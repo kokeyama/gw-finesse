@@ -1,0 +1,127 @@
+# KAGRA PRFPMI model under development
+#
+# Keiko Kokeyama, 2nd Aug, 2020
+# 
+
+
+
+
+# ======== Constants ========================
+const f1 16.881M
+const f2 45.0159M
+const mf1 -16.881M
+const mf2 -45.0159M
+const a 0.686
+
+# ======== Input optics =====================
+l i1 1 0 n0
+s s_eo0 0 n0 n_eo1
+mod eom1 $f1 0.3 1 pm n_eo1 n_eo2
+s s_eo1 0 n_eo2 n_eo3
+mod eom2 $f2 0.3 1 pm n_eo3 n_eo4
+s s_eo2 0 n_eo4 nREFL
+
+## ======= PRC each mirror loss 45ppm =======
+m1 PRM 0.1 45e-6 0 nREFL npr1
+s sLpr1 14.7615 npr1 npr2
+bs1 PR2 500e-6 45e-6 0 $a npr3 npr2 nPOP nPOP2
+s sLpr2 11.0661 npr3 npr4
+bs1 PR3 50e-6 45e-6 0 $a dump dump npr4 npr5
+s sLpr3 15.7638 npr5 npr6
+
+# Michelson
+bs bs1 0.5 0.5 0 45 npr6 n2 n3 nAS
+s lx 26.6649 n3 nx1
+s ly 23.3351 n2 ny1
+
+# X arm
+m mx1 0.996 0.004 0 nx1 nx2
+s sx1 3000 nx2 nx3
+m mx2 0.999995 5e-06 0 nx3 nxTRANS
+
+# Y arm
+m my1 0.996 0.004 90 ny1 ny2
+s sy1 3000 ny2 ny3
+m my2 0.999995 5e-06 90 ny3 nyTRANS
+
+###############
+
+
+# Amplitude detectors ================
+/*
+ad CR 0 nxTRANS
+ad SB1p $f1 nxTRANS
+ad SB1m $mf1 nxTRANS
+ad SB2p $f2 nxTRANS
+ad SB2m $mf2 nxTRANS
+*/
+
+#pd1 REFLI1 $f1 0 nREFL
+#pd1 REFLQ1 $f1 90 nREFL
+
+#pd1 REFLI2 $f2 0 nREFL
+#pd1 REFLQ2 $f2 90 nREFL
+
+#pd1 POPI1 $f1 119 nPOP
+#pd1 POPQ1 $f1 209 nPOP
+
+pd1 POPI2 $f2 74 nPOP
+pd1 POPQ2 $f2 164 nPOP
+
+#pd1 ASQ2 $f2 178 nAS
+
+
+# ====================================
+
+# DARM scan
+/*
+xaxis mx2 phi lin -0.01 0.01 500
+put* my2 phi $mx1
+diff mx2 phi
+yaxis abs
+*/
+
+
+# BS scan
+/*
+xaxis* mx1 phi lin -0.1 0.1 1000
+put* my1 phi $mx1
+put* mx2 phi $x1
+put* my2 phi $mx1
+#diff mx1 phi
+yaxis abs
+*/
+
+
+
+# CARM scan
+/*
+xaxis* mx2 phi lin -0.001 0.001 500
+put* my2 phi $x1
+#diff mx2 phi
+yaxis lin abs
+*/
+
+# PRM scan
+
+xaxis PRM phi lin -0.1 0.1 300
+#diff PRM phi
+yaxis lin abs
+
+
+
+
+
+
+
+
+# ====================================
+
+/*
+### Transfer function
+pd2 inphase 40k 0 10 n_in
+xaxis sig1 f log .01 100 400
+put inphase f2 $x1
+fsig sig1 m1 10 0
+yaxis lin db:deg
+*/
