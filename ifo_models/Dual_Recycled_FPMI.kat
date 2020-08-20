@@ -77,9 +77,6 @@ ad SB2p_POS $f2 nPOS
 ad SB2m_POS $mf2 nPOS
 */
 
-ad power $f1 nsr1
-
-
 # ====================================
 
 # DARM scan
@@ -119,11 +116,6 @@ yaxis lin abs
 xaxis SRM phi lin -8.59 -8.5 300
 yaxis lin abs
 */
-
-
-xaxis SRM phi lin -8.8 -8 500
-#-0.00315 0.00315
-
 
 # ====================================
 ### Sensmat using fsig
