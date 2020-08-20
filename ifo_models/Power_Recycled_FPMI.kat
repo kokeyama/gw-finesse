@@ -12,6 +12,7 @@ const f2 45.0159M
 const mf1 -16.881M
 const mf2 -45.0159M
 const a 0.686
+const pi 3.1415
 
 # ======== Input optics =====================
 l i1 1 0 n0
@@ -35,25 +36,25 @@ s lx 26.6649 n3 nx1
 s ly 23.3351 n2 ny1
 
 # X arm
-m mx1 0.996 0.004 0 nx1 nx2
+m ITMX 0.996 0.004 0 nx1 nx2
 s sx1 3000 nx2 nx3
-m mx2 0.999995 5e-06 0 nx3 nxTRANS
+m ETMX 0.999995 5e-06 0 nx3 nTMSX
 
 # Y arm
-m my1 0.996 0.004 90 ny1 ny2
+m ITMY 0.996 0.004 90 ny1 ny2
 s sy1 3000 ny2 ny3
-m my2 0.999995 5e-06 90 ny3 nyTRANS
+m ETMY 0.999995 5e-06 90 ny3 nTMSY
 
 ###############
 
 
 # Amplitude detectors ================
 /*
-ad CR 0 nxTRANS
-ad SB1p $f1 nxTRANS
-ad SB1m $mf1 nxTRANS
-ad SB2p $f2 nxTRANS
-ad SB2m $mf2 nxTRANS
+ad CR 0 nTMSX
+ad SB1p $f1 nTMSX
+ad SB1m $mf1 nTMSX
+ad SB2p $f2 nTMSX
+ad SB2m $mf2 nTMSX
 */
 
 #pd1 REFLI1 $f1 0 nREFL
@@ -65,8 +66,8 @@ ad SB2m $mf2 nxTRANS
 #pd1 POPI1 $f1 119 nPOP
 #pd1 POPQ1 $f1 209 nPOP
 
-pd1 POPI2 $f2 74 nPOP
-pd1 POPQ2 $f2 164 nPOP
+#pd1 POPI2 $f2 74 nPOP
+#pd1 POPQ2 $f2 164 nPOP
 
 #pd1 ASQ2 $f2 178 nAS
 
@@ -75,20 +76,20 @@ pd1 POPQ2 $f2 164 nPOP
 
 # DARM scan
 /*
-xaxis mx2 phi lin -0.01 0.01 500
-put* my2 phi $mx1
-diff mx2 phi
+xaxis ETMX phi lin -0.01 0.01 500
+put* ETMY phi $ITMX
+diff ETMX phi
 yaxis abs
 */
 
 
 # BS scan
 /*
-xaxis* mx1 phi lin -0.1 0.1 1000
-put* my1 phi $mx1
-put* mx2 phi $x1
-put* my2 phi $mx1
-#diff mx1 phi
+xaxis* ITMX phi lin -0.1 0.1 1000
+put* ITMY phi $ITMX
+put* ETMX phi $x1
+put* ETMY phi $ITMX
+#diff ITMX phi
 yaxis abs
 */
 
@@ -96,32 +97,69 @@ yaxis abs
 
 # CARM scan
 /*
-xaxis* mx2 phi lin -0.001 0.001 500
-put* my2 phi $x1
-#diff mx2 phi
+xaxis* ETMX phi lin -0.001 0.001 500
+put* ETMY phi $x1
+#diff ETMX phi
 yaxis lin abs
 */
 
 # PRM scan
-
+/*
 xaxis PRM phi lin -0.1 0.1 300
 #diff PRM phi
 yaxis lin abs
-
-
-
-
-
-
+*/
 
 
 # ====================================
+### Sensmat using fsig
 
+## DARM ###
 /*
-### Transfer function
-pd2 inphase 40k 0 10 n_in
-xaxis sig1 f log .01 100 400
+fsig sig1 ETMX 10 0
+fsig sig2 ETMY 10 180
+pd2 inphase $f1 max 10 nREFL
+xaxis sig1 f log .01 100 500
 put inphase f2 $x1
-fsig sig1 m1 10 0
-yaxis lin db:deg
+yaxis lin abs:deg
 */
+
+
+## MICH ###
+/*
+fsig sig1 ETMX 10 0
+fsig sig2 ITMX 10 0
+fsig sig3 ETMY 10 180
+fsig sig4 ITMY 10 180
+xaxis sig1 f log .01 100 500
+pd2 REFLI1 $f1 0 10 nREFL
+pd2 REFLQ1 $f1 90 10 nREFL
+put REFLI1 f2 $x1
+put REFLQ1 f2 $x1
+yaxis lin abs
+*/
+
+
+
+## PRCL ##
+
+fsig sig1 PRM 1 0
+pd2 inphase $f1 0 10 nREFL
+xaxis sig1 f log .01 100 500
+put inphase f2 $x1
+yaxis lin abs:deg
+
+
+## CARM ###
+/*
+fsig sig1 ETMX 10 0
+fsig sig2 ETMY 10 0
+pd2 inphase $f1 max 10 nREFL
+xaxis sig1 f log .01 100 500
+put inphase f2 $x1
+yaxis lin abs:deg
+*/
+
+
+
+
