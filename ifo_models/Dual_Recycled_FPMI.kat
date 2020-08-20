@@ -3,9 +3,6 @@
 # Keiko Kokeyama, 12th Aug, 2020
 # 
 
-
-
-
 # ======== Constants ========================
 const f1 16.881M
 const f2 45.0159M
@@ -24,6 +21,7 @@ s s_eo2 0 n_eo4 nREFL
 
 ## ======= PRC each mirror loss 45ppm =======
 # PRC
+#m1 PRM 1 0e-6 0 nREFL npr1
 m1 PRM 0.1 45e-6 0 nREFL npr1
 s sLpr1 14.7615 npr1 npr2
 bs1 PR2 500e-6 45e-6 0 $a npr3 npr2 nPOP nPOP2
@@ -54,11 +52,12 @@ s sLsr2 11.1115 nsr4 nsr3
 bs1 SR2 500e-6 45e-6 0 $a nsr2 nsr3 nPOS dump
 s sLsr1 14.7412 nsr2 nsr1
 m1 SRM 0.3 45e-6 0 nsr1 nAS
+#m1 SRM 1 0e-6 0 nsr1 nAS
 
 
 
 #### ===== amplitude detectors =====
-
+/*
 ad CR_POP 0 nPOP
 ad SB1p_POP $f1 nPOP
 ad SB1m_POP $mf1 nPOP
@@ -76,6 +75,10 @@ ad SB1p_POS $f1 nPOS
 ad SB1m_POS $mf1 nPOS
 ad SB2p_POS $f2 nPOS
 ad SB2m_POS $mf2 nPOS
+*/
+
+ad power $f1 nsr1
+
 
 # ====================================
 
@@ -83,10 +86,8 @@ ad SB2m_POS $mf2 nPOS
 /*
 xaxis ETMX phi lin -0.01 0.01 500
 put* ETMY phi $ITMX
-diff ETMX phi
 yaxis abs
 */
-
 
 # BS scan
 /*
@@ -97,8 +98,6 @@ put* ETMY phi $ITMX
 #diff ITMX phi
 yaxis abs
 */
-
-
 
 # CARM scan
 /*
@@ -115,13 +114,15 @@ xaxis PRM phi lin -0.1 0.1 300
 yaxis lin abs
 */
 
-# SRM scan
 /*
-xaxis SRM phi lin -90 90 300
+# SRM scan
+xaxis SRM phi lin -8.59 -8.5 300
 yaxis lin abs
-
-
 */
+
+
+xaxis SRM phi lin -8.8 -8 500
+#-0.00315 0.00315
 
 
 # ====================================
