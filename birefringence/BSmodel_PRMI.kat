@@ -1,0 +1,162 @@
+#------- Main PRMI ---------------------------
+#---------------------------------------------
+
+# clight 299792458.0 
+
+l i1 83.74 0 ni                  #I0=780W
+const fmod1 16.880962M            #f1
+const fmod2 45.0159M              #f2
+const fmod3 56.2699M              #f3
+const PRMtune 0
+const PRMptune 0
+const BSR 0.9
+const BST 0.1
+
+mod eo1 $fmod1 0.1 1 pm 0 ni neo1
+s seo1 0 neo1 neo2
+mod eo2 $fmod2 0.1 1 pm 0 neo2 neo3
+s seo2 0 neo3 neo4
+mod eo3 $fmod3 0.05 1 am 0 neo4 neo5
+
+s seo3 0 neo5 neoout
+bs bsREFL 0.0001 0.9999 0 45 neoout dump nPR nREFL   #REFL
+s sREFL 0 nPR nPRMa
+
+m PRM 0.90 0.10 $PRMtune nPRMa nPRMb
+
+s Ls1 14.7615 nPRMb nPR2a #14.7615 
+bs PR2 0.9999 0.0001 0 0.6860 nPR2a nPR2b dump dump # tilted
+s Ls2 11.0661 nPR2b nPR3a
+bs PR3 1 0 0 0.6860 nPR3a nPR3b dump dump # tilted
+s Ls3 15.7638 nPR3b nPRBS
+
+#bs BS 0.5 0.5 0 45 nPRBS nYBS n3hr n4hr   #==BS==#
+bs BS 0.5 0.5 0 45 nPRBS nYBS nXBS nSRBS   #==BS==#
+
+#s bs1bsAR1 0 n3hr n3hr2
+#m bsAR1 0 1 0 n3hr2 n3ar
+#s subBS1 0.0 1.45 n3ar n3ar2 # BS thickness is ignored 
+#m bsAR3 0 1 0 n3ar2 nXBS
+#s bs1bsAR2 0 n4hr n4hr2
+#m bsAR2 0 1 0 n4hr2 n4ar
+#s subBS2 0.0 1.45 n4ar n4ar2 # BS thickness is ignored 
+#m bsAR4 0 1 0 n4ar2 nSRBS
+
+s Lmx 26.6649  nXBS nARXa
+s Lmy 23.3351  nYBS nARYa
+
+
+# ITMX ---------------
+#---------------------------------------------
+
+bs ARX 200e-6 0.9998 0 0.025 nARXa nPOX nARXc dump   # wedged ITM
+s subxs 0.15 1.754 nARXc nITMXBSa  # thickness 150mm
+
+bs ITMXBS $BSR $BST 0 0 nITMXBSa nITMXBSb nITMXBSc nITMXBSd
+
+s subxs0 0 1.754 nITMXBSb nITMXsa
+m ITMXs 0.996 4000e-6 90 nITMXsa nITMXsb
+
+s subxp0 0 1.754 nITMXBSc nITMXpa
+m ITMXp 0.996 4000e-6 90 nITMXpa nITMXpb
+
+s subxp 0.15 1.754 nITMXBSd nARXpa  # thickness 150mm
+bs ARXp 200e-6 0.9998 0 0.025 nARXpa dump nARXpc dump   # wedged ITM
+
+s Lmpx 26.6649  nARXpc nBSpx
+
+
+
+# ITMY ---------------
+#---------------------------------------------
+
+bs ARY 200e-6 0.9998 0 0.025 nARYa dump nARYc dump   # wedged ITM
+s subys 0.15 1.754 nARYc nITMYBSa  # thickness 150mm
+
+bs ITMYBS $BSR $BST 0 0 nITMYBSa nITMYBSb nITMYBSc nITMYBSd
+
+s subys0 0 1.754 nITMYBSb nITMYsa
+m ITMYs 0.996 4000e-6 0 nITMYsa nITMYsb
+
+s subyp0 0 1.754 nITMYBSc nITMYpa
+m ITMYp 0.996 4000e-6 0 nITMYpa nITMYpb
+
+s subyp 0.15 1.754 nITMYBSd nARYpa  # thickness 150mm
+bs ARYp 200e-6 0.9998 0 0.025 nARYpa dump nARYpc dump   # wedged ITM
+
+s Lmpy 23.3351  nARYpc nBSpy
+
+
+
+#----------- P-pol Cavity Part ---------------
+#---------------------------------------------
+
+bs BSp 0.5 0.5 0 45 nBSpy dump nBSptrans nBSpx
+
+s Lp3 15.7638 nBSptrans nPR3pa
+bs PR3p 1 0 0 0.6860 nPR3pa nPR3pb dump dump
+s Lp2 11.0661 nPR3pb nPR2pa
+bs PR2p 0.9999 0.0001 0 0.6860 nPR2pa nPR2pb nPOPp dump
+s Lp1 14.7615 nPR2pb nPRMpa
+m PRMp 0.9 0.1 $PRMptune nPRMpa nPRMpb
+
+
+
+#----------- Gaussian params -----------------
+#---------------------------------------------
+
+
+gauss input i1 ni 4.3330624e-3 6.809459 4.4088792e-3 7.3067531
+
+
+attr PRM Rc -458.1285
+attr PR2 Rc -3.0764
+attr PR3 Rc 24.9165
+
+attr ITMXs Rc -1900
+attr ITMXp Rc -1900
+attr ITMYs Rc -1900
+attr ITMYp Rc -1900
+
+attr PR3p Rc 24.9165
+attr PR2p Rc -3.0764
+attr PRMp Rc 458.1285
+
+cav cav_sx PRM nPRMb ITMXs nITMXsa
+cav cav_px ITMXp nITMXpa PRMp nPRMpa
+cav cav_sy PRM nPRMb ITMYs nITMYsa
+cav cav_py ITMYp nITMYpa PRMp nPRMpa
+
+var tuning 0
+
+
+#----------- Mirror Map (ITMs) ---------------
+#---------------------------------------------
+#map ITMYBS ITMY_Rmap_oneway.txt
+#map ITMXBS ITMX_Rmap_oneway.txt
+
+#knm ITMXBS ITMX_Rmap_oneway0
+#conf ITMXBS save_knm_binary 1
+#conf ITMXBS interpolation_method 2
+#conf ITMXBS integration_method 3
+
+#knm ITMYBS ITMY_Rmap_oneway0
+#conf ITMYBS save_knm_binary 1
+#conf ITMYBS interpolation_method 2
+#conf ITMYBS integration_method 3
+
+#---------------- Detectors ------------------
+#---------------------------------------------
+
+ad CR0 0 nPRMb
+ad SB1 $fmod1 nPRMb
+ad SB2 $fmod2 nPRMb
+ad SB3 $fmod3 nPRMb
+ad CR0p 0 nPRMpa
+ad SB1p $fmod1 nPRMpa
+ad SB2p $fmod2 nPRMpa
+ad SB3p $fmod3 nPRMpa
+pd1 detectorI $fmod1 0 nPRMa
+pd1 detectorQ $fmod1 90 nPRMa
+pd1 detectorIp $fmod1 0 nPRMpb
+pd1 detectorQp $fmod1 90 nPRMpb
