@@ -271,7 +271,7 @@ tab1_layout =  [
                 ]
 #FPMI_tab
 tab2_layout = [
-                [sg.Image("./Fabry_Perot_MI_eom_drawing.png", key="imageContainer", size=(800,600))],#size=(800,600)
+                [sg.Image("../Fabry_Perot_MI_eom_drawing.png", key="imageContainer", size=(800,600))],#size=(800,600)
                 ### RADIO BOX pd0/pd1/pd2
                 [sg.Radio('Sweep', "HOW_SIMULATE01", default=True, size=(10,1), key='issweep', enable_events=True),
                  sg.Radio('Transfer', "HOW_SIMULATE01", default=False, size=(10,1), key='istransfunc', enable_events=True)],
