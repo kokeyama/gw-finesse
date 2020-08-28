@@ -1,9 +1,10 @@
+#!/bin/bash
+# on control workstations, we can't load .bashrc except for interactive bash.
 #
-# To run this script, run `source run_finesse.sh`
-#
-# on bash / zsh script, we can't use `conda activate mifsim37`
-#
+source ~/.bashrc
 
+#
 conda activate mifsim37
 
 python GUI.py
+
