@@ -3,7 +3,11 @@ from pykat import finesse
 import numpy as np
 
 def model_DRFPMI():
-    
+    #
+    # usage: base = utils_DRFPMI.model_DRFPMI()
+    # output is the finesse structure with the DRFPMI configuration
+    #
+    #
     base = finesse.kat()
     base.verbose=False
     base.parse("""
@@ -82,7 +86,12 @@ def model_DRFPMI():
 
 
 def run_sweep(DoF, base):
-
+    #
+    # usage: model, out = utils_DRFPMI.run_sweep('CARM',base)
+    # out: the computed signals, 
+    # model: updated the finesse structire
+    # model is with the sweep command, such as 'xaxis mirror phi lin -90 90 5000'
+    #
     model = base.deepcopy()
     model.parse("""
     const fsb1 16.881M
@@ -241,13 +250,11 @@ def run_fsig(DoF, base):
 
 def demod_phase(out, port, SB, N):
     #
-    # Deriving the signal angle simply by arctan(Qsig/Isig) of a port
-    #
-    # port and SB should be string
-    # SB is 1 or 2 for f1 or f2
-    # out is the output of model.run()
-    # N indicate a frequency, but currently it's just a number.
-    #   should be properly treated in a near future
+    # usage: mag, phase = utils_DRFPMI.demod_phase(out, port, SB, N):
+    # out: the computed signals from run_fsig
+    # port: string, either 'REFL','AS','POP' or 'POS'
+    # SB: string, either '1' or '2', indecating f1 or f2 demodulation
+    # N: integer related to the frequency. Should be updated.
     #
     #
     sensI = port+"I"+SB
