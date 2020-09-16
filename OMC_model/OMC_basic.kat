@@ -1,0 +1,53 @@
+#========= constants ===============
+# OMC distance 
+const d1 0.357316M
+const d2 0.359284M
+const aoiomc 3.0
+#========= source ===============
+
+l i1 1 0 n0
+s s1 1 n0 n1
+
+# OMC1
+bs omc1 0.996 0.004 0 -$aoiomc n1 nn2 n2 n9 
+s omc12 0.357316 n2 n3
+
+# OMC2
+bs omc2 0.996 0.004 0 $aoiomc n3 n4 n33 nn3
+s omc23 0.359284 n4 n5
+
+# OMC2 to PD
+s somc2pd 1 n33 npd
+
+# OMC3
+bs omc3 0.99996 0.00004 0 -$aoiomc n5 n6 n55 nn4
+s omc34 0.357316 n6 n7
+
+# OMC4
+bs omc4 0.99996 0.00004 0 -$aoiomc n7 n8 nn1 n88
+s omc41 0.359284 n8 n9
+
+
+
+# OMC RC
+attr omc3 Rc 1.8
+attr omc4 Rc 1.8
+attr omc1 Rc 0
+attr omc2 Rc 0
+
+#cavity
+cav OMC_ring omc1 n2 omc1 n9
+
+
+# amp detector
+ad OMC_TR 0 npd
+
+
+
+xaxis omc1 phi lin -0.00025 0.00025 2400
+
+yaxis abs
+
+trace 2
+
+
