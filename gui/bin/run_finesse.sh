@@ -1,27 +1,12 @@
 #!/bin/bash
-# on control workstations, we can't load .bashrc except for interactive bash.
 #
-#source ~/.bashrc
+# This code is called by medm command.
+# See this page as example : http://gwwiki.icrr.u-tokyo.ac.jp/JGWwiki/KAGRA/Commissioning/NoiseBudgetter
 #
-
-# when you start to use python3 and miniconda3, please remove this
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/controls/miniconda2/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/controls/miniconda2/etc/profile.d/conda.sh" ]; then
-        . "/home/controls/miniconda2/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/controls/miniconda2/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
+# cd /users/MIF/gw-finesse/gui/bin
+# conda activate mifsim37
+# ./run_finesse.sh
 #
-conda activate mifsim37
 
 python GUI.py
 
