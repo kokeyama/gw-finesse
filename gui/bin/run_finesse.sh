@@ -1,10 +1,12 @@
 #!/bin/bash
-# on control workstations, we can't load .bashrc except for interactive bash.
 #
-source ~/.bashrc
-
+# This code is called by medm command.
+# See this page as example : http://gwwiki.icrr.u-tokyo.ac.jp/JGWwiki/KAGRA/Commissioning/NoiseBudgetter
 #
-conda activate mifsim37
+# cd /users/MIF/gw-finesse/gui/bin
+# conda activate mifsim37
+# ./run_finesse.sh
+#
 
 python GUI.py
 
