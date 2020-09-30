@@ -262,10 +262,12 @@ xaxis sig1 f %s %s %s %s
     code = input_finesse
     print(code)
     return code
+# %%
+# make_dof_sentence_for_finesse
 
 
 # %%
-def create_input_finesse(dic_advanced_setting, selected_interferometer):
+def create_input_finesse(dic_advanced_setting, selected_interferometer):# make_interferometer_sentence_for_finesse
     """
     選択した干渉計をfinesseでシミュレーションするためのkatテキストを、GUIのOPTIONタブで設定した例外的な設定などを加えて作成する
 
@@ -520,19 +522,24 @@ def make_dic_selected_setting_from_gui(values, selected_tab, type_of_pd_signal):
         demod_phase  = values["k%s_pd2_demod_phase"%selected_tab]
     
     dic_selected_setting_from_gui = {
-            'type_of_pd_signal':type_of_pd_signal,
-            'interferometer'   :interferometer,
-            'port_trues'       :port_trues,
-            'pdname_head'      :pdname_head,
-            'pdname_tails'     :pdname_tails,
-            'demod_phase'      :demod_phase
+            'type_of_pd_signal': type_of_pd_signal,
+            'interferometer'   : interferometer,
+            'port_trues'       : port_trues,
+            'pdname_head'      : pdname_head,
+            'pdname_tails'     : pdname_tails,
+            'demod_phase'      : demod_phase,
+            'put_cr_amp_detecter_flag'  : values['k_inf_c_put_cr_amp_detecter_flag'],
+            'put_f1_amp_detecter_flag'  : values['k_inf_c_put_f1_amp_detecter_flag'],
+            'put_f2_amp_detecter_flag'  : values['k_inf_c_put_f2_amp_detecter_flag']
             }
     
     return dic_selected_setting_from_gui
+# %%
+#def make_pdname():
 
 
 # %%
-def make_pd_kat_for_finesse(dic_selected_setting_from_gui):
+def make_pd_kat_for_finesse(dic_selected_setting_from_gui):# make_pd_sentence_for _finesse
     """
     関数 make_dic_selected_setting_from_gui で作成した辞書を使って、finesseでノードに置くpdのテキストを作る
 
@@ -553,19 +560,34 @@ def make_pd_kat_for_finesse(dic_selected_setting_from_gui):
         Pdの名前の頭につける時にQphaseになるtailのリスト
     """
 
-    interferometer    = dic_selected_setting_from_gui["interferometer"]
-    type_of_pd_signal = dic_selected_setting_from_gui["type_of_pd_signal"]
-    port_trues        = dic_selected_setting_from_gui["port_trues"]
-    pdname_head       = dic_selected_setting_from_gui["pdname_head"]
-    pdname_tails      = dic_selected_setting_from_gui["pdname_tails"]
-    demod_phase       = dic_selected_setting_from_gui["demod_phase"]
-    pds_for_kat       = []
+    interferometer           = dic_selected_setting_from_gui["interferometer"]
+    type_of_pd_signal        = dic_selected_setting_from_gui["type_of_pd_signal"]
+    port_trues               = dic_selected_setting_from_gui["port_trues"]
+    pdname_head              = dic_selected_setting_from_gui["pdname_head"]
+    pdname_tails             = dic_selected_setting_from_gui["pdname_tails"]
+    demod_phase              = dic_selected_setting_from_gui["demod_phase"]
+    put_cr_amp_detecter_flag = dic_selected_setting_from_gui["put_f1_amp_detecter_flag"]
+    put_f1_amp_detecter_flag = dic_selected_setting_from_gui["put_f1_amp_detecter_flag"]
+    put_f2_amp_detecter_flag = dic_selected_setting_from_gui["put_f2_amp_detecter_flag"]
+    pds_for_kat              = []
     
     if type_of_pd_signal=="sw_power" or type_of_pd_signal=="tf_power":
         for port in port_trues:
             pds_for_kat.append("""
 pd0 %s_%s %s""" % (pdname_head, port, port)
             )
+            if put_cr_amp_detecter_flag:
+                pds_for_kat.append("""
+ad cr_%s_%s 0 %s""" % (pdname_head, port, port)
+                )
+            if put_f1_amp_detecter_flag:
+                pds_for_kat.append("""
+ad fsb1_%s_%s $fsb1 %s""" % (pdname_head, port, port)
+                )
+            if put_f2_amp_detecter_flag:
+                pds_for_kat.append("""
+ad fsb2_%s_%s $fsb2 %s""" % (pdname_head, port, port)
+                )
     else:
         for port in port_trues:
             for pdname_tail in pdname_tails:
@@ -579,10 +601,36 @@ pd0 %s_%s %s""" % (pdname_head, port, port)
                 if   type_of_pd_signal=="sw_dmod1":
                     pds_for_kat.append("""
 pd1 %s $%s %s %s"""%  (pdname, freq, phase, port))
+                    # 周波数ごと(CR, f1 f2)に見る場合
+                    if put_cr_amp_detecter_flag:
+                pds_for_kat.append("""
+ad cr_%s_%s 0 %s""" % (pdname_head, port, port)
+                )
+                    if put_f1_amp_detecter_flag:
+                pds_for_kat.append("""
+ad fsb1_%s_%s $fsb1 %s""" % (pdname_head, port, port)
+                )
+                    if put_f2_amp_detecter_flag:
+                pds_for_kat.append("""
+ad fsb2_%s_%s $fsb2 %s""" % (pdname_head, port, port)
+                )
                 elif type_of_pd_signal=="tf_dmod2":
                     pds_for_kat.append("""
 pd2 %s $%s %s 10 %s
 put %s f2 $x1"""%     (pdname, freq, phase, port, pdname))
+                    # 周波数ごと(CR, f1 f2)に見る場合
+                    if put_cr_amp_detecter_flag:
+                pds_for_kat.append("""
+ad cr_%s_%s 0 %s""" % (pdname_head, port, port)
+                )
+                    if put_f1_amp_detecter_flag:
+                pds_for_kat.append("""
+ad fsb1_%s_%s $fsb1 %s""" % (pdname_head, port, port)
+                )
+                    if put_f2_amp_detecter_flag:
+                pds_for_kat.append("""
+ad fsb2_%s_%s $fsb2 %s""" % (pdname_head, port, port)
+                )
                 else:
                     pass
                                            
@@ -593,7 +641,7 @@ put %s f2 $x1"""%     (pdname, freq, phase, port, pdname))
 
 
 # %%
-def set_gui_window_visible_true(target_section_keys, should_be_visible, window):
+def set_gui_window_visible(target_section_keys, should_be_visible, window):
     """
     第一引数で渡した名前のセクションを第二引数がTrueなら開く、Falseなら閉じる
 
@@ -613,7 +661,7 @@ def set_gui_window_visible_true(target_section_keys, should_be_visible, window):
     for key in target_section_keys:
         window[key].update(visible=should_be_visible)
 
-def set_gui_window_bool_true(target_keys, should_be_enabled, window):
+def set_gui_window_bool(target_keys, should_be_enabled, window):
     """
     第一引数で渡した名前のGUIオブジェクトを第二引数の真偽値の値にする
 
