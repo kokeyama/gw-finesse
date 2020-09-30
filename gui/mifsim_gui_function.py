@@ -566,7 +566,7 @@ def make_pd_kat_for_finesse(dic_selected_setting_from_gui):# make_pd_sentence_fo
     pdname_head              = dic_selected_setting_from_gui["pdname_head"]
     pdname_tails             = dic_selected_setting_from_gui["pdname_tails"]
     demod_phase              = dic_selected_setting_from_gui["demod_phase"]
-    put_cr_amp_detecter_flag = dic_selected_setting_from_gui["put_f1_amp_detecter_flag"]
+    put_cr_amp_detecter_flag = dic_selected_setting_from_gui["put_cr_amp_detecter_flag"]
     put_f1_amp_detecter_flag = dic_selected_setting_from_gui["put_f1_amp_detecter_flag"]
     put_f2_amp_detecter_flag = dic_selected_setting_from_gui["put_f2_amp_detecter_flag"]
     pds_for_kat              = []
@@ -601,36 +601,10 @@ ad fsb2_%s_%s $fsb2 %s""" % (pdname_head, port, port)
                 if   type_of_pd_signal=="sw_dmod1":
                     pds_for_kat.append("""
 pd1 %s $%s %s %s"""%  (pdname, freq, phase, port))
-                    # 周波数ごと(CR, f1 f2)に見る場合
-                    if put_cr_amp_detecter_flag:
-                        pds_for_kat.append("""
-ad cr_%s_%s 0 %s""" % (pdname_head, port, port)
-                )
-                    if put_f1_amp_detecter_flag:
-                        pds_for_kat.append("""
-ad fsb1_%s_%s $fsb1 %s""" % (pdname_head, port, port)
-                )
-                    if put_f2_amp_detecter_flag:
-                        pds_for_kat.append("""
-ad fsb2_%s_%s $fsb2 %s""" % (pdname_head, port, port)
-                )
                 elif type_of_pd_signal=="tf_dmod2":
                     pds_for_kat.append("""
 pd2 %s $%s %s 10 %s
 put %s f2 $x1"""%     (pdname, freq, phase, port, pdname))
-                    # 周波数ごと(CR, f1 f2)に見る場合
-                    if put_cr_amp_detecter_flag:
-                        pds_for_kat.append("""
-ad cr_%s_%s 0 %s""" % (pdname_head, port, port)
-                )
-                    if put_f1_amp_detecter_flag:
-                        pds_for_kat.append("""
-ad fsb1_%s_%s $fsb1 %s""" % (pdname_head, port, port)
-                )
-                    if put_f2_amp_detecter_flag:
-                        pds_for_kat.append("""
-ad fsb2_%s_%s $fsb2 %s""" % (pdname_head, port, port)
-                )
                 else:
                     pass
                                            
