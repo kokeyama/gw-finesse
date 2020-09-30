@@ -603,15 +603,15 @@ ad fsb2_%s_%s $fsb2 %s""" % (pdname_head, port, port)
 pd1 %s $%s %s %s"""%  (pdname, freq, phase, port))
                     # 周波数ごと(CR, f1 f2)に見る場合
                     if put_cr_amp_detecter_flag:
-                pds_for_kat.append("""
+                        pds_for_kat.append("""
 ad cr_%s_%s 0 %s""" % (pdname_head, port, port)
                 )
                     if put_f1_amp_detecter_flag:
-                pds_for_kat.append("""
+                        pds_for_kat.append("""
 ad fsb1_%s_%s $fsb1 %s""" % (pdname_head, port, port)
                 )
                     if put_f2_amp_detecter_flag:
-                pds_for_kat.append("""
+                        pds_for_kat.append("""
 ad fsb2_%s_%s $fsb2 %s""" % (pdname_head, port, port)
                 )
                 elif type_of_pd_signal=="tf_dmod2":
@@ -620,15 +620,15 @@ pd2 %s $%s %s 10 %s
 put %s f2 $x1"""%     (pdname, freq, phase, port, pdname))
                     # 周波数ごと(CR, f1 f2)に見る場合
                     if put_cr_amp_detecter_flag:
-                pds_for_kat.append("""
+                        pds_for_kat.append("""
 ad cr_%s_%s 0 %s""" % (pdname_head, port, port)
                 )
                     if put_f1_amp_detecter_flag:
-                pds_for_kat.append("""
+                        pds_for_kat.append("""
 ad fsb1_%s_%s $fsb1 %s""" % (pdname_head, port, port)
                 )
                     if put_f2_amp_detecter_flag:
-                pds_for_kat.append("""
+                        pds_for_kat.append("""
 ad fsb2_%s_%s $fsb2 %s""" % (pdname_head, port, port)
                 )
                 else:
