@@ -43,23 +43,28 @@ all_important_ports = ["REFL", "AS", "nTMSX", "nTMSY",
 all_gui_section_keys = []
 for interferometer in all_interferometers:
     # すべてのsectionのkeyをここで設定
-    all_gui_section_keys += ["k%s_sec_sw_setting"%interferometer,
-                             "k%s_sec_tf_setting"%interferometer,
-                             "k%s_sec_sw_power_setting"%interferometer,
-                             "k%s_sec_sw_dmod1_setting"%interferometer,
-                             "k%s_sec_tf_power_setting"%interferometer,
-                             "k%s_sec_tf_dmod2_setting"%interferometer]
+    all_gui_section_keys += [   "k%s_sec_sw_setting"%interferometer,
+                                "k%s_sec_tf_setting"%interferometer,
+                                "k%s_sec_sw_power_setting"%interferometer,
+                                "k%s_sec_sw_amptd_setting"%interferometer,
+                                "k%s_sec_sw_dmod1_setting"%interferometer,
+                                "k%s_sec_tf_power_setting"%interferometer,
+                                "k%s_sec_tf_amptd_setting"%interferometer,
+                                "k%s_sec_tf_dmod2_setting"%interferometer]
 all_radiobox_keys = []
 for interferometer in all_interferometers:
     # すべてのRADIOBOXのkeyをここで設定
-    all_radiobox_keys += ["k%s_issw"%interferometer,
-                          "k%s_istf"%interferometer,
-                          "k%s_issw_power"%interferometer,
-                          "k%s_issw_dmod1"%interferometer,
-                          "k%s_istf_power"%interferometer,
-                          "k%s_istf_dmod2"%interferometer]
+    all_radiobox_keys += [      "k%s_issw"%interferometer,
+                                "k%s_istf"%interferometer,
+                                "k%s_issw_power"%interferometer,
+                                "k%s_issw_amptd"%interferometer,
+                                "k%s_issw_dmod1"%interferometer,
+                                "k%s_istf_power"%interferometer,
+                                "k%s_istf_amptd"%interferometer,
+                                "k%s_istf_dmod2"%interferometer]
 
 all_demod_phases = ["Iphase", "Qphase"]
+#all_mod_freqs    =
 all_demod_freqs  = ["fsb1", "fsb2"]
 all_pdname_heads = ["pd0", "pd1", "pd2"]
 
@@ -70,6 +75,8 @@ for freq in all_demod_freqs:
 for freq in all_demod_freqs:
     all_pdname_tails_q.append("Qphase_%s"%freq)
 
+# %%
+    # mifsim.generate_kat(interferometer, type_of_pd_signal, dof)
 
 # %%
 def generate_kat(pds_for_kat, dic_advanced_setting, selected_interferometer):
@@ -129,7 +136,7 @@ def generate_kat(pds_for_kat, dic_advanced_setting, selected_interferometer):
     ### DoF ###
 
     ### sweep ###
-    if(type_of_pd_signal=="sw_power" or type_of_pd_signal=="sw_dmod1"):
+    if(type_of_pd_signal=="sw_power" or type_of_pd_signal=="sw_dmod1" or type_of_pd_signal=="sw_amptd"):
         if(dof=="DARM"):
             input_finesse += """
             
@@ -202,7 +209,7 @@ put SRM phi $x1
             pass
 
     ### transfer function ###
-    if(type_of_pd_signal=="tf_power" or type_of_pd_signal=="tf_dmod2"):
+    if(type_of_pd_signal=="tf_power" or type_of_pd_signal=="tf_dmod2" or type_of_pd_signal=="tf_amptd"):
         
         if(dof=="DARM"):
             input_finesse += """
@@ -455,6 +462,38 @@ m1 SRM 0.3 $src_loss 0 nsr1 AS
     
     return input_finesse
 
+# %%
+def return_gui_selected_portlist(values, selected_interferometer):
+    """
+    GUIで選択したポートをリストにして返す
+
+    Parameters
+    ----------
+    values            : dictionary
+        pysimpleGUIで選択した値の辞書
+    selected_interferometer      : str
+        GUIで選択されている干渉計構成の名前 MI/FPMI/PRFPMI/DRFPMI
+
+    Returns
+    -------
+    port_trues : list of str
+        GUI上で選択したポートの名前のリスト
+    
+    See Also
+    --------
+    all_ports        : list of str
+        GUIで用意しているすべてのportのリスト
+    """
+    port_trues = []
+    for port in all_ports:
+        port_name = "%s_%s" % (selected_interferometer, port)
+        if "k"+port_name in values:# このポートがGUI上で選択できるかを調べる
+            if(values["k"+port_name]):
+                port_trues.append(port)
+    
+    return port_trues
+# %%
+
 
 # %%
 def make_dic_selected_setting_from_gui(values, selected_tab, type_of_pd_signal):
@@ -493,20 +532,21 @@ def make_dic_selected_setting_from_gui(values, selected_tab, type_of_pd_signal):
     interferometer = selected_tab
         
     # port_true
-    for port in all_ports:
-        port_name = "%s_%s" % (interferometer, port)
-        if "k"+port_name in values:# valueにはGUIのチェックボックスのkFPMI_REFLなどが入っている
-            if(values["k"+port_name]):
-                port_trues.append(port)
+    port_trues = return_gui_selected_portlist(values,interferometer)
         
+    # selected_detecter_name
     # pdname_heads
     if type_of_pd_signal  =="sw_power" or type_of_pd_signal=="tf_power":
         pdname_head = "pd0"
+        #elif type_of_pd_signal=="sw_amptd" or type_of_pd_signal=="tf_amptd":
+        #    if value[""]
     elif type_of_pd_signal=="sw_dmod1":
         pdname_head = "pd1"
     elif type_of_pd_signal=="tf_dmod2":
         pdname_head = "pd2"
-        
+    elif type_of_pd_signal == "sw_amptd" or type_of_pd_signal == "tf_amptd":
+        pdname_head = "ad"
+    print(pdname_head)
     # pdname_tails
     for freq in all_demod_freqs:
         for phase in all_demod_phases:
@@ -522,15 +562,18 @@ def make_dic_selected_setting_from_gui(values, selected_tab, type_of_pd_signal):
         demod_phase  = values["k%s_pd2_demod_phase"%selected_tab]
     
     dic_selected_setting_from_gui = {
-            'type_of_pd_signal': type_of_pd_signal,
-            'interferometer'   : interferometer,
-            'port_trues'       : port_trues,
-            'pdname_head'      : pdname_head,
-            'pdname_tails'     : pdname_tails,
-            'demod_phase'      : demod_phase,
-            'put_cr_amp_detecter_flag'  : values['k_inf_c_put_cr_amp_detecter_flag'],
-            'put_f1_amp_detecter_flag'  : values['k_inf_c_put_f1_amp_detecter_flag'],
-            'put_f2_amp_detecter_flag'  : values['k_inf_c_put_f2_amp_detecter_flag']
+            'type_of_pd_signal'         : type_of_pd_signal,
+            'interferometer'            : interferometer,
+            'port_trues'                : port_trues,
+            'pdname_head'               : pdname_head,
+            'pdname_tails'              : pdname_tails,
+            'demod_phase'               : demod_phase,
+            'put_cr_sw_amptd_flag'  : values['k%s_put_cr_sw_amptd_flag'%interferometer],
+            'put_f1_sw_amptd_flag'  : values['k%s_put_f1_sw_amptd_flag'%interferometer],
+            'put_f2_sw_amptd_flag'  : values['k%s_put_f2_sw_amptd_flag'%interferometer],
+            'put_cr_tf_amptd_flag'  : values['k%s_put_cr_tf_amptd_flag'%interferometer],
+            'put_f1_tf_amptd_flag'  : values['k%s_put_f1_tf_amptd_flag'%interferometer],
+            'put_f2_tf_amptd_flag'  : values['k%s_put_f2_tf_amptd_flag'%interferometer]
             }
     
     return dic_selected_setting_from_gui
@@ -560,31 +603,36 @@ def make_pd_kat_for_finesse(dic_selected_setting_from_gui):# make_pd_sentence_fo
         Pdの名前の頭につける時にQphaseになるtailのリスト
     """
 
-    interferometer           = dic_selected_setting_from_gui["interferometer"]
-    type_of_pd_signal        = dic_selected_setting_from_gui["type_of_pd_signal"]
-    port_trues               = dic_selected_setting_from_gui["port_trues"]
-    pdname_head              = dic_selected_setting_from_gui["pdname_head"]
-    pdname_tails             = dic_selected_setting_from_gui["pdname_tails"]
-    demod_phase              = dic_selected_setting_from_gui["demod_phase"]
-    put_cr_amp_detecter_flag = dic_selected_setting_from_gui["put_cr_amp_detecter_flag"]
-    put_f1_amp_detecter_flag = dic_selected_setting_from_gui["put_f1_amp_detecter_flag"]
-    put_f2_amp_detecter_flag = dic_selected_setting_from_gui["put_f2_amp_detecter_flag"]
-    pds_for_kat              = []
-    
-    if type_of_pd_signal=="sw_power" or type_of_pd_signal=="tf_power":
+    interferometer        = dic_selected_setting_from_gui["interferometer"]
+    type_of_pd_signal     = dic_selected_setting_from_gui["type_of_pd_signal"]
+    port_trues            = dic_selected_setting_from_gui["port_trues"]
+    pdname_head           = dic_selected_setting_from_gui["pdname_head"]
+    pdname_tails          = dic_selected_setting_from_gui["pdname_tails"]
+    demod_phase           = dic_selected_setting_from_gui["demod_phase"]
+    put_cr_sw_amptd_flag  = dic_selected_setting_from_gui["put_cr_sw_amptd_flag"]
+    put_f1_sw_amptd_flag  = dic_selected_setting_from_gui["put_f1_sw_amptd_flag"]
+    put_f2_sw_amptd_flag  = dic_selected_setting_from_gui["put_f2_sw_amptd_flag"]
+    put_cr_tf_amptd_flag  = dic_selected_setting_from_gui["put_cr_tf_amptd_flag"]
+    put_f1_tf_amptd_flag  = dic_selected_setting_from_gui["put_f1_tf_amptd_flag"]
+    put_f2_tf_amptd_flag  = dic_selected_setting_from_gui["put_f2_tf_amptd_flag"]
+    pds_for_kat           = []
+
+    if   type_of_pd_signal=="sw_power" or type_of_pd_signal=="tf_power":
         for port in port_trues:
             pds_for_kat.append("""
 pd0 %s_%s %s""" % (pdname_head, port, port)
             )
-            if put_cr_amp_detecter_flag:
+    elif type_of_pd_signal=="sw_amptd" or type_of_pd_signal=="tf_amptd":
+        for port in port_trues:
+            if put_cr_sw_amptd_flag or put_cr_tf_amptd_flag:
                 pds_for_kat.append("""
 ad cr_%s_%s 0 %s""" % (pdname_head, port, port)
                 )
-            if put_f1_amp_detecter_flag:
+            if put_f1_sw_amptd_flag or put_f1_tf_amptd_flag:
                 pds_for_kat.append("""
 ad fsb1_%s_%s $fsb1 %s""" % (pdname_head, port, port)
                 )
-            if put_f2_amp_detecter_flag:
+            if put_f2_sw_amptd_flag or put_f2_tf_amptd_flag:
                 pds_for_kat.append("""
 ad fsb2_%s_%s $fsb2 %s""" % (pdname_head, port, port)
                 )
@@ -597,7 +645,7 @@ ad fsb2_%s_%s $fsb2 %s""" % (pdname_head, port, port)
                     phase = str(0+float(demod_phase))
                 elif pdname_tail in all_pdname_tails_q:
                     phase = str(90+float(demod_phase))
-                
+
                 if   type_of_pd_signal=="sw_dmod1":
                     pds_for_kat.append("""
 pd1 %s $%s %s %s"""%  (pdname, freq, phase, port))
@@ -607,10 +655,10 @@ pd2 %s $%s %s 10 %s
 put %s f2 $x1"""%     (pdname, freq, phase, port, pdname))
                 else:
                     pass
-                                           
+
     # 重複するとfinesseのエラーが出るから重複はなくす
     pds_for_kat = set(pds_for_kat)
-    
+
     return pds_for_kat
 
 
