@@ -3,8 +3,6 @@
 # %%
 import PySimpleGUI as sg
 from pykat import finesse
-from pykat.commands import *
-import pykat
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
@@ -49,7 +47,7 @@ for interferometer in all_interferometers:
                                 "k%s_sec_sw_amptd_setting"%interferometer,
                                 "k%s_sec_sw_dmod1_setting"%interferometer,
                                 "k%s_sec_tf_power_setting"%interferometer,
-                                "k%s_sec_tf_amptd_setting"%interferometer,
+                                #"k%s_sec_tf_amptd_setting"%interferometer,
                                 "k%s_sec_tf_dmod2_setting"%interferometer]
 all_radiobox_keys = []
 for interferometer in all_interferometers:
@@ -60,12 +58,12 @@ for interferometer in all_interferometers:
                                 "k%s_issw_amptd"%interferometer,
                                 "k%s_issw_dmod1"%interferometer,
                                 "k%s_istf_power"%interferometer,
-                                "k%s_istf_amptd"%interferometer,
+                                #"k%s_istf_amptd"%interferometer,
                                 "k%s_istf_dmod2"%interferometer]
 
 all_demod_phases = ["Iphase", "Qphase"]
 #all_mod_freqs    =
-all_demod_freqs  = ["fsb1", "fsb2"]
+all_demod_freqs  = ["fsb1", "fsb2", "arbitraryfreq001", "arbitraryfreq002"]
 all_pdname_heads = ["pd0", "pd1", "pd2"]
 
 all_pdname_tails_i, all_pdname_tails_q = [], []
@@ -79,7 +77,7 @@ for freq in all_demod_freqs:
     # mifsim.generate_kat(interferometer, type_of_pd_signal, dof)
 
 # %%
-def generate_kat(pds_for_kat, dic_advanced_setting, selected_interferometer):
+def generate_kat(pds_for_kat, dic_selected_setting_from_gui, selected_interferometer):
     """
     GUIで選択した設定のfinesseのkatテキストを作成する
     この関数で作成したkatファイルをfinesseで読み込んでシミュレーションを行う
@@ -89,7 +87,7 @@ def generate_kat(pds_for_kat, dic_advanced_setting, selected_interferometer):
     pds_for_kat             : list of str
         関数make_pd_kat_for_finesseで作成した
         finesseで使うkatのテキストに追加するPdの部分をリストにしたもの
-    dic_advanced_setting    : dictionary
+    dic_selected_setting_from_gui    : dictionary
         GUIで選択されたvaluesの値から干渉計の設定に関する値を取り出してまとめた辞書
     selected_interferometer : str
         GUIで選択されている干渉計構成の名前 MI/FPMI/PRFPMI/DRFPMI
@@ -104,27 +102,27 @@ def generate_kat(pds_for_kat, dic_advanced_setting, selected_interferometer):
     ### get variables from GUI ###
     ##############################
     
-    dof               = dic_advanced_setting["dof"]# pick up DoF (CARM / DARM / BS) from GUI
-    type_of_pd_signal = dic_advanced_setting["type_of_pd_signal"]# sw_power/sw_dmod1/tf_power/tf_dmod2
+    dof               = dic_selected_setting_from_gui["dof"]# pick up DoF (CARM / DARM / BS) from GUI
+    type_of_pd_signal = dic_selected_setting_from_gui["type_of_pd_signal"]# sw_power/sw_dmod1/tf_power/tf_dmod2
     
     ### xaxis/yaxis setting ###
-    x_plotscale       = dic_advanced_setting["x_plotscale"]# linear or log
-    xaxis_range_beg   = dic_advanced_setting["xaxis_range_beg"]#plotしたときのx軸の最小値
-    xaxis_range_end   = dic_advanced_setting["xaxis_range_end"]#plotしたときのx軸の最大値
-    y_plotscale       = dic_advanced_setting["y_plotscale"]#str
+    x_plotscale       = dic_selected_setting_from_gui["x_plotscale"]# linear or log
+    xaxis_range_beg   = dic_selected_setting_from_gui["xaxis_range_beg"]#plotしたときのx軸の最小値
+    xaxis_range_end   = dic_selected_setting_from_gui["xaxis_range_end"]#plotしたときのx軸の最大値
+    y_plotscale       = dic_selected_setting_from_gui["y_plotscale"]#str
 
     if x_plotscale=='linear':
         x_plotscale = 'lin'
     if y_plotscale=='linear':
         y_plotscale = 'lin'
 
-    samplingnum       = dic_advanced_setting["samplingnum"]# サンプリング数
+    samplingnum       = dic_selected_setting_from_gui["samplingnum"]# サンプリング数
     
     ######################
     ### INF components ###
     ######################
 
-    input_finesse = create_input_finesse(dic_advanced_setting, selected_interferometer)
+    input_finesse = create_input_finesse(dic_selected_setting_from_gui, selected_interferometer)
 
     ## pds ##
     input_finesse += """
@@ -150,9 +148,6 @@ yaxis abs
             input_finesse += """
             
 # CARM scan
-#(koyama) xaxis*
-#initial
-# m ITMX 0.996 0.004 0 nx1 nx2
 xaxis ETMX phi %s %s %s %s
 put* ETMY phi $x1
 yaxis abs
@@ -162,13 +157,6 @@ yaxis abs
             input_finesse += """
             
 # BS scan
-#
-#(koyama) original vergion log kokeyamasan uses xaxis*
-# select xaxis plotscale "log" cause an error with xaxis*
-# m ITMX 0.996 0.004 0 nx1 nx2
-# since the config are above, I think it doesnt cause any problem about the correctness of the result
-#
-
 xaxis ITMX phi %s %s %s %s
 put* ITMY phi $mx1
 put* ETMX phi $x1
@@ -179,20 +167,13 @@ yaxis abs
             input_finesse += """
             
 # BS scan
-#
-#(koyama) original vergion log kokeyamasan uses xaxis*
-# select xaxis plotscale "log" cause an error with xaxis*
-# m ITMX 0.996 0.004 0 nx1 nx2
-# since the config are above, I think it doesnt cause any problem about the correctness of the result
-#
-
 xaxis ITMX phi %s %s %s %s
 put* ITMY phi $mx1
 yaxis abs
             """ % (x_plotscale, xaxis_range_beg,xaxis_range_end, samplingnum)
         elif(dof=="PRCL"):
             input_finesse += """
-            
+
 # PRM scan
 xaxis PRM phi %s %s %s %s
 yaxis lin abs
@@ -270,17 +251,39 @@ xaxis sig1 f %s %s %s %s
     print(code)
     return code
 # %%
-# make_dof_sentence_for_finesse
+def change_nums_unit_str_to_float(str_num):
+    """
+    str_numに含まれる省略した単位を数値に変換して,str_numをfloat型の数字に変換して計算した結果を返す
+
+    Parameters
+    ----------
+    str_num    : str
+        str型の数字
+
+    Returns
+    -------
+    str_num : float
+        計算した結果のfloat型の数字
+    """
+    str_num = str_num.replace('p', '*10**(-12)')
+    str_num = str_num.replace('n', '*10**(-9)')
+    str_num = str_num.replace('ppm', '*10**(-6)')
+    str_num = str_num.replace('k', '*10**3')
+    str_num = str_num.replace('m', '*10**(-3)')
+    str_num = str_num.replace('M', '*10**6')
+    str_num = str_num.replace('G', '*10**9')
+    str_num = eval(str_num)
+    return str_num
 
 
 # %%
-def create_input_finesse(dic_advanced_setting, selected_interferometer):# make_interferometer_sentence_for_finesse
+def create_input_finesse(dic_selected_setting_from_gui, selected_interferometer):# make_interferometer_sentence_for_finesse
     """
     選択した干渉計をfinesseでシミュレーションするためのkatテキストを、GUIのOPTIONタブで設定した例外的な設定などを加えて作成する
 
     Parameters
     ----------
-    dic_advanced_setting    : dictionary
+    dic_selected_setting_from_gui    : dictionary
         GUIで選択されたvaluesの値から干渉計の設定に関する値を取り出してまとめた辞書
     selected_interferometer : str
         GUIで選択されている干渉計構成の名前 MI/FPMI/PRFPMI/DRFPMI
@@ -291,175 +294,167 @@ def create_input_finesse(dic_advanced_setting, selected_interferometer):# make_i
         finesseに送ったりplotを行うために必要な変数をまとめた辞書
     """
 
-    laser_power     = dic_advanced_setting["laser_power"]
-    prc_mirror_loss = dic_advanced_setting["prc_mirror_loss"]
-    src_mirror_loss = dic_advanced_setting["src_mirror_loss"]
+    laser_power              = dic_selected_setting_from_gui["laser_power"]
+    prc_each_mirror_loss     = dic_selected_setting_from_gui["prc_each_mirror_loss"]
+    src_each_mirror_loss     = dic_selected_setting_from_gui["src_each_mirror_loss"]
+    ITM_mirror_reflectance  = dic_selected_setting_from_gui['ITM_mirror_reflectance']
+    ITM_mirror_transmittance = dic_selected_setting_from_gui['ITM_mirror_transmittance']
+    ETM_mirror_reflectance  = dic_selected_setting_from_gui['ETM_mirror_reflectance']
+    ETM_mirror_transmittance = dic_selected_setting_from_gui['ETM_mirror_transmittance']
+    mod_f1_frequency         = dic_selected_setting_from_gui['mod_f1_frequency']
+    mod_f2_frequency         = dic_selected_setting_from_gui['mod_f2_frequency']
+    arbitraryfreq001         = dic_selected_setting_from_gui['arbitraryfreq001']
+    arbitraryfreq002         = dic_selected_setting_from_gui['arbitraryfreq002']
+    num_of_sidebands         = dic_selected_setting_from_gui['num_of_sidebands']
+    input_finesse = (""
+            + "# ======== Constants ========================\n"
+            + "const fsb1 %s\n"  %str(mod_f1_frequency)
+            + "const fsb2 %s\n"  %str(mod_f2_frequency)
+            + "const mfsb1 -%s\n"%str(mod_f1_frequency)
+            + "const mfsb2 -%s\n"%str(mod_f2_frequency)
+            + "const arbitraryfreq001 %s\n"  %str(arbitraryfreq001)
+            + "const arbitraryfreq002 %s\n"  %str(arbitraryfreq002)
+            
+            + "const a 0.686\n"
+            + "const prc_loss %s\n"%prc_each_mirror_loss
+            + "const src_loss %s\n"%src_each_mirror_loss
+            + "\n"
+    )
 
     if selected_interferometer=="MI":
-        input_finesse = """
-
-### MI
-
-const fsb1 16.881M
-const fsb2 45.0159M
-
-# Input optics
-l I_fsb1 %s 0 n0
-s s_eo0 0 n0 n_eo1
-mod eom1 16.881M 0.3 1 pm n_eo1 n_eo2
-s s_eo1 0 n_eo2 n_eo3
-mod eom2 45.0159M 0.3 1 pm n_eo3 n_eo4
-s s_eo2 0 n_eo4 REFL
-
-# Michelson
-bs bs1 0.5 0.5 0 45 REFL n2 n3 AS
-s lx 26.6649 n3 nx1
-s ly 23.3351 n2 ny1
-
-# X arm
-m ITMX 0.996 0.004 0 nx1 nx2
-
-# Y arm
-m ITMY 0.996 0.004 90 ny1 ny2
-
-        """ % (laser_power)
+        input_finesse += (
+            "# MI\n"
+            + "#\n"
+            + "# ======== Input optics =====================\n"
+            + "# Input optics\n"
+            + "l I_fsb1 %s 0 n0\n"%laser_power
+            + "s s_eo0 0 n0 n_eo1\n"
+            + "mod eom1 $fsb1 0.3 %s pm n_eo1 n_eo2\n"%(num_of_sidebands)
+            + "s s_eo1 0 n_eo2 n_eo3\n"
+            + "mod eom2 $fsb2 0.3 %s pm n_eo3 n_eo4\n"%(num_of_sidebands)
+            + "s s_eo2 0 n_eo4 REFL\n"
+            + "\n"
+            + "# Michelson\n"
+            + "bs bs1 0.5 0.5 0 45 REFL n2 n3 AS\n"
+            + "s lx 26.6649 n3 nx1\n"
+            + "s ly 23.3351 n2 ny1\n"
+            + "\n"
+            + "# X arm\n"
+            + "m ITMX %s %s 0 nx1 nx2\n"%(ITM_mirror_reflectance,ITM_mirror_transmittance)
+            + "\n"
+            + "# Y arm\n"
+            + "m ITMY %s %s 90 ny1 ny2\n"%(ITM_mirror_reflectance,ITM_mirror_transmittance)
+        )
     elif selected_interferometer=="FPMI":
-        input_finesse = """
-
-### FPMI
-
-const fsb1 16.881M
-const fsb2 45.0159M
-
-# Input optics
-l I_fsb1 %s 0 n0
-s s_eo0 0 n0 n_eo1
-mod eom1 16.881M 0.3 1 pm n_eo1 n_eo2
-s s_eo1 0 n_eo2 n_eo3
-mod eom2 45.0159M 0.3 1 pm n_eo3 n_eo4
-s s_eo2 0 n_eo4 REFL
-
-# Michelson
-bs bs1 0.5 0.5 0 45 REFL n2 n3 AS
-s lx 26.6649 n3 nx1
-s ly 23.3351 n2 ny1
-
-
-# X arm
-m ITMX 0.996 0.004 0 nx1 nx2
-s sx1 3000 nx2 nx3
-m ETMX 0.99995 5e-06 0 nx3 nTMSX
-
-# Y arm
-m ITMY 0.996 0.004 90 ny1 ny2
-s sy1 3000 ny2 ny3
-m ETMY 0.99995 5e-06 90 ny3 nTMSY
-
-        """ % (laser_power)
+        input_finesse += (
+            "# FPMI\n"
+            + "# \n"
+            + "# ======== Input optics =====================\n"
+            + "l I_fsb1 %s 0 n0\n"         %(laser_power)
+            + "s s_eo0 0 n0 n_eo1\n"
+            + "mod eom1 $fsb1 0.3 %s pm n_eo1 n_eo2\n"%num_of_sidebands
+            + "s s_eo1 0 n_eo2 n_eo3\n"
+            + "mod eom2 $fsb2 0.3 %s pm n_eo3 n_eo4\n"%num_of_sidebands
+            + "s s_eo2 0 n_eo4 REFL\n"
+            + "\n"
+            +  "# ======= Michelson =======\n"
+            + "bs bs1 0.5 0.5 0 45 REFL n2 n3 AS\n"
+            + "s lx 26.6649 n3 nx1\n"
+            + "s ly 23.3351 n2 ny1\n"
+            + "\n"
+            + "# X arm\n"
+            + "m ITMX %s %s 0 nx1 nx2\n"   %(ITM_mirror_reflectance,ITM_mirror_transmittance)
+            + "s sx1 3000 nx2 nx3\n"
+            + "m ETMX %s %s 0 nx3 nTMSX\n" %(ETM_mirror_reflectance,ETM_mirror_transmittance)
+            + "\n"
+            + "# Y arm\n"
+            + "m ITMY %s %s 90 ny1 ny2\n"  %(ITM_mirror_reflectance,ITM_mirror_transmittance)
+            + "s sy1 3000 ny2 ny3\n"
+            + "m ETMY %s %s 90 ny3 nTMSY\n"%(ETM_mirror_reflectance,ETM_mirror_transmittance)
+        )
         
     elif selected_interferometer=="PRFPMI":
-        input_finesse = """
-# PRFPMI
-# 
-# ======== Constants ========================
-const fsb1 16.881M
-const fsb2 45.0159M
-const mfsb1 -16.881M
-const mfsb2 -45.0159M
-const a 0.686
-const prc_loss %s
-
-# ======== Input optics =====================
-l i1 %s 0 n0
-s s_eo0 0 n0 n_eo1
-mod eom1 $fsb1 0.3 1 pm n_eo1 n_eo2
-s s_eo1 0 n_eo2 n_eo3
-mod eom2 $fsb2 0.3 1 pm n_eo3 n_eo4
-s s_eo2 0 n_eo4 REFL
-
-## ======= PRC each mirror loss $prc_loss =======
-# PRC
-#m1 PRM 1 0e-6 0 REFL npr1
-m1 PRM 0.1 $prc_loss 0 REFL npr1
-s sLpr1 14.7615 npr1 npr2
-bs1 PR2 500e-6 $prc_loss 0 $a npr3 npr2 POP POP2
-s sLpr2 11.0661 npr3 npr4
-bs1 PR3 50e-6 $prc_loss 0 $a dump dump npr4 npr5
-s sLpr3 15.7638 npr5 npr6
-
-# Michelson
-bs bs1 0.5 0.5 0 45 npr6 n2 n3 AS
-s lx 26.6649 n3 nx1
-s ly 23.3351 n2 ny1
-
-# X arm
-m ITMX 0.996 0.004 0 nx1 nx2
-s sx1 3000 nx2 nx3
-m ETMX 0.999995 5e-06 0 nx3 nTMSX
-
-# Y arm
-m ITMY 0.996 0.004 90 ny1 ny2
-s sy1 3000 ny2 ny3
-m ETMY 0.999995 5e-06 90 ny3 nTMSY
-        """%(prc_mirror_loss, laser_power)
+        input_finesse += (
+            "# PRFPMI\n"
+            + "# \n"
+            + "# ======== Input optics =====================\n"
+            + "l i1 %s 0 n0\n"%laser_power
+            + "s s_eo0 0 n0 n_eo1\n"
+            + "mod eom1 $fsb1 0.3 %s pm n_eo1 n_eo2\n"%num_of_sidebands
+            + "s s_eo1 0 n_eo2 n_eo3\n"
+            + "mod eom2 $fsb2 0.3 %s pm n_eo3 n_eo4\n"%num_of_sidebands
+            + "s s_eo2 0 n_eo4 REFL\n"
+            + "\n"
+            + "# ======= PRC each mirror loss $prc_loss =======\n"
+            + "# PRC\n"
+            + "#m1 PRM 1 0e-6 0 REFL npr1\n"
+            + "m1 PRM 0.1 $prc_loss 0 REFL npr1\n"
+            + "s sLpr1 14.7615 npr1 npr2\n"
+            + "bs1 PR2 500e-6 $prc_loss 0 $a npr3 npr2 POP POP2\n"
+            + "s sLpr2 11.0661 npr3 npr4\n"
+            + "bs1 PR3 50e-6 $prc_loss 0 $a dump dump npr4 npr5\n"
+            + "s sLpr3 15.7638 npr5 npr6\n"
+            + "\n"
+            + "# ======= Michelson =======\n"
+            + "bs bs1 0.5 0.5 0 45 npr6 n2 n3 AS\n"
+            + "s lx 26.6649 n3 nx1\n"
+            + "s ly 23.3351 n2 ny1\n"
+            + "\n"
+            + "# X arm\n"
+            + "m ITMX %s %s 0 nx1 nx2\n"   %(ITM_mirror_reflectance,ITM_mirror_transmittance)
+            + "s sx1 3000 nx2 nx3\n"
+            + "m ETMX %s %s 0 nx3 nTMSX\n" %(ETM_mirror_reflectance,ETM_mirror_transmittance)
+            + "\n"
+            + "# Y arm\n"
+            + "m ITMY %s %s 90 ny1 ny2\n"  %(ITM_mirror_reflectance,ITM_mirror_transmittance)
+            + "s sy1 3000 ny2 ny3\n"
+            + "m ETMY %s %s 90 ny3 nTMSY\n"%(ETM_mirror_reflectance,ETM_mirror_transmittance)
+        )
 
     elif selected_interferometer=="DRFPMI":
-        input_finesse = """
-# DRFPMI
-#
-# ======== Constants ========================
-const fsb1 16.881M
-const fsb2 45.0159M
-const mfsb1 -16.881M
-const mfsb2 -45.0159M
-const a 0.686
-const prc_loss %s
-const src_loss %s
-
-# ======== Input optics =====================
-l i1 %s 0 n0
-s s_eo0 0 n0 n_eo1
-mod eom1 $fsb1 0.3 1 pm n_eo1 n_eo2
-s s_eo1 0 n_eo2 n_eo3
-mod eom2 $fsb2 0.3 1 pm n_eo3 n_eo4
-s s_eo2 0 n_eo4 REFL
-
-## ======= PRC each mirror loss $prc_loss =======
-# PRC
-#m1 PRM 1 0e-6 0 REFL npr1
-m1 PRM 0.1 $prc_loss 0 REFL npr1
-s sLpr1 14.7615 npr1 npr2
-bs1 PR2 500e-6 $prc_loss 0 $a npr3 npr2 POP POP2
-s sLpr2 11.0661 npr3 npr4
-bs1 PR3 50e-6 $prc_loss 0 $a dump dump npr4 npr5
-s sLpr3 15.7638 npr5 npr6
-
-# Michelson
-bs bs1 0.5 0.5 0 45 npr6 n2 n3 n4
-s lx 26.6649 n3 nx1
-s ly 23.3351 n2 ny1
-
-# X arm
-m ITMX 0.996 0.004 0 nx1 nx2
-s sx1 3000 nx2 nx3
-m ETMX 0.999995 5e-06 0 nx3 nTMSX
-
-# Y arm
-m ITMY 0.996 0.004 90 ny1 ny2
-s sy1 3000 ny2 ny3
-m ETMY 0.999995 5e-06 90 ny3 nTMSY
-
-# ========= SRC each mirror loss 45ppm =======
-s sLsr3 15.7396 n4 nsr5
-bs1 SR3 50e-6 $src_loss 0 $a nsr5 nsr4 dump dump
-s sLsr2 11.1115 nsr4 nsr3
-bs1 SR2 500e-6 $src_loss 0 $a nsr2 nsr3 POS dump
-s sLsr1 14.7412 nsr2 nsr1
-m1 SRM 0.3 $src_loss 0 nsr1 AS
-        """%(prc_mirror_loss, src_mirror_loss, laser_power)
-
-
-    
+        input_finesse   += (
+            "# DRFPMI\n"
+            + "#\n"
+            + "# ======== Input optics =====================\n"
+            + "l i1 %s 0 n0\n"%laser_power
+            + "s s_eo0 0 n0 n_eo1\n"
+            + "mod eom1 $fsb1 0.3 %s pm n_eo1 n_eo2\n"%num_of_sidebands
+            + "s s_eo1 0 n_eo2 n_eo3\n"
+            + "mod eom2 $fsb2 0.3 %s pm n_eo3 n_eo4\n"%num_of_sidebands
+            + "s s_eo2 0 n_eo4 REFL\n"
+            + "\n"
+            + "## ======= PRC each mirror loss $prc_loss =======\n"
+            + "# PRC\n"
+            + "m1 PRM 0.1 $prc_loss 0 REFL npr1\n"
+            + "s sLpr1 14.7615 npr1 npr2\n"
+            + "bs1 PR2 500e-6 $prc_loss 0 $a npr3 npr2 POP POP2\n"
+            + "s sLpr2 11.0661 npr3 npr4\n"
+            + "bs1 PR3 50e-6 $prc_loss 0 $a dump dump npr4 npr5\n"
+            + "s sLpr3 15.7638 npr5 npr6\n"
+            + "\n"
+            + "# ======= Michelson =======\n"
+            + "bs bs1 0.5 0.5 0 45 npr6 n2 n3 n4\n"
+            + "s lx 26.6649 n3 nx1\n"
+            + "s ly 23.3351 n2 ny1\n"
+            + "\n"
+            + "# X arm\n"
+            + "m ITMX %s %s 0 nx1 nx2\n"%(ITM_mirror_reflectance,ITM_mirror_transmittance)
+            + "s sx1 3000 nx2 nx3\n"
+            + "m ETMX %s %s 0 nx3 nTMSX\n"%(ETM_mirror_reflectance,ETM_mirror_transmittance)
+            + "\n"
+            + "# Y arm\n"
+            + "m ITMY %s %s 90 ny1 ny2\n"%(ITM_mirror_reflectance,ITM_mirror_transmittance)
+            + "s sy1 3000 ny2 ny3\n"
+            + "m ETMY %s %s 90 ny3 nTMSY\n"%(ETM_mirror_reflectance,ETM_mirror_transmittance)
+            + "\n"
+            + "# ========= SRC each mirror loss $src_loss =======\n"
+            + "s sLsr3 15.7396 n4 nsr5\n"
+            + "bs1 SR3 50e-6 $src_loss 0 $a nsr5 nsr4 dump dump\n"
+            + "s sLsr2 11.1115 nsr4 nsr3\n"
+            + "bs1 SR2 500e-6 $src_loss 0 $a nsr2 nsr3 POS dump\n"
+            + "s sLsr1 14.7412 nsr2 nsr1\n"
+            + "m1 SRM 0.3 $src_loss 0 nsr1 AS\n"
+        )
     return input_finesse
 
 # %%
@@ -507,7 +502,7 @@ def make_dic_selected_setting_from_gui(values, selected_tab, type_of_pd_signal):
     selected_tab      : str
         GUIで選択されている干渉計構成の名前 MI/FPMI/PRFPMI/DRFPMI
     type_of_pd_signal : str
-        GUIで選択されているPdの信号の検出の方法 sw_power/sw_dmod1/tf_power/tf_dmod2
+        GUIで選択されているPdの信号の検出の方法 sw_power/sw_amptd/sw_dmod1/tf_power/tf_dmod2
 
     Returns
     -------
@@ -544,9 +539,9 @@ def make_dic_selected_setting_from_gui(values, selected_tab, type_of_pd_signal):
         pdname_head = "pd1"
     elif type_of_pd_signal=="tf_dmod2":
         pdname_head = "pd2"
-    elif type_of_pd_signal == "sw_amptd" or type_of_pd_signal == "tf_amptd":
+    elif type_of_pd_signal=="sw_amptd" or \
+         type_of_pd_signal=="tf_amptd":
         pdname_head = "ad"
-    print(pdname_head)
     # pdname_tails
     for freq in all_demod_freqs:
         for phase in all_demod_phases:
@@ -560,20 +555,57 @@ def make_dic_selected_setting_from_gui(values, selected_tab, type_of_pd_signal):
     demod_phase = values["k%s_pd1_demod_phase"%selected_tab]
     if(type_of_pd_signal=="tf_dmod2"):
         demod_phase  = values["k%s_pd2_demod_phase"%selected_tab]
-    
+    # plotscale
+    if(values['k_inf_c_xaxis_log'] == True):
+        x_plotscale = 'log'
+    else:
+        x_plotscale = 'linear'
+    if(values['k_inf_c_yaxis_log'] == True):
+        y_plotscale = 'log'
+    else:
+        y_plotscale = 'linear'
+
     dic_selected_setting_from_gui = {
-            'type_of_pd_signal'         : type_of_pd_signal,
-            'interferometer'            : interferometer,
-            'port_trues'                : port_trues,
-            'pdname_head'               : pdname_head,
-            'pdname_tails'              : pdname_tails,
-            'demod_phase'               : demod_phase,
-            'put_cr_sw_amptd_flag'  : values['k%s_put_cr_sw_amptd_flag'%interferometer],
-            'put_f1_sw_amptd_flag'  : values['k%s_put_f1_sw_amptd_flag'%interferometer],
-            'put_f2_sw_amptd_flag'  : values['k%s_put_f2_sw_amptd_flag'%interferometer],
-            'put_cr_tf_amptd_flag'  : values['k%s_put_cr_tf_amptd_flag'%interferometer],
-            'put_f1_tf_amptd_flag'  : values['k%s_put_f1_tf_amptd_flag'%interferometer],
-            'put_f2_tf_amptd_flag'  : values['k%s_put_f2_tf_amptd_flag'%interferometer]
+            ### DoF
+            'dof'                      :values['k%s_dof'%interferometer],#str
+            'type_of_pd_signal'        :type_of_pd_signal,#str sw_power/sw_dmod1/tf_power/tf_dmod2
+            ### advanced setting
+            'laser_power'              : str(change_nums_unit_str_to_float(values['k_inf_c_laser_power'])),#str
+            'prc_each_mirror_loss'     : str(change_nums_unit_str_to_float(values['k_inf_c_prc_each_mirror_loss'])),#str
+            'src_each_mirror_loss'     : str(change_nums_unit_str_to_float(values['k_inf_c_src_each_mirror_loss'])),#str
+            'ITM_mirror_reflectance'   : str(change_nums_unit_str_to_float(values['k_inf_c_ITM_mirror_reflectance'])),
+            'ITM_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_ITM_mirror_transmittance'])),
+            'ETM_mirror_reflectance'   : str(change_nums_unit_str_to_float(values['k_inf_c_ETM_mirror_reflectance'])),
+            'ETM_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_ETM_mirror_transmittance'])),
+            'mod_f1_frequency'         : (change_nums_unit_str_to_float(values['k_inf_c_f1_mod_frequency'])),
+            'mod_f2_frequency'         : (change_nums_unit_str_to_float(values['k_inf_c_f2_mod_frequency'])),
+            'num_of_sidebands'         : values['k_inf_c_num_of_sidebands'],
+            
+            'arbitraryfreq001'         : str(change_nums_unit_str_to_float(values['k%s_arbitraryfreq001'%interferometer])),
+            'arbitraryfreq002'         : str(change_nums_unit_str_to_float(values['k%s_arbitraryfreq002'%interferometer])),
+            'arbitraryfreq001_name'    : values['k%s_arbitraryfreq001_name'%interferometer],
+            'arbitraryfreq002_name'    : values['k%s_arbitraryfreq002_name'%interferometer],
+
+            'x_plotscale'              : x_plotscale,#str log/linear
+            'xaxis_range_beg'          : values['k_inf_c_xaxis_range_beg'],#str #x軸の最小値
+            'xaxis_range_end'          : values['k_inf_c_xaxis_range_end'],#str #x軸の最大値
+            'y_plotscale'              : y_plotscale,#str log/linear
+            'samplingnum'              : values['k_inf_c_samplingnum'],#str
+            'interferometer'           : interferometer,
+            'port_trues'               : port_trues,
+            'pdname_head'              : pdname_head,
+            'pdname_tails'             : pdname_tails,
+            'demod_phase'              : demod_phase,
+            'put_car_sw_amptd_flag'    : values['k%s_put_car_sw_amptd_flag'%interferometer],
+            'put_f1u_sw_amptd_flag'    : values['k%s_put_f1u_sw_amptd_flag'%interferometer],
+            'put_f1l_sw_amptd_flag'    : values['k%s_put_f1l_sw_amptd_flag'%interferometer],
+            'put_f2u_sw_amptd_flag'    : values['k%s_put_f2u_sw_amptd_flag'%interferometer],
+            'put_f2l_sw_amptd_flag'    : values['k%s_put_f2l_sw_amptd_flag'%interferometer],
+            #'put_car_tf_amptd_flag'    : values['k%s_put_car_tf_amptd_flag'%interferometer],
+            #'put_f1u_tf_amptd_flag'    : values['k%s_put_f1u_tf_amptd_flag'%interferometer],
+            #'put_f1l_tf_amptd_flag'    : values['k%s_put_f1l_tf_amptd_flag'%interferometer],
+            #'put_f2u_tf_amptd_flag'    : values['k%s_put_f2u_tf_amptd_flag'%interferometer],
+            #'put_f2l_tf_amptd_flag'    : values['k%s_put_f2l_tf_amptd_flag'%interferometer]
             }
     
     return dic_selected_setting_from_gui
@@ -603,18 +635,22 @@ def make_pd_kat_for_finesse(dic_selected_setting_from_gui):# make_pd_sentence_fo
         Pdの名前の頭につける時にQphaseになるtailのリスト
     """
 
-    interferometer        = dic_selected_setting_from_gui["interferometer"]
-    type_of_pd_signal     = dic_selected_setting_from_gui["type_of_pd_signal"]
-    port_trues            = dic_selected_setting_from_gui["port_trues"]
-    pdname_head           = dic_selected_setting_from_gui["pdname_head"]
-    pdname_tails          = dic_selected_setting_from_gui["pdname_tails"]
-    demod_phase           = dic_selected_setting_from_gui["demod_phase"]
-    put_cr_sw_amptd_flag  = dic_selected_setting_from_gui["put_cr_sw_amptd_flag"]
-    put_f1_sw_amptd_flag  = dic_selected_setting_from_gui["put_f1_sw_amptd_flag"]
-    put_f2_sw_amptd_flag  = dic_selected_setting_from_gui["put_f2_sw_amptd_flag"]
-    put_cr_tf_amptd_flag  = dic_selected_setting_from_gui["put_cr_tf_amptd_flag"]
-    put_f1_tf_amptd_flag  = dic_selected_setting_from_gui["put_f1_tf_amptd_flag"]
-    put_f2_tf_amptd_flag  = dic_selected_setting_from_gui["put_f2_tf_amptd_flag"]
+    #interferometer         = dic_selected_setting_from_gui["interferometer"]# これ使ってないけど一応残しておく
+    type_of_pd_signal      = dic_selected_setting_from_gui["type_of_pd_signal"]
+    port_trues             = dic_selected_setting_from_gui["port_trues"]
+    pdname_head            = dic_selected_setting_from_gui["pdname_head"]
+    pdname_tails           = dic_selected_setting_from_gui["pdname_tails"]
+    demod_phase            = dic_selected_setting_from_gui["demod_phase"]
+    put_car_sw_amptd_flag  = dic_selected_setting_from_gui["put_car_sw_amptd_flag"]
+    put_f1u_sw_amptd_flag  = dic_selected_setting_from_gui["put_f1u_sw_amptd_flag"]
+    put_f1l_sw_amptd_flag  = dic_selected_setting_from_gui["put_f1l_sw_amptd_flag"]
+    put_f2u_sw_amptd_flag  = dic_selected_setting_from_gui["put_f2u_sw_amptd_flag"]
+    put_f2l_sw_amptd_flag  = dic_selected_setting_from_gui["put_f2l_sw_amptd_flag"]
+    #put_car_tf_amptd_flag  = dic_selected_setting_from_gui["put_car_tf_amptd_flag"]
+    #put_f1u_tf_amptd_flag  = dic_selected_setting_from_gui["put_f1u_tf_amptd_flag"]
+    #put_f1l_tf_amptd_flag  = dic_selected_setting_from_gui["put_f1l_tf_amptd_flag"]
+    #put_f2u_tf_amptd_flag  = dic_selected_setting_from_gui["put_f2u_tf_amptd_flag"]
+    #put_f2l_tf_amptd_flag  = dic_selected_setting_from_gui["put_f2l_tf_amptd_flag"]
     pds_for_kat           = []
 
     if   type_of_pd_signal=="sw_power" or type_of_pd_signal=="tf_power":
@@ -624,23 +660,31 @@ pd0 %s_%s %s""" % (pdname_head, port, port)
             )
     elif type_of_pd_signal=="sw_amptd" or type_of_pd_signal=="tf_amptd":
         for port in port_trues:
-            if put_cr_sw_amptd_flag or put_cr_tf_amptd_flag:
+            if put_car_sw_amptd_flag:# or put_car_tf_amptd_flag:
                 pds_for_kat.append("""
-ad cr_%s_%s 0 %s""" % (pdname_head, port, port)
+ad car_%s_%s 0 %s""" % (pdname_head, port, port)
                 )
-            if put_f1_sw_amptd_flag or put_f1_tf_amptd_flag:
+            if put_f1u_sw_amptd_flag:# or put_f1u_tf_amptd_flag:
                 pds_for_kat.append("""
-ad fsb1_%s_%s $fsb1 %s""" % (pdname_head, port, port)
+ad fsb1_upper_%s_%s $fsb1 %s""" % (pdname_head, port, port)
                 )
-            if put_f2_sw_amptd_flag or put_f2_tf_amptd_flag:
+            if put_f1l_sw_amptd_flag:# or put_f1l_tf_amptd_flag:
                 pds_for_kat.append("""
-ad fsb2_%s_%s $fsb2 %s""" % (pdname_head, port, port)
+ad fsb1_lower_%s_%s $mfsb1 %s""" % (pdname_head, port, port)
+                )
+            if put_f2u_sw_amptd_flag:# or put_f2u_tf_amptd_flag:
+                pds_for_kat.append("""
+ad fsb2_upper_%s_%s $fsb2 %s""" % (pdname_head, port, port)
+                )
+            if put_f2l_sw_amptd_flag:# or put_f2l_tf_amptd_flag:
+                pds_for_kat.append("""
+ad fsb2_lower_%s_%s $mfsb2 %s""" % (pdname_head, port, port)
                 )
     else:
         for port in port_trues:
             for pdname_tail in pdname_tails:
                 pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
-                freq = pdname_tail.split("_")[1]
+                freq = pdname_tail.split("_")[1]# pdname_tailの例: Iphase_fsb1
                 if   pdname_tail in all_pdname_tails_i:
                     phase = str(0+float(demod_phase))
                 elif pdname_tail in all_pdname_tails_q:
