@@ -550,11 +550,27 @@ def make_dic_selected_setting_from_gui(values, selected_tab, type_of_pd_signal):
             if key in values:
                 if values[key]:
                     pdname_tails.append(tail)
-            
+    # demod_freq
+    tmp_head = ""
+    if type_of_pd_signal=="sw_dmod1":
+        tmp_head = "pd1"
+    elif type_of_pd_signal=="tf_dmod2":
+        tmp_head = "pd2"
+    if ('k%s_%s_arbitraryfreq001'%(interferometer, tmp_head) in values) or ('k%s_%s_arbitraryfreq002'%(interferometer, tmp_head) in values):
+        arbitraryfreq001       = str(change_nums_unit_str_to_float(values['k%s_%s_arbitraryfreq001'%(interferometer, tmp_head)]))
+        arbitraryfreq002       = str(change_nums_unit_str_to_float(values['k%s_%s_arbitraryfreq002'%(interferometer, tmp_head)]))
+        arbitraryfreq001_name  = values['k%s_%s_arbitraryfreq001_name'%(interferometer, tmp_head)]
+        arbitraryfreq002_name  = values['k%s_%s_arbitraryfreq002_name'%(interferometer, tmp_head)]
+    else:
+        arbitraryfreq001       = "0"
+        arbitraryfreq002       = "0"
+        arbitraryfreq001_name  = "arbitraryfreq001_name"
+        arbitraryfreq002_name  = "arbitraryfreq002_name"
+
     # demod_phase
-    demod_phase = values["k%s_pd1_demod_phase"%selected_tab]
+    demod_phase = values["k%s_pd1_demod_phase"%interferometer]
     if(type_of_pd_signal=="tf_dmod2"):
-        demod_phase  = values["k%s_pd2_demod_phase"%selected_tab]
+        demod_phase  = values["k%s_pd2_demod_phase"%interferometer]
     # plotscale
     if(values['k_inf_c_xaxis_log'] == True):
         x_plotscale = 'log'
@@ -581,10 +597,10 @@ def make_dic_selected_setting_from_gui(values, selected_tab, type_of_pd_signal):
             'mod_f2_frequency'         : (change_nums_unit_str_to_float(values['k_inf_c_f2_mod_frequency'])),
             'num_of_sidebands'         : values['k_inf_c_num_of_sidebands'],
             
-            'arbitraryfreq001'         : str(change_nums_unit_str_to_float(values['k%s_arbitraryfreq001'%interferometer])),
-            'arbitraryfreq002'         : str(change_nums_unit_str_to_float(values['k%s_arbitraryfreq002'%interferometer])),
-            'arbitraryfreq001_name'    : values['k%s_arbitraryfreq001_name'%interferometer],
-            'arbitraryfreq002_name'    : values['k%s_arbitraryfreq002_name'%interferometer],
+            'arbitraryfreq001'         : arbitraryfreq001,
+            'arbitraryfreq002'         : arbitraryfreq002,
+            'arbitraryfreq001_name'    : arbitraryfreq001_name,
+            'arbitraryfreq002_name'    : arbitraryfreq002_name,
 
             'x_plotscale'              : x_plotscale,#str log/linear
             'xaxis_range_beg'          : values['k_inf_c_xaxis_range_beg'],#str #x軸の最小値
@@ -851,4 +867,40 @@ def set_drawing_size_enlarge(selected_tab, enlarge_flag, window):
         window["k%s_drawing_normalsize"%interferometer].update(visible=False)
         window["k%s_drawing_largesize" %selected_tab].update(visible= True)
 
+# %%
+def make_pd1_label(pdname,arbitry_freq1_label,arbitry_freq2_label):
+    """
+    arbitraryfreqのラベルを自分で設定した名前で表示するために作りました。他に上手いやり方が思いつきませんでした。
+    """
+    # pdname の例 : pd1_Iphase_arbitraryfreq001_REFL
+    tmp_list = pdname.split(("_"))# ex) pd1_Iphase_arbitraryfreq001_REFL, pd2_Iphase_fsb1_REFL
+    print()
+    if tmp_list[2]=="arbitraryfreq001":
+        tmp_list[2] = arbitry_freq1_label
+        pdname = '_'.join(tmp_list)
+        return pdname
+    elif tmp_list[2]=="arbitraryfreq002":
+        tmp_list[2] = arbitry_freq2_label
+        pdname = '_'.join(tmp_list)
+        return pdname
+    else:
+        return pdname
+# %%
+def calculate_plot_fontsize(plotnum, v_plotnum, h_plotnum):
+    """
+    legendのfontsizeをplotする数によって変更する
+    """
+    fontsize = 18
+    if   1<=plotnum and plotnum<=4:
+        fontsize = 18
+    elif 5<=plotnum and plotnum<=9:
+        fontsize = 4
+    elif 10<=plotnum and plotnum<=16:
+        fontsize = 1
+        if 2<=v_plotnum:
+            fontsize = 4
+    else:
+        # plotnumが大量にある時はfontsize=4だと図が隠れるけど、逆にs大体形がわかればいいと思った
+        fontsize = 4
 
+    return fontsize
