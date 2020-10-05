@@ -8,5 +8,9 @@
 # ./run_finesse.sh
 #
 
-python GUI.py
+source /kagra/kagraups/etc/conda2-user-env.sh
+conda activate mifsim37
+cd /users/MIF/gw-finesse/gui/bin
+python mifsim_gui.py
+conda deactivate mifsim37
 
