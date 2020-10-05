@@ -839,6 +839,7 @@ while True:
     if event == "kselected_tab":
         selected_tab = values["kselected_tab"]
         if selected_tab=="OPTION":
+            can_return_xaxis_range_default_value = False
             continue
         else:
             ####### initializeと共通なのでなんとかする
@@ -870,11 +871,11 @@ while True:
     if event == 'k_inf_c_xaxis_lin':
         mifsim.change_GUI_plotscale(["lin","no change"], True, window)
         limited_range     = '0123456789.-'
-        can_return_xaxis_range_default_value = False
+        #can_return_xaxis_range_default_value = False
     if event == 'k_inf_c_xaxis_log':
         mifsim.change_GUI_plotscale(["log","no change"], True, window)
         limited_range     = '0123456789.'
-        can_return_xaxis_range_default_value = False
+        #can_return_xaxis_range_default_value = False
     # OPTION tab limit enter value
     # 要するに数字を入れる場所に文字が入らないようにしているだけです
     if event == 'k_inf_c_laser_power' and values['k_inf_c_laser_power'] and values['k_inf_c_laser_power'][-1] not in (".-0123456789enmkMGp"):
@@ -1377,7 +1378,7 @@ while True:
                         plt.plot(out.x, np.abs(out['%s' % pdname]), label=label)
                         plt.xscale(x_plotscale)
                         plt.yscale(y_plotscale)
-                        plt.ylabel('Magnitude')
+                        plt.ylabel('Magnitude', fontsize=fontsize)
                         plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
                         plt.title('%s' % plot_title, fontsize=fontsize)
                         plt.tick_params(labelsize=fontsize)
@@ -1388,10 +1389,10 @@ while True:
                     for pdname_tail in pdname_tails:
                         pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
                         label  = "%s_phase"%mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
-                        plt.plot(out.x, np.angle(out['%s' % pdname]), label=label)
+                        plt.plot(out.x, np.angle(out['%s' % pdname])*180/np.pi, label=label)
                         plt.xscale(x_plotscale)
                         #plt.yscale(y_plotscale) #phaseはy軸をlogにすると-πなどが表示できなくなるので付けない
-                        plt.ylabel('Phase [deg]')
+                        plt.ylabel('Phase [deg]', fontsize=fontsize)
                         plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
                         plt.title('%s' % plot_title, fontsize=fontsize)
                         plt.tick_params(labelsize=fontsize)
@@ -1419,7 +1420,7 @@ while True:
                             plt.legend(fontsize=fontsize)
                         plt.xscale(x_plotscale)
                         plt.yscale(y_plotscale)
-                        plt.ylabel('Magnitude')
+                        plt.ylabel('Magnitude', fontsize=fontsize)
                         plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
                         plt.title('%s' % title, fontsize=fontsize)
                         plt.tick_params(labelsize=fontsize)
@@ -1430,12 +1431,12 @@ while True:
                         for pdname_tail in pdname_tails:
                             pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
                             label  = "%s_phase"%mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
-                            plt.plot(out.x, np.angle(out['%s' % pdname]), label=label)
+                            plt.plot(out.x, np.angle(out['%s' % pdname])*180/np.pi, label=label)
                             plt.legend(fontsize=fontsize)
                         i += 1
                         plt.xscale(x_plotscale)
                         #plt.yscale(y_plotscale) #phaseはy軸をlogにすると-πなどが表示できなくなるので付けない
-                        plt.ylabel('Phase [deg]')
+                        plt.ylabel('Phase [deg]', fontsize=fontsize)
                         plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
                         plt.title('%s' % title, fontsize=fontsize)
                         plt.tick_params(labelsize=fontsize)
@@ -1462,7 +1463,7 @@ while True:
                             plt.plot(out.x, np.abs(out['%s' % pdname]), label=label, color=color1)
                             plt.xscale(x_plotscale)
                             plt.yscale(y_plotscale)
-                            plt.ylabel('Magnitude')
+                            plt.ylabel('Magnitude', fontsize=fontsize)
                             plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
                             plt.title('%s' % plot_title, fontsize=fontsize)
                             plt.tick_params(labelsize=fontsize)
@@ -1470,10 +1471,10 @@ while True:
                             #phase
                             label  = "%s_phase"%mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
                             plt.subplot(v_plotnum,h_plotnum,k2)
-                            plt.plot(out.x, np.angle(out['%s' % pdname]), label = label, color=color2)
+                            plt.plot(out.x, np.angle(out['%s' % pdname])*180/np.pi, label = label, color=color2)
                             plt.xscale(x_plotscale)
                             #plt.yscale(y_plotscale) #phaseはy軸をlogにすると-πなどが表示できなくなるので付けない
-                            plt.ylabel('Phase [deg]')
+                            plt.ylabel('Phase [deg]', fontsize=fontsize)
                             plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
                             plt.title('%s' % plot_title, fontsize=fontsize)
                             plt.tick_params(labelsize=fontsize)
