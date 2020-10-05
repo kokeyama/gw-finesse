@@ -219,7 +219,7 @@ fsig sig1 ITMX 10 0
 fsig sig1 ETMY 10 180
 fsig sig1 ITMY 10 180
 xaxis sig1 f %s %s %s %s
-yaxis lin abs
+yaxis lin abs:deg
             """ % (x_plotscale, xaxis_range_beg, xaxis_range_end, samplingnum)
         elif(dof=="BS"and selected_interferometer=="MI"):
             input_finesse += """
@@ -228,7 +228,7 @@ yaxis lin abs
 fsig sig1 ITMX 10 0
 fsig sig1 ITMY 10 180
 xaxis sig1 f %s %s %s %s
-yaxis lin abs
+yaxis lin abs:deg
             """ % (x_plotscale, xaxis_range_beg, xaxis_range_end, samplingnum)
         elif(dof=="PRCL"):
             input_finesse += """
@@ -236,6 +236,7 @@ yaxis lin abs
 ### PRCL ###
 fsig sig1 PRM 1 0
 xaxis sig1 f %s %s %s %s
+yaxis lin abs:deg
             """ % (x_plotscale, xaxis_range_beg, xaxis_range_end, samplingnum)
         elif(dof=="SRCL"):
             input_finesse += """
@@ -243,6 +244,7 @@ xaxis sig1 f %s %s %s %s
 ### SRCL ###
 fsig sig1 SRM 1 0
 xaxis sig1 f %s %s %s %s
+yaxis lin abs:deg
             """ % (x_plotscale, xaxis_range_beg, xaxis_range_end, samplingnum)
         else:
             pass

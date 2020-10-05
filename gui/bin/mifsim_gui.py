@@ -871,11 +871,9 @@ while True:
     if event == 'k_inf_c_xaxis_lin':
         mifsim.change_GUI_plotscale(["lin","no change"], True, window)
         limited_range     = '0123456789.-'
-        #can_return_xaxis_range_default_value = False
     if event == 'k_inf_c_xaxis_log':
         mifsim.change_GUI_plotscale(["log","no change"], True, window)
         limited_range     = '0123456789.'
-        #can_return_xaxis_range_default_value = False
     # OPTION tab limit enter value
     # 要するに数字を入れる場所に文字が入らないようにしているだけです
     if event == 'k_inf_c_laser_power' and values['k_inf_c_laser_power'] and values['k_inf_c_laser_power'][-1] not in (".-0123456789enmkMGp"):
@@ -1388,6 +1386,7 @@ while True:
                 for port in port_trues:
                     for pdname_tail in pdname_tails:
                         pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
+                        print(pdname)
                         label  = "%s_phase"%mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
                         plt.plot(out.x, np.angle(out['%s' % pdname])*180/np.pi, label=label)
                         plt.xscale(x_plotscale)
@@ -1397,7 +1396,7 @@ while True:
                         plt.title('%s' % plot_title, fontsize=fontsize)
                         plt.tick_params(labelsize=fontsize)
                         # 凡例の表示
-                        plt.legend(fontsize=fontsize) 
+                        plt.legend(fontsize=fontsize)
                 plt.show()
 
             else: # 全部はoverplotしないとき
