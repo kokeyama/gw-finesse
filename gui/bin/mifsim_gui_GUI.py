@@ -353,7 +353,8 @@ kDRFPMI_sec_sw_dmod1_setting = [
              sg.Radio('plot separately',        'RADIO_sw_dmod1_plot', default=True,  key='kDRFPMI_sw_dmod1_sepaplot', enable_events=True)],
             [sg.Text('Which phase to plot?')],
 
-            [sg.Checkbox('I_fsb1(in_phase f1)',         key='kDRFPMI_pd1_Iphase_fsb1'),
+            [sg.Checkbox('DC (not demodulated signal)', key='kDRFPMI_pd1_dphase_DC'),
+             sg.Checkbox('I_fsb1(in_phase f1)',         key='kDRFPMI_pd1_Iphase_fsb1'),
              sg.Checkbox('Q_fsb1(quadrature_phase f1)', key='kDRFPMI_pd1_Qphase_fsb1'),
              sg.Checkbox('I_fsb2(in_phase f2)',         key='kDRFPMI_pd1_Iphase_fsb2'),
              sg.Checkbox('Q_fsb2(quadrature_phase f2)', key='kDRFPMI_pd1_Qphase_fsb2')],
@@ -754,10 +755,13 @@ extra_option_tab =  [
                 [sg.Text('laser_power [W]'),          sg.Input(key='k_inf_c_laser_power'             ,default_text='1')],
                 # future task
                 [sg.Text('note: Reflectance and transmittance are values between 0 and 1.')],
-                [sg.Text('ITM mirror reflectance'),  sg.Input(key='k_inf_c_ITM_mirror_reflectance' , default_text='0.996'   , enable_events=True)],
-                [sg.Text('ITM mirror transmittance'), sg.Input(key='k_inf_c_ITM_mirror_transmittance', default_text='0.004'   , enable_events=True)],
-                [sg.Text('ETM mirror reflectance'),  sg.Input(key='k_inf_c_ETM_mirror_reflectance' , default_text='0.999995', enable_events=True)],
-                [sg.Text('ETM mirror transmittance'), sg.Input(key='k_inf_c_ETM_mirror_transmittance', default_text='5e-06'   , enable_events=True)],
+                #[sg.Text('ITM mirror reflectance'),         sg.Input(key='k_inf_c_ITM_mirror_reflectance'  , default_text='0.996'   , enable_events=True)],# Reflectace
+                [sg.Text('ITM mirror power transmittance'), sg.Input(key='k_inf_c_ITM_mirror_transmittance', default_text='0.004'   , enable_events=True)],# Transmittance
+                [sg.Text('ITM mirror power loss'),          sg.Input(key='k_inf_c_ITM_mirror_loss'         , default_text='45e-6'   , enable_events=True)],
+
+                #[sg.Text('ETM mirror reflectance'),         sg.Input(key='k_inf_c_ETM_mirror_reflectance'  , default_text='0.999995', enable_events=True)],# Reflectace
+                [sg.Text('ETM mirror power transmittance'), sg.Input(key='k_inf_c_ETM_mirror_transmittance', default_text='5e-06'   , enable_events=True)],# Transmittance
+                [sg.Text('ETM mirror power loss'),          sg.Input(key='k_inf_c_ETM_mirror_loss'         , default_text='45e-6'   , enable_events=True)],
 
                 [sg.Text('PRC each mirror power loss'),     sg.Input(key='k_inf_c_prc_each_mirror_loss'    , default_text='45e-6'   , enable_events=True)],
                 [sg.Text('SRC each mirror power loss'),     sg.Input(key='k_inf_c_src_each_mirror_loss'    , default_text='45e-6'   , enable_events=True)],
@@ -1292,18 +1296,25 @@ while True:
                 plt.subplot(1,1,1)
                 for port in port_trues:
                     for pdname_tail in pdname_tails:
-                        pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
-                        pdnames.append(pdname)
-                        label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
-                        plt.plot(out.x, out['%s' % pdname], label=label)
+                        if pdname_tail.split("_")[1]=="DC":
+                            pdname ="pd0_DC_%s"%(port)
+                            label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
+                            plt.plot(out.x, out['%s' % pdname], label=label)
+                            plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
+                            plt.ylabel("Power [W]", fontsize=fontsize)
+                        else:
+                            pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
+                            label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
+                            plt.plot(out.x, out['%s' % pdname], label=label)
+                            plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
+                            plt.ylabel("Demodulated signal[a.u.]", fontsize=fontsize)
                         plt.xscale(x_plotscale)
                         plt.yscale(y_plotscale)
-                        plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
-                        plt.ylabel("Demodulated signal[a.u.]", fontsize=fontsize)
+                        pdnames.append(pdname)
                         plt.title('%s' % plot_title, fontsize=fontsize)
                         plt.tick_params(labelsize=fontsize)
                         # 凡例の表示
-                        plt.legend(fontsize=fontsize) 
+                        plt.legend(fontsize=fontsize)
                 plt.tight_layout()
                 plt.show()
             else: # 全部はoverplotしないとき
@@ -1318,14 +1329,21 @@ while True:
                         title += "%s abs"%port
                         plt.subplot(v_plotnum,h_plotnum,i)
                         for pdname_tail in pdname_tails:
-                            pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
+                            if pdname_tail.split("_")[1]=="DC":
+                                pdname ="pd0_DC_%s"%(port)
+                                label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
+                                plt.plot(out.x, out['%s' % pdname], label=label)
+                                plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
+                                plt.ylabel("Power[W]", fontsize=fontsize)
+                            else:
+                                pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
+                                label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
+                                plt.plot(out.x, out['%s' % pdname], label=label)
+                                plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
+                                plt.ylabel("Demodulated signal[a.u.]", fontsize=fontsize)
                             pdnames.append(pdname)
-                            label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
-                            plt.plot(out.x, out['%s' % pdname], label=label)
                             plt.xscale(x_plotscale)
                             plt.yscale(y_plotscale)
-                            plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
-                            plt.ylabel("Demodulated signal[a.u.]", fontsize=fontsize)
                             plt.title('%s' % title, fontsize=fontsize)
                             plt.tick_params(labelsize=fontsize)
                             # 凡例の表示
@@ -1342,14 +1360,21 @@ while True:
                     for port in port_trues:
                         for pdname_tail in pdname_tails:
                             plt.subplot(v_plotnum,h_plotnum,i)
-                            pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
+                            if pdname_tail.split("_")[1]=="DC":
+                                pdname ="pd0_DC_%s"%(port)
+                                label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
+                                plt.plot(out.x, out['%s' % pdname], label=label, color="orange")
+                                plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
+                                plt.ylabel("Power[W]", fontsize=fontsize)
+                            else:
+                                pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
+                                label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
+                                plt.plot(out.x, out['%s' % pdname], label=label)
+                                plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
+                                plt.ylabel("Demodulated signal[a.u.]", fontsize=fontsize)
                             pdnames.append(pdname)
-                            label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
-                            plt.plot(out.x, out['%s' % pdname], label=label)
                             plt.xscale(x_plotscale)
                             plt.yscale(y_plotscale)
-                            plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
-                            plt.ylabel("Demodulated signal[a.u.]", fontsize=fontsize)
                             plt.title('%s' % plot_title, fontsize=fontsize)
                             plt.tick_params(labelsize=fontsize)
                             # 凡例の表示

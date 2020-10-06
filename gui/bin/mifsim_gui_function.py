@@ -61,17 +61,17 @@ for interferometer in all_interferometers:
                                 #"k%s_istf_amptd"%interferometer,
                                 "k%s_istf_dmod2"%interferometer]
 
-all_demod_phases = ["Iphase", "Qphase"]
+all_demod_phases = ["Iphase", "Qphase", "dphase"]
 #all_mod_freqs    =
-all_demod_freqs  = ["fsb1", "fsb2", "arbitraryfreq001", "arbitraryfreq002"]
+all_demod_freqs  = ["fsb1", "fsb2", "arbitraryfreq001", "arbitraryfreq002", "DC"]# DCは復調位相ではありませんがすみません。
 all_pdname_heads = ["pd0", "pd1", "pd2"]
 
-all_pdname_tails_i, all_pdname_tails_q = [], []
+all_pdname_tails_i, all_pdname_tails_q, all_pdname_tails_d= [], [], []
 
 for freq in all_demod_freqs:
     all_pdname_tails_i.append("Iphase_%s"%freq)
-for freq in all_demod_freqs:
     all_pdname_tails_q.append("Qphase_%s"%freq)
+    all_pdname_tails_d.append("dphase_%s"%freq)
 
 # %%
     # mifsim.generate_kat(interferometer, type_of_pd_signal, dof)
@@ -267,13 +267,13 @@ def change_nums_unit_str_to_float(str_num):
     str_num : float
         計算した結果のfloat型の数字
     """
-    str_num = str_num.replace('p', '*10**(-12)')
-    str_num = str_num.replace('n', '*10**(-9)')
-    str_num = str_num.replace('ppm', '*10**(-6)')
-    str_num = str_num.replace('k', '*10**3')
-    str_num = str_num.replace('m', '*10**(-3)')
-    str_num = str_num.replace('M', '*10**6')
-    str_num = str_num.replace('G', '*10**9')
+    str_num = str_num.replace('ppm','*10**(-6)')
+    str_num = str_num.replace('p',  '*10**(-12)')
+    str_num = str_num.replace('n',  '*10**(-9)')
+    str_num = str_num.replace('k',  '*10**3')
+    str_num = str_num.replace('m',  '*10**(-3)')
+    str_num = str_num.replace('M',  '*10**6')
+    str_num = str_num.replace('G',  '*10**9')
     str_num = eval(str_num)
     return str_num
 
@@ -299,10 +299,14 @@ def create_input_finesse(dic_selected_setting_from_gui, selected_interferometer)
     laser_power              = dic_selected_setting_from_gui["laser_power"]
     prc_each_mirror_loss     = dic_selected_setting_from_gui["prc_each_mirror_loss"]
     src_each_mirror_loss     = dic_selected_setting_from_gui["src_each_mirror_loss"]
-    ITM_mirror_reflectance  = dic_selected_setting_from_gui['ITM_mirror_reflectance']
+
+    #ITM_mirror_reflectance   = dic_selected_setting_from_gui['ITM_mirror_reflectance']
     ITM_mirror_transmittance = dic_selected_setting_from_gui['ITM_mirror_transmittance']
-    ETM_mirror_reflectance  = dic_selected_setting_from_gui['ETM_mirror_reflectance']
+    ITM_mirror_loss          = dic_selected_setting_from_gui["ITM_mirror_loss"]
+    #ETM_mirror_reflectance   = dic_selected_setting_from_gui['ETM_mirror_reflectance']
     ETM_mirror_transmittance = dic_selected_setting_from_gui['ETM_mirror_transmittance']
+    ETM_mirror_loss          = dic_selected_setting_from_gui["ETM_mirror_loss"]
+
     mod_f1_frequency         = dic_selected_setting_from_gui['mod_f1_frequency']
     mod_f2_frequency         = dic_selected_setting_from_gui['mod_f2_frequency']
     arbitraryfreq001         = dic_selected_setting_from_gui['arbitraryfreq001']
@@ -342,10 +346,10 @@ def create_input_finesse(dic_selected_setting_from_gui, selected_interferometer)
             + "s ly 23.3351 n2 ny1\n"
             + "\n"
             + "# X arm\n"
-            + "m ITMX %s %s 0 nx1 nx2\n"%(ITM_mirror_reflectance,ITM_mirror_transmittance)
+            + "m1 ITMX %s %s 0 nx1 nx2\n"%(ITM_mirror_transmittance, ITM_mirror_loss)
             + "\n"
             + "# Y arm\n"
-            + "m ITMY %s %s 90 ny1 ny2\n"%(ITM_mirror_reflectance,ITM_mirror_transmittance)
+            + "m1 ITMY %s %s 90 ny1 ny2\n"%(ITM_mirror_transmittance, ITM_mirror_loss)
         )
     elif selected_interferometer=="FPMI":
         input_finesse += (
@@ -365,14 +369,14 @@ def create_input_finesse(dic_selected_setting_from_gui, selected_interferometer)
             + "s ly 23.3351 n2 ny1\n"
             + "\n"
             + "# X arm\n"
-            + "m ITMX %s %s 0 nx1 nx2\n"   %(ITM_mirror_reflectance,ITM_mirror_transmittance)
+            + "m1 ITMX %s %s 0 nx1 nx2\n"%(ITM_mirror_transmittance, ITM_mirror_loss)
             + "s sx1 3000 nx2 nx3\n"
-            + "m ETMX %s %s 0 nx3 nTMSX\n" %(ETM_mirror_reflectance,ETM_mirror_transmittance)
+            + "m1 ETMX %s %s 0 nx3 nTMSX\n"%(ETM_mirror_transmittance, ETM_mirror_loss)
             + "\n"
             + "# Y arm\n"
-            + "m ITMY %s %s 90 ny1 ny2\n"  %(ITM_mirror_reflectance,ITM_mirror_transmittance)
+            + "m1 ITMY %s %s 90 ny1 ny2\n"%(ITM_mirror_transmittance, ITM_mirror_loss)
             + "s sy1 3000 ny2 ny3\n"
-            + "m ETMY %s %s 90 ny3 nTMSY\n"%(ETM_mirror_reflectance,ETM_mirror_transmittance)
+            + "m1 ETMY %s %s 90 ny3 nTMSY\n"%(ETM_mirror_transmittance, ETM_mirror_loss)
         )
         
     elif selected_interferometer=="PRFPMI":
@@ -403,14 +407,14 @@ def create_input_finesse(dic_selected_setting_from_gui, selected_interferometer)
             + "s ly 23.3351 n2 ny1\n"
             + "\n"
             + "# X arm\n"
-            + "m ITMX %s %s 0 nx1 nx2\n"   %(ITM_mirror_reflectance,ITM_mirror_transmittance)
+            + "m1 ITMX %s %s 0 nx1 nx2\n"%(ITM_mirror_transmittance, ITM_mirror_loss)
             + "s sx1 3000 nx2 nx3\n"
-            + "m ETMX %s %s 0 nx3 nTMSX\n" %(ETM_mirror_reflectance,ETM_mirror_transmittance)
+            + "m1 ETMX %s %s 0 nx3 nTMSX\n"%(ETM_mirror_transmittance, ETM_mirror_loss)
             + "\n"
             + "# Y arm\n"
-            + "m ITMY %s %s 90 ny1 ny2\n"  %(ITM_mirror_reflectance,ITM_mirror_transmittance)
+            + "m1 ITMY %s %s 90 ny1 ny2\n"%(ITM_mirror_transmittance, ITM_mirror_loss)
             + "s sy1 3000 ny2 ny3\n"
-            + "m ETMY %s %s 90 ny3 nTMSY\n"%(ETM_mirror_reflectance,ETM_mirror_transmittance)
+            + "m1 ETMY %s %s 90 ny3 nTMSY\n"%(ETM_mirror_transmittance, ETM_mirror_loss)
         )
 
     elif selected_interferometer=="DRFPMI":
@@ -440,14 +444,14 @@ def create_input_finesse(dic_selected_setting_from_gui, selected_interferometer)
             + "s ly 23.3351 n2 ny1\n"
             + "\n"
             + "# X arm\n"
-            + "m ITMX %s %s 0 nx1 nx2\n"%(ITM_mirror_reflectance,ITM_mirror_transmittance)
+            + "m1 ITMX %s %s 0 nx1 nx2\n"%(ITM_mirror_transmittance, ITM_mirror_loss)
             + "s sx1 3000 nx2 nx3\n"
-            + "m ETMX %s %s 0 nx3 nTMSX\n"%(ETM_mirror_reflectance,ETM_mirror_transmittance)
+            + "m1 ETMX %s %s 0 nx3 nTMSX\n"%(ETM_mirror_transmittance, ETM_mirror_loss)
             + "\n"
             + "# Y arm\n"
-            + "m ITMY %s %s 90 ny1 ny2\n"%(ITM_mirror_reflectance,ITM_mirror_transmittance)
+            + "m1 ITMY %s %s 90 ny1 ny2\n"%(ITM_mirror_transmittance, ITM_mirror_loss)
             + "s sy1 3000 ny2 ny3\n"
-            + "m ETMY %s %s 90 ny3 nTMSY\n"%(ETM_mirror_reflectance,ETM_mirror_transmittance)
+            + "m1 ETMY %s %s 90 ny3 nTMSY\n"%(ETM_mirror_transmittance, ETM_mirror_loss)
             + "\n"
             + "# ========= SRC each mirror loss $src_loss =======\n"
             + "s sLsr3 15.7396 n4 nsr5\n"
@@ -585,16 +589,21 @@ def make_dic_selected_setting_from_gui(values, selected_tab, type_of_pd_signal):
 
     dic_selected_setting_from_gui = {
             ### DoF
-            'dof'                      :values['k%s_dof'%interferometer],#str
-            'type_of_pd_signal'        :type_of_pd_signal,#str sw_power/sw_dmod1/tf_power/tf_dmod2
+            'dof'                      : values['k%s_dof'%interferometer],#str
+            'type_of_pd_signal'        : type_of_pd_signal,#str sw_power/sw_dmod1/tf_power/tf_dmod2
             ### advanced setting
             'laser_power'              : str(change_nums_unit_str_to_float(values['k_inf_c_laser_power'])),#str
             'prc_each_mirror_loss'     : str(change_nums_unit_str_to_float(values['k_inf_c_prc_each_mirror_loss'])),#str
             'src_each_mirror_loss'     : str(change_nums_unit_str_to_float(values['k_inf_c_src_each_mirror_loss'])),#str
-            'ITM_mirror_reflectance'   : str(change_nums_unit_str_to_float(values['k_inf_c_ITM_mirror_reflectance'])),
+
+            #'ITM_mirror_reflectance'   : str(change_nums_unit_str_to_float(values['k_inf_c_ITM_mirror_reflectance'])),
             'ITM_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_ITM_mirror_transmittance'])),
-            'ETM_mirror_reflectance'   : str(change_nums_unit_str_to_float(values['k_inf_c_ETM_mirror_reflectance'])),
+            'ITM_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_ITM_mirror_loss'])),
+
+            #'ETM_mirror_reflectance'   : str(change_nums_unit_str_to_float(values['k_inf_c_ETM_mirror_reflectance'])),
             'ETM_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_ETM_mirror_transmittance'])),
+            'ETM_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_ETM_mirror_loss'])),
+
             'mod_f1_frequency'         : (change_nums_unit_str_to_float(values['k_inf_c_f1_mod_frequency'])),
             'mod_f2_frequency'         : (change_nums_unit_str_to_float(values['k_inf_c_f2_mod_frequency'])),
             'num_of_sidebands'         : values['k_inf_c_num_of_sidebands'],
@@ -703,11 +712,16 @@ ad fsb2_lower_%s_%s $mfsb2 %s""" % (pdname_head, port, port)
             for pdname_tail in pdname_tails:
                 pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
                 freq = pdname_tail.split("_")[1]# pdname_tailの例: Iphase_fsb1
+                print(pdname_tail)
                 if   pdname_tail in all_pdname_tails_i:
                     phase = str(0+float(demod_phase))
                 elif pdname_tail in all_pdname_tails_q:
                     phase = str(90+float(demod_phase))
-
+                elif pdname_tail in all_pdname_tails_d:# DC
+                    pds_for_kat.append("""
+pd0 pd0_DC_%s %s""" % (port, port)
+            )
+                    continue
                 if   type_of_pd_signal=="sw_dmod1":
                     pds_for_kat.append("""
 pd1 %s $%s %s %s"""%  (pdname, freq, phase, port))
@@ -896,13 +910,11 @@ def calculate_plot_fontsize(plotnum, v_plotnum, h_plotnum):
     if   1<=plotnum and plotnum<=4:
         fontsize = 18
     elif 5<=plotnum and plotnum<=9:
-        fontsize = 4
+        fontsize = 9
     elif 10<=plotnum and plotnum<=16:
-        fontsize = 1
-        if 2<=v_plotnum:
-            fontsize = 4
+        fontsize = 6
     else:
         # plotnumが大量にある時はfontsize=4だと図が隠れるけど、逆にs大体形がわかればいいと思った
-        fontsize = 4
+        fontsize = 6
 
     return fontsize
