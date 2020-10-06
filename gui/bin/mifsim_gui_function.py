@@ -276,7 +276,28 @@ def change_nums_unit_str_to_float(str_num):
     str_num = str_num.replace('G',  '*10**9')
     str_num = eval(str_num)
     return str_num
+# %%
+def date_to_num(dt_now):
+    """
+    dt_nowに含まれる" ", ":", ".", "-"を取り除いて数字のみのstrにする
 
+    Parameters
+    ----------
+    dt_now    : str
+        str型の日付
+
+    Returns
+    -------
+    dt_now : str
+        引数から記号を取り除いたもの
+    """
+    dt_now = dt_now.replace(' ','')
+    dt_now = dt_now.replace('-','')
+    dt_now = dt_now.replace(':','')
+    dt_now = dt_now.replace(',','')
+    dt_now = dt_now.replace('.','')
+    dt_now = str(dt_now)
+    return dt_now
 
 # %%
 def create_input_finesse(dic_selected_setting_from_gui, selected_interferometer):# make_interferometer_sentence_for_finesse
@@ -308,7 +329,9 @@ def create_input_finesse(dic_selected_setting_from_gui, selected_interferometer)
     ETM_mirror_loss          = dic_selected_setting_from_gui["ETM_mirror_loss"]
 
     mod_f1_frequency         = dic_selected_setting_from_gui['mod_f1_frequency']
+    f1_mod_index             = dic_selected_setting_from_gui['f1_mod_index']
     mod_f2_frequency         = dic_selected_setting_from_gui['mod_f2_frequency']
+    f2_mod_index             = dic_selected_setting_from_gui['f2_mod_index']
     arbitraryfreq001         = dic_selected_setting_from_gui['arbitraryfreq001']
     arbitraryfreq002         = dic_selected_setting_from_gui['arbitraryfreq002']
     num_of_sidebands         = dic_selected_setting_from_gui['num_of_sidebands']
@@ -335,9 +358,9 @@ def create_input_finesse(dic_selected_setting_from_gui, selected_interferometer)
             + "# Input optics\n"
             + "l I_fsb1 %s 0 n0\n"%laser_power
             + "s s_eo0 0 n0 n_eo1\n"
-            + "mod eom1 $fsb1 0.3 %s pm n_eo1 n_eo2\n"%(num_of_sidebands)
+            + "mod eom1 $fsb1 %s %s pm n_eo1 n_eo2\n"%(f1_mod_index, num_of_sidebands)
             + "s s_eo1 0 n_eo2 n_eo3\n"
-            + "mod eom2 $fsb2 0.3 %s pm n_eo3 n_eo4\n"%(num_of_sidebands)
+            + "mod eom2 $fsb2 %s %s pm n_eo3 n_eo4\n"%(f2_mod_index, num_of_sidebands)
             + "s s_eo2 0 n_eo4 REFL\n"
             + "\n"
             + "# Michelson\n"
@@ -358,9 +381,9 @@ def create_input_finesse(dic_selected_setting_from_gui, selected_interferometer)
             + "# ======== Input optics =====================\n"
             + "l I_fsb1 %s 0 n0\n"         %(laser_power)
             + "s s_eo0 0 n0 n_eo1\n"
-            + "mod eom1 $fsb1 0.3 %s pm n_eo1 n_eo2\n"%num_of_sidebands
+            + "mod eom1 $fsb1 %s %s pm n_eo1 n_eo2\n"%(f1_mod_index, num_of_sidebands)
             + "s s_eo1 0 n_eo2 n_eo3\n"
-            + "mod eom2 $fsb2 0.3 %s pm n_eo3 n_eo4\n"%num_of_sidebands
+            + "mod eom2 $fsb2 %s %s pm n_eo3 n_eo4\n"%(f2_mod_index, num_of_sidebands)
             + "s s_eo2 0 n_eo4 REFL\n"
             + "\n"
             +  "# ======= Michelson =======\n"
@@ -386,9 +409,9 @@ def create_input_finesse(dic_selected_setting_from_gui, selected_interferometer)
             + "# ======== Input optics =====================\n"
             + "l i1 %s 0 n0\n"%laser_power
             + "s s_eo0 0 n0 n_eo1\n"
-            + "mod eom1 $fsb1 0.3 %s pm n_eo1 n_eo2\n"%num_of_sidebands
+            + "mod eom1 $fsb1 %s %s pm n_eo1 n_eo2\n"%(f1_mod_index, num_of_sidebands)
             + "s s_eo1 0 n_eo2 n_eo3\n"
-            + "mod eom2 $fsb2 0.3 %s pm n_eo3 n_eo4\n"%num_of_sidebands
+            + "mod eom2 $fsb2 %s %s pm n_eo3 n_eo4\n"%(f2_mod_index, num_of_sidebands)
             + "s s_eo2 0 n_eo4 REFL\n"
             + "\n"
             + "# ======= PRC each mirror loss $prc_loss =======\n"
@@ -424,9 +447,9 @@ def create_input_finesse(dic_selected_setting_from_gui, selected_interferometer)
             + "# ======== Input optics =====================\n"
             + "l i1 %s 0 n0\n"%laser_power
             + "s s_eo0 0 n0 n_eo1\n"
-            + "mod eom1 $fsb1 0.3 %s pm n_eo1 n_eo2\n"%num_of_sidebands
+            + "mod eom1 $fsb1 %s %s pm n_eo1 n_eo2\n"%(f1_mod_index, num_of_sidebands)
             + "s s_eo1 0 n_eo2 n_eo3\n"
-            + "mod eom2 $fsb2 0.3 %s pm n_eo3 n_eo4\n"%num_of_sidebands
+            + "mod eom2 $fsb2 %s %s pm n_eo3 n_eo4\n"%(f2_mod_index, num_of_sidebands)
             + "s s_eo2 0 n_eo4 REFL\n"
             + "\n"
             + "## ======= PRC each mirror loss $prc_loss =======\n"
@@ -605,7 +628,9 @@ def make_dic_selected_setting_from_gui(values, selected_tab, type_of_pd_signal):
             'ETM_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_ETM_mirror_loss'])),
 
             'mod_f1_frequency'         : (change_nums_unit_str_to_float(values['k_inf_c_f1_mod_frequency'])),
+            'f1_mod_index'             : values['k_inf_c_f1_mod_index'],
             'mod_f2_frequency'         : (change_nums_unit_str_to_float(values['k_inf_c_f2_mod_frequency'])),
+            'f2_mod_index'             : values['k_inf_c_f2_mod_index'],
             'num_of_sidebands'         : values['k_inf_c_num_of_sidebands'],
             
             'arbitraryfreq001'         : arbitraryfreq001,
@@ -914,7 +939,7 @@ def calculate_plot_fontsize(plotnum, v_plotnum, h_plotnum):
     elif 10<=plotnum and plotnum<=16:
         fontsize = 6
     else:
-        # plotnumが大量にある時はfontsize=4だと図が隠れるけど、逆にs大体形がわかればいいと思った
+        # plotnumが大量にある時はfontsize=6くらいだと図が隠れるけど、逆にs大体形がわかればいいと思った
         fontsize = 6
 
     return fontsize
