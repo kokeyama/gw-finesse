@@ -1528,7 +1528,7 @@ while True:
             filename = "%s_%s"%(filename_head, filename_tail)
             kat           = header_file
             kat          += code
-            fname_kat     = sg.popup_get_file('Select the output name for kat file?', save_as=True, default_path="../plotdata/%s.kat"%(filename), file_types=(('ALL Files', '*.kat'),))
+            fname_kat     = sg.popup_get_file('Select the output name for kat file?', save_as=True, default_path="../export/kat/%s.kat"%(filename), file_types=(('ALL Files', '*.kat'),))
             try:
                 f = open(fname_kat, 'x')
                 f.writelines(kat)
@@ -1544,7 +1544,7 @@ while True:
             filename_head = plot_title
             filename_tail = mifsim.date_to_num(str(dt_now))
             filename = "%s_%s"%(filename_head, filename_tail)
-            fname_plotdata = sg.popup_get_file('Select the output name for plot data?', save_as=True, default_path="../plotdata/%s.txt"%(filename),file_types=(("ALL Files", "*.txt"),))
+            fname_plotdata = sg.popup_get_file('Select the output name for plot data?', save_as=True, default_path="../export/plotdata/%s.txt"%(filename),file_types=(("ALL Files", "*.txt"),))
             try:
                 f           = open(fname_plotdata, 'x')
                 arr         = np.empty((0, out.x.size), float)
