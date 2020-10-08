@@ -47,32 +47,32 @@ all_radiobox_keys = mifsim.all_radiobox_keys
 ##################################
 # FPMI
 kFPMI_drawing_normalsize = [
-                [sg.Image('../devel/FPMI_picture_normal.png',   key='kFPMI_imageContainer',    size=(400,300))]#size=(800,600)
+                [sg.Image('../fig/FPMI_picture_normal.png',   key='kFPMI_imageContainer',    size=(400,300))]#size=(800,600)
 ]
 kFPMI_drawing_largesize = [
-                [sg.Image('../devel/FPMI_picture_large.png',    key='kFPMI_imageContainer2',   size=(800,600))]#size=(800,600)
+                [sg.Image('../fig/FPMI_picture_large.png',    key='kFPMI_imageContainer2',   size=(800,600))]#size=(800,600)
 ]
 
 # PRFPMI
 kPRFPMI_drawing_normalsize = [
-                [sg.Image('../devel/PRFPMI_picture_normal.png', key='kPRFPMI_imageContainer',  size=(400,300))]#size=(800,600)
+                [sg.Image('../fig/PRFPMI_picture_normal.png', key='kPRFPMI_imageContainer',  size=(400,300))]#size=(800,600)
 ]
 kPRFPMI_drawing_largesize = [
-                [sg.Image('../devel/PRFPMI_picture_large.png',  key='kPRFPMI_imageContainer2', size=(800,600))]#size=(800,600)
+                [sg.Image('../fig/PRFPMI_picture_large.png',  key='kPRFPMI_imageContainer2', size=(800,600))]#size=(800,600)
 ]
 # kDRFPMI
 kDRFPMI_drawing_normalsize = [
-                [sg.Image('../devel/DRFPMI_picture_normal.png', key='kDRFPMI_imageContainer',  size=(400,300))]#size=(800,600)
+                [sg.Image('../fig/DRFPMI_picture_normal.png', key='kDRFPMI_imageContainer',  size=(400,300))]#size=(800,600)
 ]
 kDRFPMI_drawing_largesize = [
-                [sg.Image('../devel/DRFPMI_picture_large.png',  key='kDRFPMI_imageContainer2', size=(800,600))]#size=(800,600)
+                [sg.Image('../fig/DRFPMI_picture_large.png',  key='kDRFPMI_imageContainer2', size=(800,600))]#size=(800,600)
 ]
 # kMI
 kMI_drawing_normalsize = [
-                [sg.Image('../devel/MI_picture_normal.png',     key='kMI_imageContainer',      size=(400,300))]#size=(800,600)
+                [sg.Image('../fig/MI_picture_normal.png',     key='kMI_imageContainer',      size=(400,300))]#size=(800,600)
 ]
 kMI_drawing_largesize = [
-                [sg.Image('../devel/MI_picture_large.png',      key='kMI_imageContainer2',     size=(800,600))]#size=(800,600)
+                [sg.Image('../fig/MI_picture_large.png',      key='kMI_imageContainer2',     size=(800,600))]#size=(800,600)
 ]
 ##################################
 # drawing size buttons
