@@ -901,6 +901,7 @@ while True:
     #
     # キーボードで入力できる部分に、変な文字が入ってエラーにならないように設定する
     #
+    #       laser power
     if event == 'k_inf_c_laser_power' and values['k_inf_c_laser_power'] and values['k_inf_c_laser_power'][-1] not in (".-0123456789enmkMGp"):
         window['k_inf_c_laser_power'].update(values['k_inf_c_laser_power'][:-1])
     #       BS
@@ -965,7 +966,64 @@ while True:
         window['k_inf_c_num_of_sidebands'].update(values['k_inf_c_num_of_sidebands'][:-1])
     if event == 'k_inf_c_samplingnum' and values['k_inf_c_samplingnum'] and values['k_inf_c_samplingnum'][-1] not in ("0123456789"):
         window['k_inf_c_samplingnum'].update(values['k_inf_c_samplingnum'][:-1])
-    
+    #       arbitrary freq
+    #               MI
+    if event == 'kMI_pd1_arbitraryfreq001' and values['kMI_pd1_arbitraryfreq001'] and values['kMI_pd1_arbitraryfreq001'][-1] not in ("0123456789.nmkMG*"):
+        window['kMI_pd1_arbitraryfreq001'].update(values['kMI_pd1_arbitraryfreq001'][:-1])
+    if event == 'kMI_pd1_arbitraryfreq002' and values['kMI_pd1_arbitraryfreq002'] and values['kMI_pd1_arbitraryfreq002'][-1] not in ("0123456789.nmkMG*"):
+        window['kMI_pd1_arbitraryfreq002'].update(values['kMI_pd1_arbitraryfreq002'][:-1])
+    if event == 'kMI_pd2_arbitraryfreq001' and values['kMI_pd2_arbitraryfreq001'] and values['kMI_pd2_arbitraryfreq001'][-1] not in ("0123456789.nmkMG*"):
+        window['kMI_pd2_arbitraryfreq001'].update(values['kMI_pd2_arbitraryfreq001'][:-1])
+    if event == 'kMI_pd2_arbitraryfreq002' and values['kMI_pd2_arbitraryfreq002'] and values['kMI_pd2_arbitraryfreq002'][-1] not in ("0123456789.nmkMG*"):
+        window['kMI_pd2_arbitraryfreq002'].update(values['kMI_pd2_arbitraryfreq002'][:-1])
+    #               FPMI
+    if event == 'kFPMI_pd1_arbitraryfreq001' and values['kFPMI_pd1_arbitraryfreq001'] and values['kFPMI_pd1_arbitraryfreq001'][-1] not in ("0123456789.nmkMG*"):
+        window['kFPMI_pd1_arbitraryfreq001'].update(values['kFPMI_pd1_arbitraryfreq001'][:-1])
+    if event == 'kFPMI_pd1_arbitraryfreq002' and values['kFPMI_pd1_arbitraryfreq002'] and values['kFPMI_pd1_arbitraryfreq002'][-1] not in ("0123456789.nmkMG*"):
+        window['kFPMI_pd1_arbitraryfreq002'].update(values['kFPMI_pd1_arbitraryfreq002'][:-1])
+    if event == 'kFPMI_pd2_arbitraryfreq001' and values['kFPMI_pd2_arbitraryfreq001'] and values['kFPMI_pd2_arbitraryfreq001'][-1] not in ("0123456789.nmkMG*"):
+        window['kFPMI_pd2_arbitraryfreq001'].update(values['kFPMI_pd2_arbitraryfreq001'][:-1])
+    if event == 'kFPMI_pd2_arbitraryfreq002' and values['kFPMI_pd2_arbitraryfreq002'] and values['kFPMI_pd2_arbitraryfreq002'][-1] not in ("0123456789.nmkMG*"):
+        window['kFPMI_pd2_arbitraryfreq002'].update(values['kFPMI_pd2_arbitraryfreq002'][:-1])
+    #               PRFPMI
+    if event == 'kPRFPMI_pd1_arbitraryfreq001' and values['kPRFPMI_pd1_arbitraryfreq001'] and values['kPRFPMI_pd1_arbitraryfreq001'][-1] not in ("0123456789.nmkMG*"):
+        window['kPRFPMI_pd1_arbitraryfreq001'].update(values['kPRFPMI_pd1_arbitraryfreq001'][:-1])
+    if event == 'kPRFPMI_pd1_arbitraryfreq002' and values['kPRFPMI_pd1_arbitraryfreq002'] and values['kPRFPMI_pd1_arbitraryfreq002'][-1] not in ("0123456789.nmkMG*"):
+        window['kPRFPMI_pd1_arbitraryfreq002'].update(values['kPRFPMI_pd1_arbitraryfreq002'][:-1])
+    if event == 'kPRFPMI_pd2_arbitraryfreq001' and values['kPRFPMI_pd2_arbitraryfreq001'] and values['kPRFPMI_pd2_arbitraryfreq001'][-1] not in ("0123456789.nmkMG*"):
+        window['kPRFPMI_pd2_arbitraryfreq001'].update(values['kPRFPMI_pd2_arbitraryfreq001'][:-1])
+    if event == 'kPRFPMI_pd2_arbitraryfreq002' and values['kPRFPMI_pd2_arbitraryfreq002'] and values['kPRFPMI_pd2_arbitraryfreq002'][-1] not in ("0123456789.nmkMG*"):
+        window['kPRFPMI_pd2_arbitraryfreq002'].update(values['kPRFPMI_pd2_arbitraryfreq002'][:-1])
+    #               DRFPMI
+    if event == 'kDRFPMI_pd1_arbitraryfreq001' and values['kDRFPMI_pd1_arbitraryfreq001'] and values['kDRFPMI_pd1_arbitraryfreq001'][-1] not in ("0123456789.nmkMG*"):
+        window['kDRFPMI_pd1_arbitraryfreq001'].update(values['kDRFPMI_pd1_arbitraryfreq001'][:-1])
+    if event == 'kDRFPMI_pd1_arbitraryfreq002' and values['kDRFPMI_pd1_arbitraryfreq002'] and values['kDRFPMI_pd1_arbitraryfreq002'][-1] not in ("0123456789.nmkMG*"):
+        window['kDRFPMI_pd1_arbitraryfreq002'].update(values['kDRFPMI_pd1_arbitraryfreq002'][:-1])
+    if event == 'kDRFPMI_pd2_arbitraryfreq001' and values['kDRFPMI_pd2_arbitraryfreq001'] and values['kDRFPMI_pd2_arbitraryfreq001'][-1] not in ("0123456789.nmkMG*"):
+        window['kDRFPMI_pd2_arbitraryfreq001'].update(values['kDRFPMI_pd2_arbitraryfreq001'][:-1])
+    if event == 'kDRFPMI_pd2_arbitraryfreq002' and values['kDRFPMI_pd2_arbitraryfreq002'] and values['kDRFPMI_pd2_arbitraryfreq002'][-1] not in ("0123456789.nmkMG*"):
+        window['kDRFPMI_pd2_arbitraryfreq002'].update(values['kDRFPMI_pd2_arbitraryfreq002'][:-1])
+    #       demod_phase
+    #               MI
+    if event == 'kMI_pd1_demod_phase' and values['kMI_pd1_demod_phase'] and values['kMI_pd1_demod_phase'][-1] not in ("0123456789."):
+        window['kMI_pd1_demod_phase'].update(values['kMI_pd1_demod_phase'][:-1])
+    if event == 'kMI_pd2_demod_phase' and values['kMI_pd2_demod_phase'] and values['kMI_pd2_demod_phase'][-1] not in ("0123456789."):
+        window['kMI_pd2_demod_phase'].update(values['kMI_pd2_demod_phase'][:-1])
+    #               FPMI
+    if event == 'kFPMI_pd1_demod_phase' and values['kFPMI_pd1_demod_phase'] and values['kFPMI_pd1_demod_phase'][-1] not in ("0123456789."):
+        window['kFPMI_pd1_demod_phase'].update(values['kFPMI_pd1_demod_phase'][:-1])
+    if event == 'kFPMI_pd2_demod_phase' and values['kFPMI_pd2_demod_phase'] and values['kFPMI_pd2_demod_phase'][-1] not in ("0123456789."):
+        window['kFPMI_pd2_demod_phase'].update(values['kFPMI_pd2_demod_phase'][:-1])
+    #               PRFPMI
+    if event == 'kPRFPMI_pd1_demod_phase' and values['kPRFPMI_pd1_demod_phase'] and values['kPRFPMI_pd1_demod_phase'][-1] not in ("0123456789."):
+        window['kPRFPMI_pd1_demod_phase'].update(values['kPRFPMI_pd1_demod_phase'][:-1])
+    if event == 'kPRFPMI_pd2_demod_phase' and values['kPRFPMI_pd2_demod_phase'] and values['kPRFPMI_pd2_demod_phase'][-1] not in ("0123456789."):
+        window['kPRFPMI_pd2_demod_phase'].update(values['kPRFPMI_pd2_demod_phase'][:-1])
+    #               DRFPMI
+    if event == 'kDRFPMI_pd1_demod_phase' and values['kDRFPMI_pd1_demod_phase'] and values['kDRFPMI_pd1_demod_phase'][-1] not in ("0123456789."):
+        window['kDRFPMI_pd1_demod_phase'].update(values['kDRFPMI_pd1_demod_phase'][:-1])
+    if event == 'kDRFPMI_pd2_demod_phase' and values['kDRFPMI_pd2_demod_phase'] and values['kDRFPMI_pd2_demod_phase'][-1] not in ("0123456789."):
+        window['kDRFPMI_pd2_demod_phase'].update(values['kDRFPMI_pd2_demod_phase'][:-1])
     ### port select button
     if event == "k%s_set_all_important_port_bool"%selected_tab:
         if should_check_all_important_port:
