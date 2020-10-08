@@ -24,6 +24,7 @@ def collapse(layout, key):
 
 # %%
 all_interferometers = ["FPMI", "PRFPMI", "DRFPMI", "MI"]
+all_dofs = ["DARM", "CARM", "BS", "MICH", "PRCL", "SRCL"]
 
 all_ports = ["REFL", "AS", "nTMSX", "nTMSY",
              "POP","POP2",
@@ -630,60 +631,63 @@ def make_dic_selected_setting_from_gui(values, selected_tab, type_of_pd_signal):
             'dof'                       : values['k%s_dof'%interferometer],#str
             'type_of_pd_signal'         : type_of_pd_signal,#str sw_power/sw_dmod1/tf_power/tf_dmod2
             ### advanced setting
+            # IFO_param
             'laser_power'               : str(change_nums_unit_str_to_float(values['k_inf_c_laser_power'])),#str
             #       BS
-            'mibs_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_mibs_mirror_transmittance'])),
-            'mibs_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_mibs_mirror_loss'])),
+            'mibs_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_mibs_mirror_transmittance'])),#str
+            'mibs_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_mibs_mirror_loss'])),#str
             #       PRM
-            'prm_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_prm_mirror_transmittance'])),
-            'prm_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_prm_mirror_loss'])),
+            'prm_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_prm_mirror_transmittance'])),#str
+            'prm_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_prm_mirror_loss'])),#str
             #       PRC
-            'pr2_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_pr2_mirror_transmittance'])),
-            'pr2_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_pr2_mirror_loss'])),
-            'pr3_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_pr3_mirror_transmittance'])),
-            'pr3_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_pr3_mirror_loss'])),
+            'pr2_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_pr2_mirror_transmittance'])),#str
+            'pr2_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_pr2_mirror_loss'])),#str
+            'pr3_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_pr3_mirror_transmittance'])),#str
+            'pr3_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_pr3_mirror_loss'])),#str
             #       SRM
-            'srm_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_srm_mirror_transmittance'])),
-            'srm_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_srm_mirror_loss'])),
+            'srm_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_srm_mirror_transmittance'])),#str
+            'srm_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_srm_mirror_loss'])),#str
             #       SRC
-            'sr2_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_sr2_mirror_transmittance'])),
-            'sr2_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_sr2_mirror_loss'])),
-            'sr3_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_sr3_mirror_transmittance'])),
-            'sr3_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_sr3_mirror_loss'])),
+            'sr2_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_sr2_mirror_transmittance'])),#str
+            'sr2_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_sr2_mirror_loss'])),#str
+            'sr3_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_sr3_mirror_transmittance'])),#str
+            'sr3_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_sr3_mirror_loss'])),#str
             #       ITM
-            'itmx_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_itmx_mirror_transmittance'])),
-            'itmx_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_itmx_mirror_loss'])),
-            'itmy_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_itmy_mirror_transmittance'])),
-            'itmy_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_itmy_mirror_loss'])),
+            'itmx_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_itmx_mirror_transmittance'])),#str
+            'itmx_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_itmx_mirror_loss'])),#str
+            'itmy_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_itmy_mirror_transmittance'])),#str
+            'itmy_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_itmy_mirror_loss'])),#str
             #       ETM
-            'etmx_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_etmx_mirror_transmittance'])),
-            'etmx_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_etmx_mirror_loss'])),
-            'etmy_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_etmy_mirror_transmittance'])),
-            'etmy_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_etmy_mirror_loss'])),
+            'etmx_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_etmx_mirror_transmittance'])),#str
+            'etmx_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_etmx_mirror_loss'])),#str
+            'etmy_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_etmy_mirror_transmittance'])),#str
+            'etmy_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_etmy_mirror_loss'])),#str
             #       modulation
-            'mod_f1_frequency'          : (change_nums_unit_str_to_float(values['k_inf_c_f1_mod_frequency'])),
-            'f1_mod_index'              : values['k_inf_c_f1_mod_index'],
-            'mod_f2_frequency'          : (change_nums_unit_str_to_float(values['k_inf_c_f2_mod_frequency'])),
-            'f2_mod_index'              : values['k_inf_c_f2_mod_index'],
-            'num_of_sidebands'          : values['k_inf_c_num_of_sidebands'],
-            #       demodulation
-            'arbitraryfreq001'          : arbitraryfreq001,
-            'arbitraryfreq002'          : arbitraryfreq002,
-            'arbitraryfreq001_name'     : arbitraryfreq001_name,
-            'arbitraryfreq002_name'     : arbitraryfreq002_name,
+            'mod_f1_frequency'          : (change_nums_unit_str_to_float(values['k_inf_c_f1_mod_frequency'])),#str
+            'f1_mod_index'              : values['k_inf_c_f1_mod_index'],#str
+            'mod_f2_frequency'          : (change_nums_unit_str_to_float(values['k_inf_c_f2_mod_frequency'])),#str
+            'f2_mod_index'              : values['k_inf_c_f2_mod_index'],#str
+            'num_of_sidebands'          : values['k_inf_c_num_of_sidebands'],#str
             #       plot
             'x_plotscale'               : x_plotscale,#str log/linear
-            'xaxis_range_beg'           : values['k_inf_c_xaxis_range_beg'],#str #x軸の最小値
-            'xaxis_range_end'           : values['k_inf_c_xaxis_range_end'],#str #x軸の最大値
             'y_plotscale'               : y_plotscale,#str log/linear
             'samplingnum'               : values['k_inf_c_samplingnum'],#str
+            # general
+            'xaxis_range_beg'           : values['k_inf_c_xaxis_range_beg'],#str #x軸の最小値
+            'xaxis_range_end'           : values['k_inf_c_xaxis_range_end'],#str #x軸の最大値
+            # dmod1 and dmod2
+            #       demodulation
+            'arbitraryfreq001'          : arbitraryfreq001,#str
+            'arbitraryfreq002'          : arbitraryfreq002,#str
+            'arbitraryfreq001_name'     : arbitraryfreq001_name,#str
+            'arbitraryfreq002_name'     : arbitraryfreq002_name,#str
             #       other
-            'demod_phase'               : demod_phase,
-            'put_car_sw_amptd_flag'     : values['k%s_put_car_sw_amptd_flag'%interferometer],
-            'put_f1u_sw_amptd_flag'     : values['k%s_put_f1u_sw_amptd_flag'%interferometer],
-            'put_f1l_sw_amptd_flag'     : values['k%s_put_f1l_sw_amptd_flag'%interferometer],
-            'put_f2u_sw_amptd_flag'     : values['k%s_put_f2u_sw_amptd_flag'%interferometer],
-            'put_f2l_sw_amptd_flag'     : values['k%s_put_f2l_sw_amptd_flag'%interferometer],
+            'demod_phase'               : demod_phase,#str
+            'put_car_sw_amptd_flag'     : values['k%s_put_car_sw_amptd_flag'%interferometer],#str
+            'put_f1u_sw_amptd_flag'     : values['k%s_put_f1u_sw_amptd_flag'%interferometer],#str
+            'put_f1l_sw_amptd_flag'     : values['k%s_put_f1l_sw_amptd_flag'%interferometer],#str
+            'put_f2u_sw_amptd_flag'     : values['k%s_put_f2u_sw_amptd_flag'%interferometer],#str
+            'put_f2l_sw_amptd_flag'     : values['k%s_put_f2l_sw_amptd_flag'%interferometer],#str
             #'put_car_tf_amptd_flag'     : values['k%s_put_car_tf_amptd_flag'%interferometer],
             #'put_f1u_tf_amptd_flag'     : values['k%s_put_f1u_tf_amptd_flag'%interferometer],
             #'put_f1l_tf_amptd_flag'     : values['k%s_put_f1l_tf_amptd_flag'%interferometer],

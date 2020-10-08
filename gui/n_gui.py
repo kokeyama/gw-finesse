@@ -866,8 +866,8 @@ while True:
             continue
         else:
             ####### initializeと共通なのでなんとかする
-            mifsim.set_gui_window_visible(mifsim.all_gui_section_keys, False, window)#pdの設定をするためのsectionをすべて閉じる
-            mifsim.set_gui_window_bool(mifsim.all_radiobox_keys, False, window)#pdの設定をするためのRADIOBOXの値を全部Falseにする
+            #mifsim.set_gui_window_visible(mifsim.all_gui_section_keys, False, window)#pdの設定をするためのsectionをすべて閉じる
+            #mifsim.set_gui_window_bool(mifsim.all_radiobox_keys, False, window)#pdの設定をするためのRADIOBOXの値を全部Falseにする
             mifsim.set_drawing_size_enlarge(selected_tab, False, window)#GUIを立ち上げた時には通常サイズと大きいサイズの図が両方表示されるから普通のサイズの図だけ表示されるようにする。
             #type_of_pd_signal = 'sw_power'
             is_selected_type_of_pd_signal = False
@@ -1170,9 +1170,24 @@ while True:
         # 反射率と透過率とロスの合計が1以下になっているかどうかを調べる関数を用意する
 
         # IFO_paramの項目に何もいれていない時にエラーを返す
+
         # KAGRAの設定（デフォルト）に戻すボタンを作る
+
         # DARMにDARMaとかタイプしてしまった時にエラーを返す設定を作る
+        if dic_selected_setting_from_gui["dof"] in mifsim.all_dofs:
+            pass
+        else:
+            sg.popup_ok('Error : Please select a DoF from the list.')#何も入力していない場合もエラーメッセージを表示できる
+            continue
         # xaxis に　180 -180 とか入力してしまった時に、エラーを返す
+        tmp_beg = eval(dic_selected_setting_from_gui["xaxis_range_beg"])
+        tmp_end = eval(dic_selected_setting_from_gui["xaxis_range_end"])
+        if tmp_beg<tmp_end:
+            pass
+        else:
+            sg.popup_ok('Error : Please Set the xaxis_beg value higher than the value of xaxis_end')
+            continue
+        # ラジオボックスをちゃんと選んでいない時
         if is_selected_type_of_pd_signal == False:
             sg.popup_ok('Error : Please follow the instructions on the screen to set up your pd.')
             continue
@@ -1234,7 +1249,7 @@ while True:
                     plt.tick_params(labelsize=fontsize)
                     # 凡例の表示
                     plt.legend(fontsize=fontsize)
-                plt.show()
+                plt.show(block=False)
             else: # 全部overplotしないとき
                 plotnum   = len(port_trues)
                 v_plotnum = math.ceil(math.sqrt(plotnum))
@@ -1258,7 +1273,7 @@ while True:
                     # loop
                     i += 1
                 plt.tight_layout()
-                plt.show()
+                plt.show(block=False)
 
         elif(type_of_pd_signal == 'sw_amptd' or type_of_pd_signal == 'tf_amptd'):#pd0で見る物はここ
             plot_title = '%s_%s_%s' % (values['k%s_dof'%selected_tab], type_of_pd_signal, selected_tab)
@@ -1304,7 +1319,7 @@ while True:
                     plt.tick_params(labelsize=fontsize)
                     # 凡例の表示
                     plt.legend(fontsize=fontsize)
-                plt.show()
+                plt.show(block=False)
             else: # 全部overplotしないとき
                 plotnum   = len(port_trues)
                 v_plotnum = math.ceil(math.sqrt(plotnum))
@@ -1350,7 +1365,7 @@ while True:
                     # loop
                     i += 1
                 plt.tight_layout()
-                plt.show()
+                plt.show(block=False)
                 
         elif(type_of_pd_signal=='sw_dmod1'):#pd1で見る物はここ
             plot_title = '%s_%s_%sdmodphase_%s' % (values['k%s_dof'%selected_tab], type_of_pd_signal, dic_selected_setting_from_gui["demod_phase"], selected_tab)
@@ -1384,7 +1399,7 @@ while True:
                         # 凡例の表示
                         plt.legend(fontsize=fontsize)
                 plt.tight_layout()
-                plt.show()
+                plt.show(block=False)
             else: # 全部はoverplotしないとき
                 if sw_dmod1_overplot:# portだけ分けてI1やQ1などはoverplot
                     plotnum   = len(port_trues)
@@ -1418,7 +1433,7 @@ while True:
                             plt.legend(fontsize=fontsize)
                         i += 1
                     plt.tight_layout()
-                    plt.show()
+                    plt.show(block=False)
                 else:# 全部をバラバラに表示する
                     v_plotnum = len(port_trues)
                     h_plotnum = len(pdname_tails)
@@ -1450,7 +1465,7 @@ while True:
                             # loop
                             i += 1
                     plt.tight_layout()
-                    plt.show()
+                    plt.show(block=False)
 
         elif(type_of_pd_signal=='tf_dmod2'):#pd2で見る物はここ
             plot_title = '%s_%s_%sdmodphase_%s' % (values['k%s_dof'%selected_tab], type_of_pd_signal, dic_selected_setting_from_gui["demod_phase"], selected_tab)
@@ -1490,7 +1505,7 @@ while True:
                         plt.tick_params(labelsize=fontsize)
                         # 凡例の表示
                         plt.legend(fontsize=fontsize)
-                plt.show()
+                plt.show(block=False)
 
             else: # 全部はoverplotしないとき
                 if tf_dmod2_overplot:# portだけ分けてI1やQ1などはoverplot
@@ -1533,7 +1548,7 @@ while True:
                         plt.title('%s' % title, fontsize=fontsize)
                         plt.tick_params(labelsize=fontsize)
                     plt.tight_layout()
-                    plt.show()
+                    plt.show(block=False)
                 else:# すべてバラバラに表示する
                     v_plotnum  = 2*len(port_trues)
                     h_plotnum  = len(pdname_tails)
@@ -1576,7 +1591,7 @@ while True:
                             k2 += 1
                         i+=h_plotnum
                     plt.tight_layout()
-                    plt.show()         
+                    plt.show(block=False)         
 #######################################################################################################################################
 # finesse のシミュレーション結果をkatやtxt形式で出力させる
 #######################################################################################################################################
@@ -1631,17 +1646,9 @@ while True:
                 sg.popup_ok("Error : there is a file %s" % fname_plotdata)
             except Exception:
                 sg.popup_ok("Unexpected error:", sys.exc_info()[0])
+        continue
 
 window.close()         
-
-
-# %%
-def verify_mirror_tl_sum(transmittance, loss):
-    sum = transmittance+loss
-    if sum==1:
-        return True
-    else:
-        return False
 
 
 # %%
