@@ -10,7 +10,7 @@ import numpy as np
 import sys
 import math
 import datetime
-import mifsim_gui_function as mifsim
+import n_gui_function as mifsim
 
 # 既知のバグですが、たまにGUIの表示がいろいろ重なって表示されます。
 # なんでもいいのでボタンを押して画面を更新すると治るみたいです。
@@ -47,32 +47,32 @@ all_radiobox_keys = mifsim.all_radiobox_keys
 ##################################
 # FPMI
 kFPMI_drawing_normalsize = [
-                [sg.Image('./devel/FPMI_picture_normal.png',   key='kFPMI_imageContainer',    size=(400,300))]#size=(800,600)
+                [sg.Image('../fig/FPMI_picture_normal.png',   key='kFPMI_imageContainer',    size=(400,300))]#size=(800,600)
 ]
 kFPMI_drawing_largesize = [
-                [sg.Image('./devel/FPMI_picture_large.png',    key='kFPMI_imageContainer2',   size=(800,600))]#size=(800,600)
+                [sg.Image('../fig/FPMI_picture_large.png',    key='kFPMI_imageContainer2',   size=(800,600))]#size=(800,600)
 ]
 
 # PRFPMI
 kPRFPMI_drawing_normalsize = [
-                [sg.Image('./devel/PRFPMI_picture_normal.png', key='kPRFPMI_imageContainer',  size=(400,300))]#size=(800,600)
+                [sg.Image('../fig/PRFPMI_picture_normal.png', key='kPRFPMI_imageContainer',  size=(400,300))]#size=(800,600)
 ]
 kPRFPMI_drawing_largesize = [
-                [sg.Image('./devel/PRFPMI_picture_large.png',  key='kPRFPMI_imageContainer2', size=(800,600))]#size=(800,600)
+                [sg.Image('../fig/PRFPMI_picture_large.png',  key='kPRFPMI_imageContainer2', size=(800,600))]#size=(800,600)
 ]
 # kDRFPMI
 kDRFPMI_drawing_normalsize = [
-                [sg.Image('./devel/DRFPMI_picture_normal.png', key='kDRFPMI_imageContainer',  size=(400,300))]#size=(800,600)
+                [sg.Image('../fig/DRFPMI_picture_normal.png', key='kDRFPMI_imageContainer',  size=(400,300))]#size=(800,600)
 ]
 kDRFPMI_drawing_largesize = [
-                [sg.Image('./devel/DRFPMI_picture_large.png',  key='kDRFPMI_imageContainer2', size=(800,600))]#size=(800,600)
+                [sg.Image('../fig/DRFPMI_picture_large.png',  key='kDRFPMI_imageContainer2', size=(800,600))]#size=(800,600)
 ]
 # kMI
 kMI_drawing_normalsize = [
-                [sg.Image('./devel/MI_picture_normal.png',     key='kMI_imageContainer',      size=(400,300))]#size=(800,600)
+                [sg.Image('../fig/MI_picture_normal.png',     key='kMI_imageContainer',      size=(400,300))]#size=(800,600)
 ]
 kMI_drawing_largesize = [
-                [sg.Image('./devel/MI_picture_large.png',      key='kMI_imageContainer2',     size=(800,600))]#size=(800,600)
+                [sg.Image('../fig/MI_picture_large.png',      key='kMI_imageContainer2',     size=(800,600))]#size=(800,600)
 ]
 ##################################
 # drawing size buttons
@@ -110,7 +110,7 @@ kFPMI_sec_sw_power_setting = [
             [sg.Text('no advanced settings')]
             ]
 kFPMI_sec_sw_amptd_setting = [
-            # amp detecter
+            # amp detector
             [sg.Checkbox('CR field',          key='kFPMI_put_car_sw_amptd_flag'),
              sg.Checkbox('f1 SB field upper', key='kFPMI_put_f1u_sw_amptd_flag'),
              sg.Checkbox('f1 SB field lower', key='kFPMI_put_f1l_sw_amptd_flag'),
@@ -123,25 +123,25 @@ kFPMI_sec_sw_dmod1_setting = [
             [sg.Radio('overplot selected port output', 'RADIO_sw_dmod1_plot', default=False, key='kFPMI_sw_dmod1_overplot', enable_events=True),
              sg.Radio('plot separately',        'RADIO_sw_dmod1_plot', default=True,  key='kFPMI_sw_dmod1_sepaplot', enable_events=True)],
             [sg.Text('Which phase to plot?')],
-            [sg.Checkbox('I_fsb1(in_phase f1)',         key='kFPMI_pd1_Iphase_fsb1'),
-             sg.Checkbox('Q_fsb1(quadrature_phase f1)', key='kFPMI_pd1_Qphase_fsb1'),
-             sg.Checkbox('I_fsb2(in_phase f2)',         key='kFPMI_pd1_Iphase_fsb2'),
-             sg.Checkbox('Q_fsb2(quadrature_phase f2)', key='kFPMI_pd1_Qphase_fsb2')],
+            [sg.Checkbox('I1',         key='kFPMI_pd1_Iphase_fsb1'),
+             sg.Checkbox('Q1', key='kFPMI_pd1_Qphase_fsb1'),
+             sg.Checkbox('I2',         key='kFPMI_pd1_Iphase_fsb2'),
+             sg.Checkbox('Q2', key='kFPMI_pd1_Qphase_fsb2')],
 
             [sg.Text('if you need other demodulation frequency, use these settings bellow.')],
-            [sg.Checkbox('I_arbitraryfreq001',        key='kFPMI_pd1_Iphase_arbitraryfreq001'), 
-             sg.Checkbox('Q_arbitraryfreq001',        key='kFPMI_pd1_Qphase_arbitraryfreq001'), 
-             sg.Text('arbitraryfreq001 = '), sg.Input(key='kFPMI_pd1_arbitraryfreq001',        default_text='2*16.881M', enable_events=True),
-             sg.Text('label name = '),       sg.Input(key='kFPMI_pd1_arbitraryfreq001_name',   default_text='2f1',    enable_events=True)],
-            [sg.Checkbox('I_arbitraryfreq002',        key='kFPMI_pd1_Iphase_arbitraryfreq002'), 
-             sg.Checkbox('Q_arbitraryfreq002',        key='kFPMI_pd1_Qphase_arbitraryfreq002'), 
-             sg.Text('arbitraryfreq002 = '), sg.Input(key='kFPMI_pd1_arbitraryfreq002',        default_text='3*16.881M', enable_events=True),
-             sg.Text('label name = '),       sg.Input(key='kFPMI_pd1_arbitraryfreq002_name',   default_text='3f1',    enable_events=True)],
+            [sg.Checkbox('I_freq01',          key='kFPMI_pd1_Iphase_arbitraryfreq001'), 
+             sg.Checkbox('Q_freq01',          key='kFPMI_pd1_Qphase_arbitraryfreq001'), 
+             sg.Text('freq01 = '),   sg.Input(key='kFPMI_pd1_arbitraryfreq001',        default_text='2*16.881M', enable_events=True),
+             sg.Text('label name = '),         sg.Input(key='kFPMI_pd1_arbitraryfreq001_name',   default_text='2f1',    enable_events=True)],
+            [sg.Checkbox('I_freq02',          key='kFPMI_pd1_Iphase_arbitraryfreq002'), 
+             sg.Checkbox('Q_freq02',          key='kFPMI_pd1_Qphase_arbitraryfreq002'), 
+             sg.Text('freq02 = '),   sg.Input(key='kFPMI_pd1_arbitraryfreq002',        default_text='3*16.881M', enable_events=True),
+             sg.Text('label name = '),         sg.Input(key='kFPMI_pd1_arbitraryfreq002_name',   default_text='3f1',    enable_events=True)],
             [sg.Text('note:')],
-            [sg.Text('You can set the number of sidebands generated by the modulator in the OPTION tab(default num 1),')],
+            [sg.Text('You can set the number of sidebands generated by the modulator in the IFO_param tab(default num 3),')],
             [sg.Text('so if you want to demodulate at a frequency such as 2f1 or 3f1, increase the number of sidebands.')],
     
-            [sg.Text('Demodulation_phase'),sg.Input(key='kFPMI_pd1_demod_phase', default_text='0', enable_events=True)]
+            [sg.Text('Demodulation_phase [deg]'),    sg.Input(key='kFPMI_pd1_demod_phase', default_text='0', enable_events=True)]
             ]
 
 # select tf_power or tf_dmod2
@@ -161,32 +161,32 @@ kFPMI_sec_tf_dmod2_setting = [
             [sg.Radio('overplot selected port output', 'RADIO_tf_dmod2_plot', default=False, key='kFPMI_tf_dmod2_overplot', enable_events=True),
              sg.Radio('plot separately',        'RADIO_tf_dmod2_plot', default=True,  key='kFPMI_tf_dmod2_sepaplot', enable_events=True)],
             [sg.Text('Which phase to plot?')],
-            [sg.Checkbox('I_fsb1(in_phase f1)',         key='kFPMI_pd2_Iphase_fsb1'),
-             sg.Checkbox('Q_fsb1(quadrature_phase f1)', key='kFPMI_pd2_Qphase_fsb1'),
-             sg.Checkbox('I_fsb2(in_phase f2)',         key='kFPMI_pd2_Iphase_fsb2'),
-             sg.Checkbox('Q_fsb2(quadrature_phase f2)', key='kFPMI_pd2_Qphase_fsb2'),],
+            [sg.Checkbox('I1',         key='kFPMI_pd2_Iphase_fsb1'),
+             sg.Checkbox('Q1', key='kFPMI_pd2_Qphase_fsb1'),
+             sg.Checkbox('I2',         key='kFPMI_pd2_Iphase_fsb2'),
+             sg.Checkbox('Q2', key='kFPMI_pd2_Qphase_fsb2'),],
     
             [sg.Text('if you need other demodulation frequency, use these settings bellow.')],
-            [sg.Checkbox('I_arbitraryfreq001',        key='kFPMI_pd2_Iphase_arbitraryfreq001'), 
-             sg.Checkbox('Q_arbitraryfreq001',        key='kFPMI_pd2_Qphase_arbitraryfreq001'), 
-             sg.Text('arbitraryfreq001 = '), sg.Input(key='kFPMI_pd2_arbitraryfreq001',        default_text='2*16.881M', enable_events=True),
-             sg.Text('label name = '),       sg.Input(key='kFPMI_pd2_arbitraryfreq001_name',   default_text='2f1',    enable_events=True)],
-            [sg.Checkbox('I_arbitraryfreq002',        key='kFPMI_pd2_Iphase_arbitraryfreq002'), 
-             sg.Checkbox('Q_arbitraryfreq002',        key='kFPMI_pd2_Qphase_arbitraryfreq002'), 
-             sg.Text('arbitraryfreq002 = '), sg.Input(key='kFPMI_pd2_arbitraryfreq002',        default_text='3*16.881M', enable_events=True),
-             sg.Text('label name = '),       sg.Input(key='kFPMI_pd2_arbitraryfreq002_name',   default_text='3f1',    enable_events=True)],
+            [sg.Checkbox('I_freq01',          key='kFPMI_pd2_Iphase_arbitraryfreq001'), 
+             sg.Checkbox('Q_freq01',          key='kFPMI_pd2_Qphase_arbitraryfreq001'), 
+             sg.Text('freq01 = '),   sg.Input(key='kFPMI_pd2_arbitraryfreq001',        default_text='2*16.881M', enable_events=True),
+             sg.Text('label name = '),         sg.Input(key='kFPMI_pd2_arbitraryfreq001_name',   default_text='2f1',    enable_events=True)],
+            [sg.Checkbox('I_freq02',          key='kFPMI_pd2_Iphase_arbitraryfreq002'), 
+             sg.Checkbox('Q_freq02',          key='kFPMI_pd2_Qphase_arbitraryfreq002'), 
+             sg.Text('freq02 = '),   sg.Input(key='kFPMI_pd2_arbitraryfreq002',        default_text='3*16.881M', enable_events=True),
+             sg.Text('label name = '),         sg.Input(key='kFPMI_pd2_arbitraryfreq002_name',   default_text='3f1',    enable_events=True)],
             [sg.Text('note:')],
-            [sg.Text('You can set the number of sidebands generated by the modulator in the OPTION tab(default num 1),')],
+            [sg.Text('You can set the number of sidebands generated by the modulator in the IFO_param tab(default num 3),')],
             [sg.Text('so if you want to demodulate at a frequency such as 2f1 or 3f1, increase the number of sidebands.')],
-            [sg.Text('Demodulation_phase'),sg.Input(key='kFPMI_pd2_demod_phase', default_text='0', enable_events=True)]
+            [sg.Text('Demodulation_phase [deg]'),    sg.Input(key='kFPMI_pd2_demod_phase', default_text='0', enable_events=True)]
             ]
 
 # select sw or tf
 kFPMI_sec_sw_setting = [
             
             [sg.Text('Select PD type.')],
-            [sg.Radio('Power detecter [W]','kFPMI_sw_RADIO', default=True,  key='kFPMI_issw_power', enable_events=True),
-             sg.Radio('Amplitud detecter', 'kFPMI_sw_RADIO', default=False, key='kFPMI_issw_amptd', enable_events=True),
+            [sg.Radio('Power detector [W]','kFPMI_sw_RADIO', default=True,  key='kFPMI_issw_power', enable_events=True),
+             sg.Radio('Amplitud detector', 'kFPMI_sw_RADIO', default=False, key='kFPMI_issw_amptd', enable_events=True),
              sg.Radio('Demodulated signal [A.U.]','kFPMI_sw_RADIO', default=False, key='kFPMI_issw_dmod1', enable_events=True)],
     
             ### pd0_setting_section
@@ -201,9 +201,9 @@ kFPMI_sec_sw_setting = [
 kFPMI_sec_tf_setting = [
             
             [sg.Text('Select PD type.')],
-            [sg.Radio('Power detecter [W]','kFPMI_tf_RADIO', default=True,  key='kFPMI_istf_power', enable_events=True),
-             #sg.Radio('Amplitud detecter', 'kFPMI_tf_RADIO', default=False, key='kFPMI_istf_amptd', enable_events=True),
-             sg.Radio('transfer function', 'kFPMI_tf_RADIO', default=False, key='kFPMI_istf_dmod2', enable_events=True)],
+            [sg.Radio('Power detector [W]','kFPMI_tf_RADIO', default=True,  key='kFPMI_istf_power', enable_events=True),
+             #sg.Radio('Amplitud detector', 'kFPMI_tf_RADIO', default=False, key='kFPMI_istf_amptd', enable_events=True),
+             sg.Radio('Demodulated signal', 'kFPMI_tf_RADIO', default=False, key='kFPMI_istf_dmod2', enable_events=True)],
 
             ### pd2_setting_section
             [collapse(kFPMI_sec_tf_power_setting, 'kFPMI_sec_tf_power_setting')],
@@ -223,7 +223,7 @@ kPRFPMI_sec_sw_power_setting = [
             [sg.Text('no advanced settings')]
             ]
 kPRFPMI_sec_sw_amptd_setting = [
-            # amp detecter
+            # amp detector
             [sg.Checkbox('CR field',          key='kPRFPMI_put_car_sw_amptd_flag'),
              sg.Checkbox('f1 SB field upper', key='kPRFPMI_put_f1u_sw_amptd_flag'),
              sg.Checkbox('f1 SB field lower', key='kPRFPMI_put_f1l_sw_amptd_flag'),
@@ -237,25 +237,25 @@ kPRFPMI_sec_sw_dmod1_setting = [
              sg.Radio('plot separately',        'RADIO_sw_dmod1_plot', default=True,  key='kPRFPMI_sw_dmod1_sepaplot', enable_events=True)],
             [sg.Text('Which phase to plot?')],
 
-            [sg.Checkbox('I_fsb1(in_phase f1)',         key='kPRFPMI_pd1_Iphase_fsb1'),
-             sg.Checkbox('Q_fsb1(quadrature_phase f1)', key='kPRFPMI_pd1_Qphase_fsb1'),
-             sg.Checkbox('I_fsb2(in_phase f2)',         key='kPRFPMI_pd1_Iphase_fsb2'),
-             sg.Checkbox('Q_fsb2(quadrature_phase f2)', key='kPRFPMI_pd1_Qphase_fsb2')],
+            [sg.Checkbox('I1',         key='kPRFPMI_pd1_Iphase_fsb1'),
+             sg.Checkbox('Q1', key='kPRFPMI_pd1_Qphase_fsb1'),
+             sg.Checkbox('I2',         key='kPRFPMI_pd1_Iphase_fsb2'),
+             sg.Checkbox('Q2', key='kPRFPMI_pd1_Qphase_fsb2')],
 
             [sg.Text('if you need other demodulation frequency, use these settings bellow.')],
-            [sg.Checkbox('I_arbitraryfreq001',        key='kPRFPMI_pd1_Iphase_arbitraryfreq001'), 
-             sg.Checkbox('Q_arbitraryfreq001',        key='kPRFPMI_pd1_Qphase_arbitraryfreq001'), 
-             sg.Text('arbitraryfreq001 = '), sg.Input(key='kPRFPMI_pd1_arbitraryfreq001',        default_text='2*16.881M', enable_events=True),
-             sg.Text('label name = '),       sg.Input(key='kPRFPMI_pd1_arbitraryfreq001_name',   default_text='2f1',    enable_events=True)],
-            [sg.Checkbox('I_arbitraryfreq002',        key='kPRFPMI_pd1_Iphase_arbitraryfreq002'), 
-             sg.Checkbox('Q_arbitraryfreq002',        key='kPRFPMI_pd1_Qphase_arbitraryfreq002'), 
-             sg.Text('arbitraryfreq002 = '), sg.Input(key='kPRFPMI_pd1_arbitraryfreq002',        default_text='3*16.881M', enable_events=True),
-             sg.Text('label name = '),       sg.Input(key='kPRFPMI_pd1_arbitraryfreq002_name',   default_text='3f1',    enable_events=True)],
+            [sg.Checkbox('I_freq01',          key='kPRFPMI_pd1_Iphase_arbitraryfreq001'), 
+             sg.Checkbox('Q_freq01',          key='kPRFPMI_pd1_Qphase_arbitraryfreq001'), 
+             sg.Text('freq01 = '),   sg.Input(key='kPRFPMI_pd1_arbitraryfreq001',        default_text='2*16.881M', enable_events=True),
+             sg.Text('label name = '),         sg.Input(key='kPRFPMI_pd1_arbitraryfreq001_name',   default_text='2f1',    enable_events=True)],
+            [sg.Checkbox('I_freq02',          key='kPRFPMI_pd1_Iphase_arbitraryfreq002'), 
+             sg.Checkbox('Q_freq02',          key='kPRFPMI_pd1_Qphase_arbitraryfreq002'), 
+             sg.Text('freq02 = '),   sg.Input(key='kPRFPMI_pd1_arbitraryfreq002',        default_text='3*16.881M', enable_events=True),
+             sg.Text('label name = '),         sg.Input(key='kPRFPMI_pd1_arbitraryfreq002_name',   default_text='3f1',    enable_events=True)],
             [sg.Text('note:')],
-            [sg.Text('You can set the number of sidebands generated by the modulator in the OPTION tab(default num 1),')],
+            [sg.Text('You can set the number of sidebands generated by the modulator in the IFO_param tab(default num 3),')],
             [sg.Text('so if you want to demodulate at a frequency such as 2f1 or 3f1, increase the number of sidebands.')],
     
-            [sg.Text('Demodulation_phase'),sg.Input(key='kPRFPMI_pd1_demod_phase', default_text='0', enable_events=True)]
+            [sg.Text('Demodulation_phase [deg]'),    sg.Input(key='kPRFPMI_pd1_demod_phase', default_text='0', enable_events=True)]
             ]
 
 # select tf_power or tf_dmod2
@@ -264,7 +264,7 @@ kPRFPMI_sec_tf_power_setting = [
             [sg.Text('no advanced settings')]
             ]
 kPRFPMI_sec_tf_amptd_setting = [
-            # amp detecter
+            # amp detector
             [sg.Checkbox('CR field',          key='kPRFPMI_put_car_tf_amptd_flag'),
              sg.Checkbox('f1 SB field upper', key='kPRFPMI_put_f1u_tf_amptd_flag'),
              sg.Checkbox('f1 SB field lower', key='kPRFPMI_put_f1l_tf_amptd_flag'),
@@ -278,32 +278,32 @@ kPRFPMI_sec_tf_dmod2_setting = [
              sg.Radio('plot separately',        'RADIO_tf_dmod2_plot', default=True,  key='kPRFPMI_tf_dmod2_sepaplot', enable_events=True)],
             [sg.Text('Which phase to plot?')],
 
-            [sg.Checkbox('I_fsb1(in_phase f1)',         key='kPRFPMI_pd2_Iphase_fsb1'),
-             sg.Checkbox('Q_fsb1(quadrature_phase f1)', key='kPRFPMI_pd2_Qphase_fsb1'),
-             sg.Checkbox('I_fsb2(in_phase f2)',         key='kPRFPMI_pd2_Iphase_fsb2'),
-             sg.Checkbox('Q_fsb2(quadrature_phase f2)', key='kPRFPMI_pd2_Qphase_fsb2'),],
+            [sg.Checkbox('I1',         key='kPRFPMI_pd2_Iphase_fsb1'),
+             sg.Checkbox('Q1', key='kPRFPMI_pd2_Qphase_fsb1'),
+             sg.Checkbox('I2',         key='kPRFPMI_pd2_Iphase_fsb2'),
+             sg.Checkbox('Q2', key='kPRFPMI_pd2_Qphase_fsb2'),],
     
             [sg.Text('if you need other demodulation frequency, use these settings bellow.')],
-            [sg.Checkbox('I_arbitraryfreq001',        key='kPRFPMI_pd2_Iphase_arbitraryfreq001'), 
-             sg.Checkbox('Q_arbitraryfreq001',        key='kPRFPMI_pd2_Qphase_arbitraryfreq001'), 
-             sg.Text('arbitraryfreq001 = '), sg.Input(key='kPRFPMI_pd2_arbitraryfreq001',        default_text='2*16.881M', enable_events=True),
-             sg.Text('label name = '),       sg.Input(key='kPRFPMI_pd2_arbitraryfreq001_name',   default_text='2f1',    enable_events=True)],
-            [sg.Checkbox('I_arbitraryfreq002',        key='kPRFPMI_pd2_Iphase_arbitraryfreq002'), 
-             sg.Checkbox('Q_arbitraryfreq002',        key='kPRFPMI_pd2_Qphase_arbitraryfreq002'), 
-             sg.Text('arbitraryfreq002 = '), sg.Input(key='kPRFPMI_pd2_arbitraryfreq002',        default_text='3*16.881M', enable_events=True),
-             sg.Text('label name = '),       sg.Input(key='kPRFPMI_pd2_arbitraryfreq002_name',   default_text='3f1',    enable_events=True)],
+            [sg.Checkbox('I_freq01',          key='kPRFPMI_pd2_Iphase_arbitraryfreq001'), 
+             sg.Checkbox('Q_freq01',          key='kPRFPMI_pd2_Qphase_arbitraryfreq001'), 
+             sg.Text('freq01 = '),   sg.Input(key='kPRFPMI_pd2_arbitraryfreq001',        default_text='2*16.881M', enable_events=True),
+             sg.Text('label name = '),         sg.Input(key='kPRFPMI_pd2_arbitraryfreq001_name',   default_text='2f1',    enable_events=True)],
+            [sg.Checkbox('I_freq02',          key='kPRFPMI_pd2_Iphase_arbitraryfreq002'), 
+             sg.Checkbox('Q_freq02',          key='kPRFPMI_pd2_Qphase_arbitraryfreq002'), 
+             sg.Text('freq02 = '),   sg.Input(key='kPRFPMI_pd2_arbitraryfreq002',        default_text='3*16.881M', enable_events=True),
+             sg.Text('label name = '),         sg.Input(key='kPRFPMI_pd2_arbitraryfreq002_name',   default_text='3f1',    enable_events=True)],
             [sg.Text('note:')],
-            [sg.Text('You can set the number of sidebands generated by the modulator in the OPTION tab(default num 1),')],
+            [sg.Text('You can set the number of sidebands generated by the modulator in the IFO_param tab(default num 3),')],
             [sg.Text('so if you want to demodulate at a frequency such as 2f1 or 3f1, increase the number of sidebands.')],
-            [sg.Text('Demodulation_phase'),sg.Input(key='kPRFPMI_pd2_demod_phase', default_text='0', enable_events=True)]
+            [sg.Text('Demodulation_phase [deg]'),    sg.Input(key='kPRFPMI_pd2_demod_phase', default_text='0', enable_events=True)]
             ]
 
 # select sw or tf
 kPRFPMI_sec_sw_setting = [
     
             [sg.Text('Select PD type.')],
-            [sg.Radio('Power detecter [W]','kPRFPMI_sw_RADIO', default=True,  key='kPRFPMI_issw_power', enable_events=True),
-             sg.Radio('Amplitud detecter', 'kPRFPMI_sw_RADIO', default=False, key='kPRFPMI_issw_amptd', enable_events=True),
+            [sg.Radio('Power detector [W]','kPRFPMI_sw_RADIO', default=True,  key='kPRFPMI_issw_power', enable_events=True),
+             sg.Radio('Amplitud detector', 'kPRFPMI_sw_RADIO', default=False, key='kPRFPMI_issw_amptd', enable_events=True),
              sg.Radio('Demodulated signal [A.U.]','kPRFPMI_sw_RADIO', default=False, key='kPRFPMI_issw_dmod1', enable_events=True)],
     
             ### pd0_setting_section
@@ -318,9 +318,9 @@ kPRFPMI_sec_sw_setting = [
 kPRFPMI_sec_tf_setting = [
     
             [sg.Text('Select PD type.')],
-            [sg.Radio('Power detecter [W]','kPRFPMI_tf_RADIO', default=True,  key='kPRFPMI_istf_power', enable_events=True),
-             #sg.Radio('Amplitud detecter', 'kPRFPMI_tf_RADIO', default=False, key='kPRFPMI_istf_amptd', enable_events=True),
-             sg.Radio('transfer function', 'kPRFPMI_tf_RADIO', default=False, key='kPRFPMI_istf_dmod2', enable_events=True)],
+            [sg.Radio('Power detector [W]','kPRFPMI_tf_RADIO', default=True,  key='kPRFPMI_istf_power', enable_events=True),
+             #sg.Radio('Amplitud detector', 'kPRFPMI_tf_RADIO', default=False, key='kPRFPMI_istf_amptd', enable_events=True),
+             sg.Radio('Demodulated signal', 'kPRFPMI_tf_RADIO', default=False, key='kPRFPMI_istf_dmod2', enable_events=True)],
 
             ### pd2_setting_section
             [collapse(kPRFPMI_sec_tf_power_setting, 'kPRFPMI_sec_tf_power_setting')],
@@ -339,7 +339,7 @@ kDRFPMI_sec_sw_power_setting = [
             [sg.Text('no advanced settings')]
             ]
 kDRFPMI_sec_sw_amptd_setting = [
-            # amp detecter
+            # amp detector
             [sg.Checkbox('CR field',          key='kDRFPMI_put_car_sw_amptd_flag'),
              sg.Checkbox('f1 SB field upper', key='kDRFPMI_put_f1u_sw_amptd_flag'),
              sg.Checkbox('f1 SB field lower', key='kDRFPMI_put_f1l_sw_amptd_flag'),
@@ -353,24 +353,25 @@ kDRFPMI_sec_sw_dmod1_setting = [
              sg.Radio('plot separately',        'RADIO_sw_dmod1_plot', default=True,  key='kDRFPMI_sw_dmod1_sepaplot', enable_events=True)],
             [sg.Text('Which phase to plot?')],
 
-            [sg.Checkbox('I_fsb1(in_phase f1)',         key='kDRFPMI_pd1_Iphase_fsb1'),
-             sg.Checkbox('Q_fsb1(quadrature_phase f1)', key='kDRFPMI_pd1_Qphase_fsb1'),
-             sg.Checkbox('I_fsb2(in_phase f2)',         key='kDRFPMI_pd1_Iphase_fsb2'),
-             sg.Checkbox('Q_fsb2(quadrature_phase f2)', key='kDRFPMI_pd1_Qphase_fsb2')],
-             # test
+            [sg.Checkbox('DC (not demodulated signal)', key='kDRFPMI_pd1_dphase_DC'),
+             sg.Checkbox('I1',         key='kDRFPMI_pd1_Iphase_fsb1'),
+             sg.Checkbox('Q1', key='kDRFPMI_pd1_Qphase_fsb1'),
+             sg.Checkbox('I2',         key='kDRFPMI_pd1_Iphase_fsb2'),
+             sg.Checkbox('Q2', key='kDRFPMI_pd1_Qphase_fsb2')],
+             
             [sg.Text('if you need other demodulation frequency, use these settings bellow.')],
-            [sg.Checkbox('I_arbitraryfreq001',        key='kDRFPMI_pd1_Iphase_arbitraryfreq001'), 
-             sg.Checkbox('Q_arbitraryfreq001',        key='kDRFPMI_pd1_Qphase_arbitraryfreq001'), 
-             sg.Text('arbitraryfreq001 = '), sg.Input(key='kDRFPMI_pd1_arbitraryfreq001',        default_text='2*16.881M', enable_events=True),
-             sg.Text('label name = '),       sg.Input(key='kDRFPMI_pd1_arbitraryfreq001_name',   default_text='2f1',    enable_events=True)],
-            [sg.Checkbox('I_arbitraryfreq002',        key='kDRFPMI_pd1_Iphase_arbitraryfreq002'), 
-             sg.Checkbox('Q_arbitraryfreq002',        key='kDRFPMI_pd1_Qphase_arbitraryfreq002'), 
-             sg.Text('arbitraryfreq002 = '), sg.Input(key='kDRFPMI_pd1_arbitraryfreq002',        default_text='3*16.881M', enable_events=True),
-             sg.Text('label name = '),       sg.Input(key='kDRFPMI_pd1_arbitraryfreq002_name',   default_text='3f1',    enable_events=True)],
-            [sg.Text('note:')],
-            [sg.Text('You can set the number of sidebands generated by the modulator in the OPTION tab(default num 1),')],
+            [sg.Checkbox('I_freq01',          key='kDRFPMI_pd1_Iphase_arbitraryfreq001'), 
+             sg.Checkbox('Q_freq01',          key='kDRFPMI_pd1_Qphase_arbitraryfreq001'), 
+             sg.Text('freq01 = '),   sg.Input(key='kDRFPMI_pd1_arbitraryfreq001',        default_text='2*16.881M', enable_events=True),
+             sg.Text('label name = '),         sg.Input(key='kDRFPMI_pd1_arbitraryfreq001_name',   default_text='2f1',    enable_events=True)],
+            [sg.Checkbox('I_freq02',          key='kDRFPMI_pd1_Iphase_arbitraryfreq002'), 
+             sg.Checkbox('Q_freq02',          key='kDRFPMI_pd1_Qphase_arbitraryfreq002'), 
+             sg.Text('freq02 = '),   sg.Input(key='kDRFPMI_pd1_arbitraryfreq002',        default_text='3*16.881M', enable_events=True),
+             sg.Text('label name = '),         sg.Input(key='kDRFPMI_pd1_arbitraryfreq002_name',   default_text='3f1',    enable_events=True)],
+            [sg.Text('note:')], 
+            [sg.Text('You can set the number of sidebands generated by the modulator in the IFO_param tab(default num 3),')],
             [sg.Text('so if you want to demodulate at a frequency such as 2f1 or 3f1, increase the number of sidebands.')],
-            [sg.Text('Demodulation_phase'),    sg.Input(key='kDRFPMI_pd1_demod_phase', default_text='0', enable_events=True)]
+            [sg.Text('Demodulation_phase [deg]'),    sg.Input(key='kDRFPMI_pd1_demod_phase', default_text='0', enable_events=True)]
             ]
 
 # select tf_power or tf_dmod2
@@ -379,7 +380,7 @@ kDRFPMI_sec_tf_power_setting = [
 
             ]
 kDRFPMI_sec_tf_amptd_setting = [
-            # amp detecter
+            # amp detector
             [sg.Checkbox('CR field',          key='kDRFPMI_put_car_tf_amptd_flag'),
              sg.Checkbox('f1 SB field upper', key='kDRFPMI_put_f1u_tf_amptd_flag'),
              sg.Checkbox('f1 SB field lower', key='kDRFPMI_put_f1l_tf_amptd_flag'),
@@ -393,32 +394,32 @@ kDRFPMI_sec_tf_dmod2_setting = [
              sg.Radio('plot separately',        'RADIO_tf_dmod2_plot', default=True,  key='kDRFPMI_tf_dmod2_sepaplot', enable_events=True)],
             [sg.Text('Which phase to plot?')],
 
-            [sg.Checkbox('I_fsb1(in_phase f1)',         key='kDRFPMI_pd2_Iphase_fsb1'),
-             sg.Checkbox('Q_fsb1(quadrature_phase f1)', key='kDRFPMI_pd2_Qphase_fsb1'),
-             sg.Checkbox('I_fsb2(in_phase f2)',         key='kDRFPMI_pd2_Iphase_fsb2'),
-             sg.Checkbox('Q_fsb2(quadrature_phase f2)', key='kDRFPMI_pd2_Qphase_fsb2'),],
+            [sg.Checkbox('I1',         key='kDRFPMI_pd2_Iphase_fsb1'),
+             sg.Checkbox('Q1', key='kDRFPMI_pd2_Qphase_fsb1'),
+             sg.Checkbox('I2',         key='kDRFPMI_pd2_Iphase_fsb2'),
+             sg.Checkbox('Q2', key='kDRFPMI_pd2_Qphase_fsb2'),],
     
             [sg.Text('if you need other demodulation frequency, use these settings bellow.')],
-            [sg.Checkbox('I_arbitraryfreq001',        key='kDRFPMI_pd2_Iphase_arbitraryfreq001'), 
-             sg.Checkbox('Q_arbitraryfreq001',        key='kDRFPMI_pd2_Qphase_arbitraryfreq001'), 
-             sg.Text('arbitraryfreq001 = '), sg.Input(key='kDRFPMI_pd2_arbitraryfreq001',        default_text='2*16.881M', enable_events=True),
-             sg.Text('label name = '),       sg.Input(key='kDRFPMI_pd2_arbitraryfreq001_name',   default_text='2f1',    enable_events=True)],
-            [sg.Checkbox('I_arbitraryfreq002',        key='kDRFPMI_pd2_Iphase_arbitraryfreq002'), 
-             sg.Checkbox('Q_arbitraryfreq002',        key='kDRFPMI_pd2_Qphase_arbitraryfreq002'), 
-             sg.Text('arbitraryfreq002 = '), sg.Input(key='kDRFPMI_pd2_arbitraryfreq002',        default_text='3*16.881M', enable_events=True),
-             sg.Text('label name = '),       sg.Input(key='kDRFPMI_pd2_arbitraryfreq002_name',   default_text='3f1',    enable_events=True)],
+            [sg.Checkbox('I_freq01',          key='kDRFPMI_pd2_Iphase_arbitraryfreq001'), 
+             sg.Checkbox('Q_freq01',          key='kDRFPMI_pd2_Qphase_arbitraryfreq001'), 
+             sg.Text('freq01 = '),   sg.Input(key='kDRFPMI_pd2_arbitraryfreq001',        default_text='2*16.881M', enable_events=True),
+             sg.Text('label name = '),         sg.Input(key='kDRFPMI_pd2_arbitraryfreq001_name',   default_text='2f1',    enable_events=True)],
+            [sg.Checkbox('I_freq02',          key='kDRFPMI_pd2_Iphase_arbitraryfreq002'), 
+             sg.Checkbox('Q_freq02',          key='kDRFPMI_pd2_Qphase_arbitraryfreq002'), 
+             sg.Text('freq02 = '),   sg.Input(key='kDRFPMI_pd2_arbitraryfreq002',        default_text='3*16.881M', enable_events=True),
+             sg.Text('label name = '),         sg.Input(key='kDRFPMI_pd2_arbitraryfreq002_name',   default_text='3f1',    enable_events=True)],
             [sg.Text('note:')],
-            [sg.Text('You can set the number of sidebands generated by the modulator in the OPTION tab(default num 1),')],
+            [sg.Text('You can set the number of sidebands generated by the modulator in the IFO_param tab(default num 3),')],
             [sg.Text('so if you want to demodulate at a frequency such as 2f1 or 3f1, increase the number of sidebands.')],
-            [sg.Text('Demodulation_phase'),sg.Input(key='kDRFPMI_pd2_demod_phase', default_text='0', enable_events=True)]
+            [sg.Text('Demodulation_phase [deg]'),    sg.Input(key='kDRFPMI_pd2_demod_phase', default_text='0', enable_events=True)]
             ]
 
 # select sw or tf
 kDRFPMI_sec_sw_setting = [
     
             [sg.Text('Select PD type.')],
-            [sg.Radio('Power detecter [W]','kDRFPMI_sw_RADIO', default=True,  key='kDRFPMI_issw_power', enable_events=True),
-             sg.Radio('Amplitud detecter', 'kDRFPMI_sw_RADIO', default=False, key='kDRFPMI_issw_amptd', enable_events=True),
+            [sg.Radio('Power detector [W]','kDRFPMI_sw_RADIO', default=True,  key='kDRFPMI_issw_power', enable_events=True),
+             sg.Radio('Amplitud detector', 'kDRFPMI_sw_RADIO', default=False, key='kDRFPMI_issw_amptd', enable_events=True),
              sg.Radio('Demodulated signal [A.U.]','kDRFPMI_sw_RADIO', default=False, key='kDRFPMI_issw_dmod1', enable_events=True)],
     
             ### pd0_setting_section
@@ -433,9 +434,9 @@ kDRFPMI_sec_sw_setting = [
 kDRFPMI_sec_tf_setting = [
     
             [sg.Text('Select PD type.')],
-            [sg.Radio('Power detecter [W]', 'kDRFPMI_tf_RADIO', default=True,  key='kDRFPMI_istf_power', enable_events=True),
-             #sg.Radio('Amplitud detecter',  'kDRFPMI_tf_RADIO', default=False, key='kDRFPMI_istf_amptd', enable_events=True),
-             sg.Radio('transfer function',  'kDRFPMI_tf_RADIO', default=False, key='kDRFPMI_istf_dmod2', enable_events=True)],
+            [sg.Radio('Power detector [W]', 'kDRFPMI_tf_RADIO', default=True,  key='kDRFPMI_istf_power', enable_events=True),
+             #sg.Radio('Amplitud detector',  'kDRFPMI_tf_RADIO', default=False, key='kDRFPMI_istf_amptd', enable_events=True),
+             sg.Radio('Demodulated signal',  'kDRFPMI_tf_RADIO', default=False, key='kDRFPMI_istf_dmod2', enable_events=True)],
 
             ### pd2_setting_section
             [collapse(kDRFPMI_sec_tf_power_setting, 'kDRFPMI_sec_tf_power_setting')],
@@ -455,7 +456,7 @@ kMI_sec_sw_power_setting = [
 
             ]
 kMI_sec_sw_amptd_setting = [
-            # amp detecter
+            # amp detector
             [sg.Checkbox('CR field',          key='kMI_put_car_sw_amptd_flag'),
              sg.Checkbox('f1 SB field upper', key='kMI_put_f1u_sw_amptd_flag'),
              sg.Checkbox('f1 SB field lower', key='kMI_put_f1l_sw_amptd_flag'),
@@ -469,24 +470,24 @@ kMI_sec_sw_dmod1_setting = [
              sg.Radio('plot separately',        'RADIO_sw_dmod1_plot', default=True,  key='kMI_sw_dmod1_sepaplot', enable_events=True)],
             [sg.Text('Which phase to plot?')],
 
-            [sg.Checkbox('I_fsb1(in_phase f1)',         key='kMI_pd1_Iphase_fsb1'),
-             sg.Checkbox('Q_fsb1(quadrature_phase f1)', key='kMI_pd1_Qphase_fsb1'),
-             sg.Checkbox('I_fsb2(in_phase f2)',         key='kMI_pd1_Iphase_fsb2'),
-             sg.Checkbox('Q_fsb2(quadrature_phase f2)', key='kMI_pd1_Qphase_fsb2')],
+            [sg.Checkbox('I1',         key='kMI_pd1_Iphase_fsb1'),
+             sg.Checkbox('Q1', key='kMI_pd1_Qphase_fsb1'),
+             sg.Checkbox('I2',         key='kMI_pd1_Iphase_fsb2'),
+             sg.Checkbox('Q2', key='kMI_pd1_Qphase_fsb2')],
             [sg.Text('if you need other demodulation frequency, use these settings bellow.')],
-            [sg.Checkbox('I_arbitraryfreq001',        key='kMI_pd1_Iphase_arbitraryfreq001'), 
-             sg.Checkbox('Q_arbitraryfreq001',        key='kMI_pd1_Qphase_arbitraryfreq001'), 
-             sg.Text('arbitraryfreq001 = '), sg.Input(key='kMI_pd1_arbitraryfreq001',        default_text='2*16.881M', enable_events=True),
-             sg.Text('label name = '),       sg.Input(key='kMI_pd1_arbitraryfreq001_name',   default_text='2f1',    enable_events=True)],
-            [sg.Checkbox('I_arbitraryfreq002',        key='kMI_pd1_Iphase_arbitraryfreq002'), 
-             sg.Checkbox('Q_arbitraryfreq002',        key='kMI_pd1_Qphase_arbitraryfreq002'), 
-             sg.Text('arbitraryfreq002 = '), sg.Input(key='kMI_pd1_arbitraryfreq002',        default_text='3*16.881M', enable_events=True),
-             sg.Text('label name = '),       sg.Input(key='kMI_pd1_arbitraryfreq002_name',   default_text='3f1',    enable_events=True)],
+            [sg.Checkbox('I_freq01',          key='kMI_pd1_Iphase_arbitraryfreq001'), 
+             sg.Checkbox('Q_freq01',          key='kMI_pd1_Qphase_arbitraryfreq001'), 
+             sg.Text('freq01 = '),   sg.Input(key='kMI_pd1_arbitraryfreq001',        default_text='2*16.881M', enable_events=True),
+             sg.Text('label name = '),         sg.Input(key='kMI_pd1_arbitraryfreq001_name',   default_text='2f1',    enable_events=True)],
+            [sg.Checkbox('I_freq02',          key='kMI_pd1_Iphase_arbitraryfreq002'), 
+             sg.Checkbox('Q_freq02',          key='kMI_pd1_Qphase_arbitraryfreq002'), 
+             sg.Text('freq02 = '),   sg.Input(key='kMI_pd1_arbitraryfreq002',        default_text='3*16.881M', enable_events=True),
+             sg.Text('label name = '),         sg.Input(key='kMI_pd1_arbitraryfreq002_name',   default_text='3f1',    enable_events=True)],
             [sg.Text('note:')],
-            [sg.Text('You can set the number of sidebands generated by the modulator in the OPTION tab(default num 1),')],
+            [sg.Text('You can set the number of sidebands generated by the modulator in the IFO_param tab(default num 3),')],
             [sg.Text('so if you want to demodulate at a frequency such as 2f1 or 3f1, increase the number of sidebands.')],
     
-            [sg.Text('Demodulation_phase'),sg.Input(key='kMI_pd1_demod_phase', default_text='0', enable_events=True)]
+            [sg.Text('Demodulation_phase [deg]'),    sg.Input(key='kMI_pd1_demod_phase', default_text='0', enable_events=True)]
             ]
 
 # select tf_power or tf_dmod2
@@ -495,7 +496,7 @@ kMI_sec_tf_power_setting = [
 
             ]
 kMI_sec_tf_amptd_setting = [
-            # amp detecter
+            # amp detector
             [sg.Checkbox('CR field',          key='kMI_put_car_tf_amptd_flag'),
              sg.Checkbox('f1 SB field upper', key='kMI_put_f1u_tf_amptd_flag'),
              sg.Checkbox('f1 SB field lower', key='kMI_put_f1l_tf_amptd_flag'),
@@ -509,32 +510,32 @@ kMI_sec_tf_dmod2_setting = [
              sg.Radio('plot separately',               'RADIO_tf_dmod2_plot', default=True,  key='kMI_tf_dmod2_sepaplot', enable_events=True)],
             [sg.Text('Which phase to plot?')],
 
-            [sg.Checkbox('I_fsb1(in_phase f1)',         key='kMI_pd2_Iphase_fsb1'),
-             sg.Checkbox('Q_fsb1(quadrature_phase f1)', key='kMI_pd2_Qphase_fsb1'),
-             sg.Checkbox('I_fsb2(in_phase f2)',         key='kMI_pd2_Iphase_fsb2'),
-             sg.Checkbox('Q_fsb2(quadrature_phase f2)', key='kMI_pd2_Qphase_fsb2'),],
+            [sg.Checkbox('I1',         key='kMI_pd2_Iphase_fsb1'),
+             sg.Checkbox('Q1', key='kMI_pd2_Qphase_fsb1'),
+             sg.Checkbox('I2',         key='kMI_pd2_Iphase_fsb2'),
+             sg.Checkbox('Q2', key='kMI_pd2_Qphase_fsb2'),],
     
             [sg.Text('if you need other demodulation frequency, use these settings bellow.')],
-            [sg.Checkbox('I_arbitraryfreq001',        key='kMI_pd2_Iphase_arbitraryfreq001'), 
-             sg.Checkbox('Q_arbitraryfreq001',        key='kMI_pd2_Qphase_arbitraryfreq001'), 
-             sg.Text('arbitraryfreq001 = '), sg.Input(key='kMI_pd2_arbitraryfreq001',        default_text='2*16.881M', enable_events=True),
-             sg.Text('label name = '),       sg.Input(key='kMI_pd2_arbitraryfreq001_name',   default_text='2f1',    enable_events=True)],
-            [sg.Checkbox('I_arbitraryfreq002',        key='kMI_pd2_Iphase_arbitraryfreq002'), 
-             sg.Checkbox('Q_arbitraryfreq002',        key='kMI_pd2_Qphase_arbitraryfreq002'), 
-             sg.Text('arbitraryfreq002 = '), sg.Input(key='kMI_pd2_arbitraryfreq002',        default_text='3*16.881M', enable_events=True),
-             sg.Text('label name = '),       sg.Input(key='kMI_pd2_arbitraryfreq002_name',   default_text='3f1',    enable_events=True)],
+            [sg.Checkbox('I_freq01',          key='kMI_pd2_Iphase_arbitraryfreq001'), 
+             sg.Checkbox('Q_freq01',          key='kMI_pd2_Qphase_arbitraryfreq001'), 
+             sg.Text('freq01 = '),   sg.Input(key='kMI_pd2_arbitraryfreq001',        default_text='2*16.881M', enable_events=True),
+             sg.Text('label name = '),         sg.Input(key='kMI_pd2_arbitraryfreq001_name',   default_text='2f1',    enable_events=True)],
+            [sg.Checkbox('I_freq02',          key='kMI_pd2_Iphase_arbitraryfreq002'), 
+             sg.Checkbox('Q_freq02',          key='kMI_pd2_Qphase_arbitraryfreq002'), 
+             sg.Text('freq02 = '),   sg.Input(key='kMI_pd2_arbitraryfreq002',        default_text='3*16.881M', enable_events=True),
+             sg.Text('label name = '),         sg.Input(key='kMI_pd2_arbitraryfreq002_name',   default_text='3f1',    enable_events=True)],
             [sg.Text('note:')],
-            [sg.Text('You can set the number of sidebands generated by the modulator in the OPTION tab(default num 1),')],
+            [sg.Text('You can set the number of sidebands generated by the modulator in the IFO_param tab(default num 3),')],
             [sg.Text('so if you want to demodulate at a frequency such as 2f1 or 3f1, increase the number of sidebands.')],
-            [sg.Text('Demodulation_phase'),sg.Input(key='kMI_pd2_demod_phase', default_text='0', enable_events=True)]
+            [sg.Text('Demodulation_phase [deg]'),    sg.Input(key='kMI_pd2_demod_phase', default_text='0', enable_events=True)]
             ]
 
 # select sw or tf
 kMI_sec_sw_setting = [
     
             [sg.Text('Select PD type.')],
-            [sg.Radio('Power detecter [W]','kMI_sw_RADIO', default=True,  key='kMI_issw_power', enable_events=True),
-             sg.Radio('Amplitud detecter', 'kMI_sw_RADIO', default=False, key='kMI_issw_amptd', enable_events=True),
+            [sg.Radio('Power detector [W]','kMI_sw_RADIO', default=True,  key='kMI_issw_power', enable_events=True),
+             sg.Radio('Amplitud detector', 'kMI_sw_RADIO', default=False, key='kMI_issw_amptd', enable_events=True),
              sg.Radio('Demodulated signal [A.U.]','kMI_sw_RADIO', default=False, key='kMI_issw_dmod1', enable_events=True)],
     
             ### pd0_setting_section
@@ -549,9 +550,9 @@ kMI_sec_sw_setting = [
 kMI_sec_tf_setting = [
     
             [sg.Text('Select PD type.')],
-            [sg.Radio('Power detecter [W]','kMI_tf_RADIO', default=True,  key='kMI_istf_power', enable_events=True),
-             #sg.Radio('Amplitud detecter', 'kMI_tf_RADIO', default=False, key='kMI_istf_amptd', enable_events=True),
-             sg.Radio('transfer function', 'kMI_tf_RADIO', default=False, key='kMI_istf_dmod2', enable_events=True)],
+            [sg.Radio('Power detector [W]','kMI_tf_RADIO', default=True,  key='kMI_istf_power', enable_events=True),
+             #sg.Radio('Amplitud detector', 'kMI_tf_RADIO', default=False, key='kMI_istf_amptd', enable_events=True),
+             sg.Radio('Demodulated signal', 'kMI_tf_RADIO', default=False, key='kMI_istf_dmod2', enable_events=True)],
 
             ### pd2_setting_section
             [collapse(kMI_sec_tf_power_setting, 'kMI_sec_tf_power_setting')],
@@ -575,20 +576,20 @@ kFPMI_layout = [
 # Drawing
 [sg.Column(kFPMI_drawing_size_buttons, justification="right")],
 ### select section sw or tf / power, dmod1 or dmod2
-[sg.Text('1. Select simulation mode.', font=('System',20))],
+[sg.Text('1. Select simulation mode.', font=('default',20))],
 [sg.Radio('Sweep',                  'HOW_SIMULATE01', default=True,  key='kFPMI_issw', enable_events=True),
- sg.Radio('Transfer', 'HOW_SIMULATE01', default=False, key='kFPMI_istf', enable_events=True)],
+ sg.Radio('Transfer function', 'HOW_SIMULATE01', default=False, key='kFPMI_istf', enable_events=True)],
 
 [collapse(kFPMI_sec_sw_setting, 'kFPMI_sec_sw_setting')],
 [collapse(kFPMI_sec_tf_setting, 'kFPMI_sec_tf_setting')],
 
 # select DARM, CARM or BS
-[sg.Text('2. Select which DoF to move', font=('System',20))],
+[sg.Text('2. Select which DoF to move', font=('default',20))],
 [sg.Text("note: Please do not type DoF, just select it from choices.")],
 [sg.Text('　　DoF'),sg.Combo(('DARM', 'CARM', 'BS'), size=(20,1), default_value='DARM', key='kFPMI_dof')], #sg.comboを使う時にはサイズを指定するべき
 
 ## PDs checkbox
-[sg.Text('3. Select port (see the top figure)', font=('System',20))],#図と関連あるとかく
+[sg.Text('3. Select port (see the top figure)', font=('default',20))],#図と関連あるとかく
 
 [sg.Checkbox('REFL', default=True, key='kFPMI_REFL'), sg.Checkbox('AS',    default=True, key='kFPMI_AS'),
 sg.Checkbox('nTMSY', default=True, key='kFPMI_nTMSY'),sg.Checkbox('nTMSX', default=True, key='kFPMI_nTMSX')],
@@ -619,19 +620,19 @@ kPRFPMI_layout = [
 # Drawing
 [sg.Column(kPRFPMI_drawing_size_buttons, justification="right")],
 ### select section sw or tf / power, dmod1 or dmod2
-[sg.Text('1. Select simulation mode.', font=('System',20))],
+[sg.Text('1. Select simulation mode.', font=('default',20))],
 [sg.Radio('Sweep',                  'HOW_SIMULATE01', default=True,  key='kPRFPMI_issw', enable_events=True),
- sg.Radio('Transfer', 'HOW_SIMULATE01', default=False, key='kPRFPMI_istf', enable_events=True)],
+ sg.Radio('Transfer function', 'HOW_SIMULATE01', default=False, key='kPRFPMI_istf', enable_events=True)],
 
 [collapse(kPRFPMI_sec_sw_setting, 'kPRFPMI_sec_sw_setting')],
 [collapse(kPRFPMI_sec_tf_setting, 'kPRFPMI_sec_tf_setting')],
 
 # select DARM, CARM or BS
-[sg.Text('2. Select which DoF to move', font=('System',20))],
+[sg.Text('2. Select which DoF to move', font=('default',20))],
 [sg.Text('　　DoF'),sg.Combo(('DARM', 'CARM', 'BS', 'PRCL'), size=(20,1), default_value='DARM', key='kPRFPMI_dof')], #sg.comboを使う時にはサイズを指定するべき
 
 ## PDs checkbox
-[sg.Text('3. Select port (see the top figure)', font=('System',20))],#図と関連あるとかく
+[sg.Text('3. Select port (see the top figure)', font=('default',20))],#図と関連あるとかく
 
 [sg.Checkbox('REFL', default=True, key='kPRFPMI_REFL'), sg.Checkbox('AS',    default=True, key='kPRFPMI_AS'),
  sg.Checkbox('POP',  default=True, key='kPRFPMI_POP'),
@@ -666,19 +667,19 @@ kDRFPMI_layout = [
 # Drawing
 [sg.Column(kDRFPMI_drawing_size_buttons, justification="right")],
 ### select section sw or tf / power, dmod1 or dmod2
-[sg.Text('1. Select simulation mode.', font=('System',20))],
+[sg.Text('1. Select simulation mode.', font=('default',20))],
 [sg.Radio('Sweep',                  'HOW_SIMULATE01', default=True,  key='kDRFPMI_issw', enable_events=True),
- sg.Radio('Transfer', 'HOW_SIMULATE01', default=False, key='kDRFPMI_istf', enable_events=True)],
+ sg.Radio('Transfer function', 'HOW_SIMULATE01', default=False, key='kDRFPMI_istf', enable_events=True)],
 
 [collapse(kDRFPMI_sec_sw_setting, 'kDRFPMI_sec_sw_setting')],
 [collapse(kDRFPMI_sec_tf_setting, 'kDRFPMI_sec_tf_setting')],
 
 # select DARM, CARM or BS
-[sg.Text('2. Select which DoF to move', font=('System',20))],
+[sg.Text('2. Select which DoF to move', font=('default',20))],
 [sg.Text('　　DoF'),sg.Combo(('DARM', 'CARM', 'BS', 'PRCL', 'SRCL'), size=(20,1), default_value='DARM', key='kDRFPMI_dof')], #sg.comboを使う時にはサイズを指定するべき
 
 ## PDs checkbox
-[sg.Text('3. Select port (see the top figure)', font=('System',20))],#図と関連あるとかく
+[sg.Text('3. Select port (see the top figure)', font=('default',20))],#図と関連あるとかく
 
 [sg.Checkbox('REFL', default=True, key='kDRFPMI_REFL'), sg.Checkbox('AS',   default=True, key='kDRFPMI_AS'),
  sg.Checkbox('POP',  default=True, key='kDRFPMI_POP'),
@@ -717,19 +718,19 @@ kMI_layout = [
 # Drawing
 [sg.Column(kMI_drawing_size_buttons, justification="right")],
 ### select section sw or tf / power, dmod1 or dmod2
-[sg.Text('1. Select simulation mode.', font=('System',20))],
+[sg.Text('1. Select simulation mode.', font=('default',20))],
 [sg.Radio('Sweep',    'HOW_SIMULATE01', default=True,  key='kMI_issw', enable_events=True),
- sg.Radio('Transfer', 'HOW_SIMULATE01', default=False, key='kMI_istf', enable_events=True)],
+ sg.Radio('Transfer function', 'HOW_SIMULATE01', default=False, key='kMI_istf', enable_events=True)],
 
 [collapse(kMI_sec_sw_setting, 'kMI_sec_sw_setting')],
 [collapse(kMI_sec_tf_setting, 'kMI_sec_tf_setting')],
 
 # select DARM, CARM or BS
-[sg.Text('2. Select which DoF to move', font=('System',20))],
+[sg.Text('2. Select which DoF to move', font=('default',20))],
 [sg.Text('　　DoF'),sg.Combo(('BS', ''), size=(20,1), default_value='BS', key='kMI_dof')], #sg.comboを使う時にはサイズを指定するべき # BSだけだとなぜか'B'になるエラーがある
 
 ## PDs checkbox
-[sg.Text('3. Select port (see the top figure)', font=('System',20))],#図と関連あるとかく
+[sg.Text('3. Select port (see the top figure)', font=('default',20))],#図と関連あるとかく
 [sg.Checkbox('REFL', default=True, key='kMI_REFL'), sg.Checkbox('AS',    default=True, key='kMI_AS')],
 [sg.Checkbox('n0',    key='kMI_n0'),
  sg.Checkbox('n_eo1', key='kMI_n_eo1'),sg.Checkbox('n_eo2', key='kMI_n_eo2'),
@@ -747,25 +748,47 @@ kMI_layout = [
 ]
 
 ##################################
-### EXTRA OPTION TAB
+### EXTRA IFO_param TAB
 ##################################
-extra_option_tab =  [
+extra_ifo_param_tab =  [
                 #other settings
-                [sg.Text('laser_power [W]'),          sg.Input(key='k_inf_c_laser_power'             ,default_text='1')],
+                [sg.Text('laser_power [W]'),                 sg.Input(key='k_inf_c_laser_power'              ,default_text='1'        ,enable_events=True)],
                 # future task
                 [sg.Text('note: Reflectance and transmittance are values between 0 and 1.')],
-                [sg.Text('ITM mirror reflectance'),  sg.Input(key='k_inf_c_ITM_mirror_reflectance' , default_text='0.996'   , enable_events=True)],
-                [sg.Text('ITM mirror transmittance'), sg.Input(key='k_inf_c_ITM_mirror_transmittance', default_text='0.004'   , enable_events=True)],
-                [sg.Text('ETM mirror reflectance'),  sg.Input(key='k_inf_c_ETM_mirror_reflectance' , default_text='0.999995', enable_events=True)],
-                [sg.Text('ETM mirror transmittance'), sg.Input(key='k_inf_c_ETM_mirror_transmittance', default_text='5e-06'   , enable_events=True)],
+                # Transmittance
+                [sg.Text('BS   mirror power transmittance'), sg.Input(key='k_inf_c_mibs_mirror_transmittance', default_text='0.5'     , enable_events=True)],
+                [sg.Text('ITMX mirror power transmittance'), sg.Input(key='k_inf_c_itmx_mirror_transmittance', default_text='0.004'   , enable_events=True)],
+                [sg.Text('ITMY mirror power transmittance'), sg.Input(key='k_inf_c_itmy_mirror_transmittance', default_text='0.004'   , enable_events=True)],
+                [sg.Text('ETMX mirror power transmittance'), sg.Input(key='k_inf_c_etmx_mirror_transmittance', default_text='5e-06'   , enable_events=True)],
+                [sg.Text('ETMY mirror power transmittance'), sg.Input(key='k_inf_c_etmy_mirror_transmittance', default_text='5e-06'   , enable_events=True)],
+                [sg.Text('PRM  mirror power transmittance'), sg.Input(key='k_inf_c_prm_mirror_transmittance' , default_text='0.1'     , enable_events=True)],
+                [sg.Text('SRM  mirror power transmittance'), sg.Input(key='k_inf_c_srm_mirror_transmittance' , default_text='0.1536'  , enable_events=True)],
+                #       PRC SRC
+                [sg.Text('PR2  mirror power transmittance'), sg.Input(key='k_inf_c_pr2_mirror_transmittance' , default_text='500e-6'  , enable_events=True)],
+                [sg.Text('PR3  mirror power transmittance'), sg.Input(key='k_inf_c_pr3_mirror_transmittance' , default_text='50e-6'   , enable_events=True)],
+                [sg.Text('SR2  mirror power transmittance'), sg.Input(key='k_inf_c_sr2_mirror_transmittance' , default_text='500e-6'  , enable_events=True)],
+                [sg.Text('SR3  mirror power transmittance'), sg.Input(key='k_inf_c_sr3_mirror_transmittance' , default_text='50e-6'   , enable_events=True)],
 
-                [sg.Text('PRC each mirror power loss'),     sg.Input(key='k_inf_c_prc_each_mirror_loss'    , default_text='45e-6'   , enable_events=True)],
-                [sg.Text('SRC each mirror power loss'),     sg.Input(key='k_inf_c_src_each_mirror_loss'    , default_text='45e-6'   , enable_events=True)],
+                # loss
+                [sg.Text('BS   mirror power loss'),          sg.Input(key='k_inf_c_mibs_mirror_loss'         , default_text='0'       , enable_events=True)],
+                [sg.Text('ITMX mirror power loss'),          sg.Input(key='k_inf_c_itmx_mirror_loss'         , default_text='0'       , enable_events=True)],
+                [sg.Text('ITMY mirror power loss'),          sg.Input(key='k_inf_c_itmy_mirror_loss'         , default_text='0'       , enable_events=True)],
+                [sg.Text('ETMX mirror power loss'),          sg.Input(key='k_inf_c_etmx_mirror_loss'         , default_text='0'       , enable_events=True)],
+                [sg.Text('ETMY mirror power loss'),          sg.Input(key='k_inf_c_etmy_mirror_loss'         , default_text='0'       , enable_events=True)],
+                [sg.Text('PRM  mirror power loss'),          sg.Input(key='k_inf_c_prm_mirror_loss'          , default_text='45e-6'   , enable_events=True)],
+                [sg.Text('SRM  mirror power loss'),          sg.Input(key='k_inf_c_srm_mirror_loss'          , default_text='45e-6'   , enable_events=True)],
+                #       PRC SRC
+                [sg.Text('PR2  mirror power loss'),          sg.Input(key='k_inf_c_pr2_mirror_loss'          , default_text='45e-6'  , enable_events=True)],
+                [sg.Text('PR3  mirror power loss'),          sg.Input(key='k_inf_c_pr3_mirror_loss'          , default_text='45e-6'   , enable_events=True)],
+                [sg.Text('SR2  mirror power loss'),          sg.Input(key='k_inf_c_sr2_mirror_loss'          , default_text='45e-6'  , enable_events=True)],
+                [sg.Text('SR3  mirror power loss'),          sg.Input(key='k_inf_c_sr3_mirror_loss'          , default_text='45e-6'   , enable_events=True)],
 
-                [sg.Text('modulation f1 frequency'),  sg.Input(key='k_inf_c_f1_mod_frequency'        , default_text='16.881M' , enable_events=True)],
-                [sg.Text('modulation f2 frequency'),  sg.Input(key='k_inf_c_f2_mod_frequency'        , default_text='45.0159M', enable_events=True)],
+                [sg.Text('modulation f1 frequency'),                 sg.Input(key='k_inf_c_f1_mod_frequency'        , default_text='16.881M' , enable_events=True)],
+                [sg.Text('f1 modulation index', visible=False),      sg.Input(key='k_inf_c_f1_mod_index'            , default_text='0.3'     , enable_events=True, visible=False)],# 必要なさそうなので表示していません
+                [sg.Text('modulation f2 frequency'),                 sg.Input(key='k_inf_c_f2_mod_frequency'        , default_text='45.0159M', enable_events=True)],
+                [sg.Text('f2 modulation index', visible=False),      sg.Input(key='k_inf_c_f2_mod_index'            , default_text='0.3'     , enable_events=True, visible=False)],# 必要なさそうなので表示していません
 
-                [sg.Text('number of produced modulator sidebands'), sg.Input(key='k_inf_c_num_of_sidebands', default_text='1' , enable_events=True)],
+                [sg.Text('number of produced modulator sidebands'), sg.Input(key='k_inf_c_num_of_sidebands', default_text='3' , enable_events=True)],
                 ### xaxis range
                 [sg.Radio('xaxis lin', 'x_plotscale', default=True,  key='k_inf_c_xaxis_lin', enable_events=True),
                  sg.Radio('xaxis log', 'x_plotscale', default=False, key='k_inf_c_xaxis_log', enable_events=True)],
@@ -788,7 +811,7 @@ L1 = [
                    sg.Tab('FPMI',   kFPMI_layout),
                    sg.Tab('PRFPMI', kPRFPMI_layout),
                    sg.Tab('DRFPMI', kDRFPMI_layout),
-                   sg.Tab('OPTION', extra_option_tab)]], enable_events=True, key="kselected_tab")],
+                   sg.Tab('IFO_param', extra_ifo_param_tab)]], enable_events=True, key="kselected_tab")],
     # xaxis range
     [sg.Text('xaxis range', key='k_inf_c_xaxis_range_text')],
     [sg.Input(key='k_inf_c_xaxis_range_beg', default_text='-180', enable_events=True),
@@ -806,14 +829,14 @@ col = [
     [sg.Column(layout, key="colkey", scrollable=True, vertical_scroll_only=True)]#枠戦で囲んだGUIをスクロールできるようにする
 ]
 
-window = sg.Window('finesse GUI', col, default_element_size=(15,1), finalize=True, size=(900,700), resizable=True, auto_size_text=True)
+window = sg.Window('finesse GUI', col, default_element_size=(15,1), finalize=True, size=(900,900), resizable=True, auto_size_text=True)
 
 ######################################################################################################################################################
 # GUI上のボタンを押した時にどんな動作をするか
 ######################################################################################################################################################
 initialization = False# GUIを立ち上げた一番最初だけ実行するための変数
 should_check_all_important_port = True# 重要なportにPdを置くかどうか判定するための変数
-can_start_finesse = False# finesseでのシミュレーションを行っても良いか判定する
+is_selected_type_of_pd_signal = False# finesseでのシミュレーションを行っても良いか判定する
 can_return_xaxis_range_default_value = True # xaxisの範囲の値をdefaultに戻していいかを判定する
 #default
 type_of_pd_signal = 'sw_power'# Pdの信号の検出の方法 sw_power/sw_amptd/sw_dmod1/tf_power/tf_amptd/tf_dmod2
@@ -838,25 +861,25 @@ while True:
     # select tab
     if event == "kselected_tab":
         selected_tab = values["kselected_tab"]
-        if selected_tab=="OPTION":
+        if selected_tab=="IFO_param":
             can_return_xaxis_range_default_value = False
             continue
         else:
             ####### initializeと共通なのでなんとかする
-            mifsim.set_gui_window_visible(mifsim.all_gui_section_keys, False, window)#pdの設定をするためのsectionをすべて閉じる
-            mifsim.set_gui_window_bool(mifsim.all_radiobox_keys, False, window)#pdの設定をするためのRADIOBOXの値を全部Falseにする
+            #mifsim.set_gui_window_visible(mifsim.all_gui_section_keys, False, window)#pdの設定をするためのsectionをすべて閉じる
+            #mifsim.set_gui_window_bool(mifsim.all_radiobox_keys, False, window)#pdの設定をするためのRADIOBOXの値を全部Falseにする
             mifsim.set_drawing_size_enlarge(selected_tab, False, window)#GUIを立ち上げた時には通常サイズと大きいサイズの図が両方表示されるから普通のサイズの図だけ表示されるようにする。
-            type_of_pd_signal = 'sw_power'
-            can_start_finesse = False
+            #type_of_pd_signal = 'sw_power'
+            is_selected_type_of_pd_signal = False
 
     # drawing normal/large size button
     if event == 'k%s_normalize_drawing_size'%selected_tab:
-        if selected_tab=="OPTION":
+        if selected_tab=="IFO_param":
             continue
         else:
             mifsim.set_drawing_size_enlarge(selected_tab, False, window)
     if event == 'k%s_expand_drawing_size'%selected_tab:
-        if selected_tab=="OPTION":
+        if selected_tab=="IFO_param":
             continue
         else:
             mifsim.set_drawing_size_enlarge(selected_tab, True, window)
@@ -871,29 +894,69 @@ while True:
     if event == 'k_inf_c_xaxis_lin':
         mifsim.change_GUI_plotscale(["lin","no change"], True, window)
         limited_range     = '0123456789.-'
-        #can_return_xaxis_range_default_value = False
     if event == 'k_inf_c_xaxis_log':
         mifsim.change_GUI_plotscale(["log","no change"], True, window)
         limited_range     = '0123456789.'
-        #can_return_xaxis_range_default_value = False
-    # OPTION tab limit enter value
-    # 要するに数字を入れる場所に文字が入らないようにしているだけです
+    # IFO_param tab limit enter value
+    #
+    # キーボードで入力できる部分に、変な文字が入ってエラーにならないように設定する
+    #
     if event == 'k_inf_c_laser_power' and values['k_inf_c_laser_power'] and values['k_inf_c_laser_power'][-1] not in (".-0123456789enmkMGp"):
         window['k_inf_c_laser_power'].update(values['k_inf_c_laser_power'][:-1])
-
-    if event == 'k_inf_c_ITM_mirror_reflectance' and values['k_inf_c_ITM_mirror_reflectance'] and values['k_inf_c_ITM_mirror_reflectance'][-1] not in (".-0123456789e"):
-        window['k_inf_c_ITM_mirror_reflectance'].update(values['k_inf_c_ITM_mirror_reflectance'][:-1])
-    if event == 'k_inf_c_ITM_mirror_transmittance' and values['k_inf_c_ITM_mirror_transmittance'] and values['k_inf_c_ITM_mirror_transmittance'][-1] not in (".-0123456789e"):
-        window['k_inf_c_ITM_mirror_transmittance'].update(values['k_inf_c_ITM_mirror_transmittance'][:-1])
-    if event == 'k_inf_c_ETM_mirror_reflectance' and values['k_inf_c_ETM_mirror_reflectance'] and values['k_inf_c_ETM_mirror_reflectance'][-1] not in (".-0123456789e"):
-        window['k_inf_c_ETM_mirror_reflectance'].update(values['k_inf_c_ETM_mirror_reflectance'][:-1])
-    if event == 'k_inf_c_ETM_mirror_transmittance' and values['k_inf_c_ETM_mirror_transmittance'] and values['k_inf_c_ETM_mirror_transmittance'][-1] not in (".-0123456789e"):
-        window['k_inf_c_ETM_mirror_transmittance'].update(values['k_inf_c_ETM_mirror_transmittance'][:-1])
-
-    if event == 'k_inf_c_prc_each_mirror_loss' and values['k_inf_c_prc_each_mirror_loss'] and values['k_inf_c_prc_each_mirror_loss'][-1] not in (".-0123456789enmkMGp"):
-        window['k_inf_c_prc_each_mirror_loss'].update(values['k_inf_c_prc_each_mirror_loss'][:-1])
-    if event == 'k_inf_c_src_each_mirror_loss' and values['k_inf_c_src_each_mirror_loss'] and values['k_inf_c_src_each_mirror_loss'][-1] not in (".-0123456789enmkMGp"):
-        window['k_inf_c_src_each_mirror_loss'].update(values['k_inf_c_src_each_mirror_loss'][:-1])
+    #       BS
+    if event == 'k_inf_c_mibs_mirror_transmittance' and values['k_inf_c_mibs_mirror_transmittance'] and values['k_inf_c_mibs_mirror_transmittance'][-1] not in (".-0123456789e"):
+        window['k_inf_c_mibs_mirror_transmittance'].update(values['k_inf_c_mibs_mirror_transmittance'][:-1])
+    if event == 'k_inf_c_mibs_mirror_loss' and values['k_inf_c_mibs_mirror_loss'] and values['k_inf_c_mibs_mirror_loss'][-1] not in (".-0123456789e"):
+        window['k_inf_c_mibs_mirror_loss'].update(values['k_inf_c_mibs_mirror_loss'][:-1])
+    #       ITMX
+    if event == 'k_inf_c_itmx_mirror_transmittance' and values['k_inf_c_itmx_mirror_transmittance'] and values['k_inf_c_itmx_mirror_transmittance'][-1] not in (".-0123456789e"):
+        window['k_inf_c_itmx_mirror_transmittance'].update(values['k_inf_c_itmx_mirror_transmittance'][:-1])
+    if event == 'k_inf_c_itmx_mirror_loss' and values['k_inf_c_itmx_mirror_loss'] and values['k_inf_c_itmx_mirror_loss'][-1] not in (".-0123456789e"):
+        window['k_inf_c_itmx_mirror_loss'].update(values['k_inf_c_itmx_mirror_loss'][:-1])
+    #       ITMY
+    if event == 'k_inf_c_itmy_mirror_transmittance' and values['k_inf_c_itmy_mirror_transmittance'] and values['k_inf_c_itmy_mirror_transmittance'][-1] not in (".-0123456789e"):
+        window['k_inf_c_itmy_mirror_transmittance'].update(values['k_inf_c_itmy_mirror_transmittance'][:-1])
+    if event == 'k_inf_c_itmy_mirror_loss' and values['k_inf_c_itmy_mirror_loss'] and values['k_inf_c_itmy_mirror_loss'][-1] not in (".-0123456789e"):
+        window['k_inf_c_itmy_mirror_loss'].update(values['k_inf_c_itmy_mirror_loss'][:-1])
+    #       ETMX
+    if event == 'k_inf_c_etmx_mirror_transmittance' and values['k_inf_c_etmx_mirror_transmittance'] and values['k_inf_c_etmx_mirror_transmittance'][-1] not in (".-0123456789e"):
+        window['k_inf_c_etmx_mirror_transmittance'].update(values['k_inf_c_etmx_mirror_transmittance'][:-1])
+    if event == 'k_inf_c_etmx_mirror_loss' and values['k_inf_c_etmx_mirror_loss'] and values['k_inf_c_etmx_mirror_loss'][-1] not in (".-0123456789e"):
+        window['k_inf_c_etmx_mirror_loss'].update(values['k_inf_c_etmx_mirror_loss'][:-1])
+    #       ETMY
+    if event == 'k_inf_c_etmy_mirror_transmittance' and values['k_inf_c_etmy_mirror_transmittance'] and values['k_inf_c_etmy_mirror_transmittance'][-1] not in (".-0123456789e"):
+        window['k_inf_c_etmy_mirror_transmittance'].update(values['k_inf_c_etmy_mirror_transmittance'][:-1])
+    if event == 'k_inf_c_etmy_mirror_loss' and values['k_inf_c_etmy_mirror_loss'] and values['k_inf_c_etmy_mirror_loss'][-1] not in (".-0123456789e"):
+        window['k_inf_c_etmy_mirror_loss'].update(values['k_inf_c_etmy_mirror_loss'][:-1])
+    #       PRM
+    if event == 'k_inf_c_prm_mirror_transmittance' and values['k_inf_c_prm_mirror_transmittance'] and values['k_inf_c_prm_mirror_transmittance'][-1] not in (".-0123456789e"):
+        window['k_inf_c_prm_mirror_transmittance'].update(values['k_inf_c_prm_mirror_transmittance'][:-1])
+    if event == 'k_inf_c_prm_mirror_loss' and values['k_inf_c_prm_mirror_loss'] and values['k_inf_c_prm_mirror_loss'][-1] not in (".-0123456789e"):
+        window['k_inf_c_prm_mirror_loss'].update(values['k_inf_c_prm_mirror_loss'][:-1])
+    #       SRM
+    if event == 'k_inf_c_srm_mirror_transmittance' and values['k_inf_c_srm_mirror_transmittance'] and values['k_inf_c_srm_mirror_transmittance'][-1] not in (".-0123456789e"):
+        window['k_inf_c_srm_mirror_transmittance'].update(values['k_inf_c_srm_mirror_transmittance'][:-1])
+    if event == 'k_inf_c_srm_mirror_loss' and values['k_inf_c_srm_mirror_loss'] and values['k_inf_c_srm_mirror_loss'][-1] not in (".-0123456789e"):
+        window['k_inf_c_srm_mirror_loss'].update(values['k_inf_c_srm_mirror_loss'][:-1])
+    #       PRC each mirror
+    if event == 'k_inf_c_pr2_mirror_transmittance' and values['k_inf_c_pr2_mirror_transmittance'] and values['k_inf_c_pr2_mirror_transmittance'][-1] not in (".-0123456789e"):
+        window['k_inf_c_pr2_mirror_transmittance'].update(values['k_inf_c_pr2_mirror_transmittance'][:-1])
+    if event == 'k_inf_c_pr2_mirror_loss' and values['k_inf_c_pr2_mirror_loss'] and values['k_inf_c_pr2_mirror_loss'][-1] not in (".-0123456789e"):
+        window['k_inf_c_pr2_mirror_loss'].update(values['k_inf_c_pr2_mirror_loss'][:-1])
+    if event == 'k_inf_c_pr3_mirror_transmittance' and values['k_inf_c_pr3_mirror_transmittance'] and values['k_inf_c_pr3_mirror_transmittance'][-1] not in (".-0123456789e"):
+        window['k_inf_c_pr3_mirror_transmittance'].update(values['k_inf_c_pr3_mirror_transmittance'][:-1])
+    if event == 'k_inf_c_pr3_mirror_loss' and values['k_inf_c_pr3_mirror_loss'] and values['k_inf_c_pr3_mirror_loss'][-1] not in (".-0123456789e"):
+        window['k_inf_c_pr3_mirror_loss'].update(values['k_inf_c_pr3_mirror_loss'][:-1])
+    #       SRC each mirror
+    if event == 'k_inf_c_sr2_mirror_transmittance' and values['k_inf_c_sr2_mirror_transmittance'] and values['k_inf_c_sr2_mirror_transmittance'][-1] not in (".-0123456789e"):
+        window['k_inf_c_sr2_mirror_transmittance'].update(values['k_inf_c_sr2_mirror_transmittance'][:-1])
+    if event == 'k_inf_c_sr2_mirror_loss' and values['k_inf_c_sr2_mirror_loss'] and values['k_inf_c_sr2_mirror_loss'][-1] not in (".-0123456789e"):
+        window['k_inf_c_sr2_mirror_loss'].update(values['k_inf_c_sr2_mirror_loss'][:-1])
+    if event == 'k_inf_c_sr3_mirror_transmittance' and values['k_inf_c_sr3_mirror_transmittance'] and values['k_inf_c_sr3_mirror_transmittance'][-1] not in (".-0123456789e"):
+        window['k_inf_c_sr3_mirror_transmittance'].update(values['k_inf_c_sr3_mirror_transmittance'][:-1])
+    if event == 'k_inf_c_sr3_mirror_loss' and values['k_inf_c_sr3_mirror_loss'] and values['k_inf_c_sr3_mirror_loss'][-1] not in (".-0123456789e"):
+        window['k_inf_c_sr3_mirror_loss'].update(values['k_inf_c_sr3_mirror_loss'][:-1])
+    #       modulation
     if event == 'k_inf_c_f1_mod_frequency' and values['k_inf_c_f1_mod_frequency'] and values['k_inf_c_f1_mod_frequency'][-1] not in ("0123456789.nmkMG"):
         window['k_inf_c_f1_mod_frequency'].update(values['k_inf_c_f1_mod_frequency'][:-1])
     if event == 'k_inf_c_f2_mod_frequency' and values['k_inf_c_f2_mod_frequency'] and values['k_inf_c_f2_mod_frequency'][-1] not in ("0123456789.nmkMG"):
@@ -924,7 +987,7 @@ while True:
     #
     # issw: sweep/transferfunction で sweep を選択するフラグ
     # issw_power: sweep の時に pd0 をポートに置く設定のフラグ
-    # issw_amptd: sweep の時に amplitude_detecter をポートに置く設定のフラグ
+    # issw_amptd: sweep の時に amplitude_detector をポートに置く設定のフラグ
     # issw_dmod1: sweep の時に pd1 をポートに置く設定のフラグ
     #
     
@@ -943,8 +1006,8 @@ while True:
             limited_range     = '0123456789.-'
         can_return_xaxis_range_default_value = True
         # 選択した干渉計の動作と測定の方法
-        type_of_pd_signal = 'sw_power'
-        can_start_finesse = False
+        #type_of_pd_signal = 'sw_power'
+        is_selected_type_of_pd_signal = False
     # sw_power
     if event == 'k%s_issw_power'%selected_tab:
         
@@ -958,7 +1021,7 @@ while True:
         mifsim.set_gui_window_bool(sectionkeys, True, window)
 
         type_of_pd_signal = 'sw_power'
-        can_start_finesse = True
+        is_selected_type_of_pd_signal = True
     # sw_amptd
     if event == 'k%s_issw_amptd'%selected_tab:
         
@@ -972,7 +1035,7 @@ while True:
         mifsim.set_gui_window_bool(sectionkeys, True, window)
 
         type_of_pd_signal = 'sw_amptd'
-        can_start_finesse = True
+        is_selected_type_of_pd_signal = True
     # sw_dmod1
     if event == 'k%s_issw_dmod1'%selected_tab:
         
@@ -990,13 +1053,13 @@ while True:
         mifsim.set_gui_window_bool(sectionkeys, True, window)
         
         type_of_pd_signal = 'sw_dmod1'
-        can_start_finesse = True
+        is_selected_type_of_pd_signal = True
         
     # tf: transfet function
     #
     # istf: sweep/transferfunction で transferfunction を選択するフラグ
     # istf_power: transferfunction の時にpd0をポートに置く設定のフラグ
-    # istf_amptd: transferfunction amplitude_detecter をポートに置く設定のフラグ
+    # istf_amptd: transferfunction amplitude_detector をポートに置く設定のフラグ
     # istf_dmod2: transferfunction の時にpd2をポートに置く設定のフラグ
     #
     
@@ -1015,8 +1078,8 @@ while True:
             limited_range     = '0123456789.'
         can_return_xaxis_range_default_value = True
         # variables
-        type_of_pd_signal = 'tf_power'
-        can_start_finesse = False
+        #type_of_pd_signal = 'tf_power'
+        is_selected_type_of_pd_signal = False
     # tf_power
     if event == 'k%s_istf_power'%selected_tab:
         
@@ -1029,7 +1092,7 @@ while True:
         mifsim.set_gui_window_visible(windowkeys, True, window)
         mifsim.set_gui_window_bool(sectionkeys, True, window)
         type_of_pd_signal = 'tf_power'
-        can_start_finesse = True
+        is_selected_type_of_pd_signal = True
     # sw_amptd
     if event == 'k%s_istf_amptd'%selected_tab:
         
@@ -1043,7 +1106,7 @@ while True:
         mifsim.set_gui_window_bool(sectionkeys, True, window)
 
         type_of_pd_signal = 'tf_amptd'
-        can_start_finesse = True
+        is_selected_type_of_pd_signal = True
     # tf_dmod2
     if event == 'k%s_istf_dmod2'%selected_tab:
         
@@ -1059,7 +1122,7 @@ while True:
         mifsim.set_gui_window_bool(sectionkeys, True, window)
 
         type_of_pd_signal = 'tf_dmod2'
-        can_start_finesse = True
+        is_selected_type_of_pd_signal = True
         
 #######################################################################################################################################
 #
@@ -1104,7 +1167,28 @@ while True:
         pdname_tails      = dic_selected_setting_from_gui["pdname_tails"]
         
         # finesseを実行する前にGUIで必要な設定がすべてできているかチェックする
-        if can_start_finesse == False:
+        # 反射率と透過率とロスの合計が1以下になっているかどうかを調べる関数を用意する
+
+        # IFO_paramの項目に何もいれていない時にエラーを返す
+
+        # KAGRAの設定（デフォルト）に戻すボタンを作る
+
+        # DARMにDARMaとかタイプしてしまった時にエラーを返す設定を作る
+        if dic_selected_setting_from_gui["dof"] in mifsim.all_dofs:
+            pass
+        else:
+            sg.popup_ok('Error : Please select a DoF from the list.')#何も入力していない場合もエラーメッセージを表示できる
+            continue
+        # xaxis に　180 -180 とか入力してしまった時に、エラーを返す
+        tmp_beg = eval(dic_selected_setting_from_gui["xaxis_range_beg"])
+        tmp_end = eval(dic_selected_setting_from_gui["xaxis_range_end"])
+        if tmp_beg<tmp_end:
+            pass
+        else:
+            sg.popup_ok('Error : Please Set the xaxis_beg value higher than the value of xaxis_end')
+            continue
+        # ラジオボックスをちゃんと選んでいない時
+        if is_selected_type_of_pd_signal == False:
             sg.popup_ok('Error : Please follow the instructions on the screen to set up your pd.')
             continue
         if type_of_pd_signal=="sw_power" or type_of_pd_signal=="tf_power":
@@ -1135,15 +1219,15 @@ while True:
         
         kat.parse(code)
         out = kat.run()
-
         # katファイルや結果をoutputする用のlist
         pdnames = []
+        plot_title = ""
 
-        plot_title = '%s %s %s' % (values['k%s_dof'%selected_tab], type_of_pd_signal, selected_tab)
         color1,color2 = "darkorange","firebrick"
         #color1,color2 = "seagreen","royalblue"
 
         if(type_of_pd_signal == 'sw_power' or type_of_pd_signal == 'tf_power'):#pd0で見る物はここ
+            plot_title = '%s_%s_%s' % (values['k%s_dof'%selected_tab], type_of_pd_signal, selected_tab)
             fig1      = plt.figure(figsize=(12.80, 7.20))
             # plot
             if is_overplot_all_pds: # 全部overplotするとき
@@ -1165,7 +1249,7 @@ while True:
                     plt.tick_params(labelsize=fontsize)
                     # 凡例の表示
                     plt.legend(fontsize=fontsize)
-                plt.show()
+                plt.show(block=False)
             else: # 全部overplotしないとき
                 plotnum   = len(port_trues)
                 v_plotnum = math.ceil(math.sqrt(plotnum))
@@ -1189,10 +1273,10 @@ while True:
                     # loop
                     i += 1
                 plt.tight_layout()
-                plt.show()
-                
+                plt.show(block=False)
 
         elif(type_of_pd_signal == 'sw_amptd' or type_of_pd_signal == 'tf_amptd'):#pd0で見る物はここ
+            plot_title = '%s_%s_%s' % (values['k%s_dof'%selected_tab], type_of_pd_signal, selected_tab)
             fig1      = plt.figure(figsize=(12.80, 7.20))
             # plot
             if is_overplot_all_pds: # 全部overplotするとき
@@ -1235,7 +1319,7 @@ while True:
                     plt.tick_params(labelsize=fontsize)
                     # 凡例の表示
                     plt.legend(fontsize=fontsize)
-                plt.show()
+                plt.show(block=False)
             else: # 全部overplotしないとき
                 plotnum   = len(port_trues)
                 v_plotnum = math.ceil(math.sqrt(plotnum))
@@ -1281,9 +1365,10 @@ while True:
                     # loop
                     i += 1
                 plt.tight_layout()
-                plt.show()
+                plt.show(block=False)
                 
         elif(type_of_pd_signal=='sw_dmod1'):#pd1で見る物はここ
+            plot_title = '%s_%s_%sdmodphase_%s' % (values['k%s_dof'%selected_tab], type_of_pd_signal, dic_selected_setting_from_gui["demod_phase"], selected_tab)
             fig1      = plt.figure(figsize=(12.80, 7.20))
             # plot
             if is_overplot_all_pds: # 全部overplotするとき
@@ -1294,20 +1379,27 @@ while True:
                 plt.subplot(1,1,1)
                 for port in port_trues:
                     for pdname_tail in pdname_tails:
-                        pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
-                        pdnames.append(pdname)
-                        label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
-                        plt.plot(out.x, out['%s' % pdname], label=label)
+                        if pdname_tail.split("_")[1]=="DC":
+                            pdname ="pd0_DC_%s"%(port)
+                            label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
+                            plt.plot(out.x, out['%s' % pdname], label=label)
+                            plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
+                            plt.ylabel("Power [W]", fontsize=fontsize)
+                        else:
+                            pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
+                            label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
+                            plt.plot(out.x, out['%s' % pdname], label=label)
+                            plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
+                            plt.ylabel("Demodulated signal[a.u.]", fontsize=fontsize)
                         plt.xscale(x_plotscale)
                         plt.yscale(y_plotscale)
-                        plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
-                        plt.ylabel("Demodulated signal[a.u.]", fontsize=fontsize)
+                        pdnames.append(pdname)
                         plt.title('%s' % plot_title, fontsize=fontsize)
                         plt.tick_params(labelsize=fontsize)
                         # 凡例の表示
-                        plt.legend(fontsize=fontsize) 
+                        plt.legend(fontsize=fontsize)
                 plt.tight_layout()
-                plt.show()
+                plt.show(block=False)
             else: # 全部はoverplotしないとき
                 if sw_dmod1_overplot:# portだけ分けてI1やQ1などはoverplot
                     plotnum   = len(port_trues)
@@ -1320,21 +1412,28 @@ while True:
                         title += "%s abs"%port
                         plt.subplot(v_plotnum,h_plotnum,i)
                         for pdname_tail in pdname_tails:
-                            pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
+                            if pdname_tail.split("_")[1]=="DC":
+                                pdname ="pd0_DC_%s"%(port)
+                                label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
+                                plt.plot(out.x, out['%s' % pdname], label=label)
+                                plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
+                                plt.ylabel("Power[W]", fontsize=fontsize)
+                            else:
+                                pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
+                                label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
+                                plt.plot(out.x, out['%s' % pdname], label=label)
+                                plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
+                                plt.ylabel("Demodulated signal[a.u.]", fontsize=fontsize)
                             pdnames.append(pdname)
-                            label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
-                            plt.plot(out.x, out['%s' % pdname], label=label)
                             plt.xscale(x_plotscale)
                             plt.yscale(y_plotscale)
-                            plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
-                            plt.ylabel("Demodulated signal[a.u.]", fontsize=fontsize)
                             plt.title('%s' % title, fontsize=fontsize)
                             plt.tick_params(labelsize=fontsize)
                             # 凡例の表示
                             plt.legend(fontsize=fontsize)
                         i += 1
                     plt.tight_layout()
-                    plt.show()
+                    plt.show(block=False)
                 else:# 全部をバラバラに表示する
                     v_plotnum = len(port_trues)
                     h_plotnum = len(pdname_tails)
@@ -1344,14 +1443,21 @@ while True:
                     for port in port_trues:
                         for pdname_tail in pdname_tails:
                             plt.subplot(v_plotnum,h_plotnum,i)
-                            pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
+                            if pdname_tail.split("_")[1]=="DC":
+                                pdname ="pd0_DC_%s"%(port)
+                                label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
+                                plt.plot(out.x, out['%s' % pdname], label=label, color="orange")
+                                plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
+                                plt.ylabel("Power[W]", fontsize=fontsize)
+                            else:
+                                pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
+                                label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
+                                plt.plot(out.x, out['%s' % pdname], label=label)
+                                plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
+                                plt.ylabel("Demodulated signal[a.u.]", fontsize=fontsize)
                             pdnames.append(pdname)
-                            label  = mifsim.make_pd1_label(pdname,dic_selected_setting_from_gui["arbitraryfreq001_name"],dic_selected_setting_from_gui["arbitraryfreq002_name"])
-                            plt.plot(out.x, out['%s' % pdname], label=label)
                             plt.xscale(x_plotscale)
                             plt.yscale(y_plotscale)
-                            plt.xlabel(out.xlabel.split()[0]+out.xlabel.split()[1], fontsize=fontsize)
-                            plt.ylabel("Demodulated signal[a.u.]", fontsize=fontsize)
                             plt.title('%s' % plot_title, fontsize=fontsize)
                             plt.tick_params(labelsize=fontsize)
                             # 凡例の表示
@@ -1359,11 +1465,12 @@ while True:
                             # loop
                             i += 1
                     plt.tight_layout()
-                    plt.show()
+                    plt.show(block=False)
 
         elif(type_of_pd_signal=='tf_dmod2'):#pd2で見る物はここ
+            plot_title = '%s_%s_%sdmodphase_%s' % (values['k%s_dof'%selected_tab], type_of_pd_signal, dic_selected_setting_from_gui["demod_phase"], selected_tab)
             fig1       = plt.figure(figsize=(12.80, 7.20))
-             # plot
+            # plot
             if is_overplot_all_pds: # 全部overplotするとき
                 v_plotnum  = 2
                 h_plotnum  = 1
@@ -1397,8 +1504,8 @@ while True:
                         plt.title('%s' % plot_title, fontsize=fontsize)
                         plt.tick_params(labelsize=fontsize)
                         # 凡例の表示
-                        plt.legend(fontsize=fontsize) 
-                plt.show()
+                        plt.legend(fontsize=fontsize)
+                plt.show(block=False)
 
             else: # 全部はoverplotしないとき
                 if tf_dmod2_overplot:# portだけ分けてI1やQ1などはoverplot
@@ -1410,7 +1517,7 @@ while True:
                     for port in port_trues:
                         # abs
                         title = plot_title
-                        title += " %s abs"%port
+                        title += " %s_abs"%port
                         plt.subplot(2,h_plotnum,i)
                         for pdname_tail in pdname_tails:
                             pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
@@ -1426,7 +1533,7 @@ while True:
                         plt.tick_params(labelsize=fontsize)
                         # phase
                         title = plot_title
-                        title += " %s phase"%port
+                        title += " %s_phase"%port
                         plt.subplot(2,h_plotnum,i+h_plotnum)
                         for pdname_tail in pdname_tails:
                             pdname = "%s_%s_%s"%(pdname_head, pdname_tail, port)
@@ -1441,7 +1548,7 @@ while True:
                         plt.title('%s' % title, fontsize=fontsize)
                         plt.tick_params(labelsize=fontsize)
                     plt.tight_layout()
-                    plt.show()
+                    plt.show(block=False)
                 else:# すべてバラバラに表示する
                     v_plotnum  = 2*len(port_trues)
                     h_plotnum  = len(pdname_tails)
@@ -1484,17 +1591,20 @@ while True:
                             k2 += 1
                         i+=h_plotnum
                     plt.tight_layout()
-                    plt.show()         
+                    plt.show(block=False)         
 #######################################################################################################################################
 # finesse のシミュレーション結果をkatやtxt形式で出力させる
 #######################################################################################################################################
         if values['k_inf_c_output_kat'] == True:
         
-            dt_now      = datetime.datetime.now()
-            header_file = "# This is kat file created at %s \n" % dt_now
-            kat         = header_file
-            kat        += code
-            fname_kat   = sg.popup_get_file('Select the output name for kat file?', save_as=True, file_types=(('ALL Files', '*.kat'),))
+            dt_now        = datetime.datetime.now()
+            header_file   = "# This is kat file created at %s \n" % dt_now
+            filename_head = plot_title
+            filename_tail = mifsim.date_to_num(str(dt_now))
+            filename = "%s_%s"%(filename_head, filename_tail)
+            kat           = header_file
+            kat          += code
+            fname_kat     = sg.popup_get_file('Select the output name for kat file?', save_as=True, default_path="../export/kat/%s.kat"%(filename), file_types=(('ALL Files', '*.kat'),))
             try:
                 f = open(fname_kat, 'x')
                 f.writelines(kat)
@@ -1505,11 +1615,14 @@ while True:
                 sg.popup_ok('Unexpected error:', sys.exc_info()[0])
 
         if values['k_inf_c_output_plotdata'] == True:
-            fname_plotdata = sg.popup_get_file('Select the output name for plot data?', save_as=True, file_types=(("ALL Files", "*.txt"),))
+            dt_now      = datetime.datetime.now()
+            header_file = "# This is finesse result simulated at %s \n# x " % dt_now
+            filename_head = plot_title
+            filename_tail = mifsim.date_to_num(str(dt_now))
+            filename = "%s_%s"%(filename_head, filename_tail)
+            fname_plotdata = sg.popup_get_file('Select the output name for plot data?', save_as=True, default_path="../export/plotdata/%s.txt"%(filename),file_types=(("ALL Files", "*.txt"),))
             try:
                 f           = open(fname_plotdata, 'x')
-                dt_now      = datetime.datetime.now()
-                header_file = "# This is finesse result simulated at %s \n# x " % dt_now
                 arr         = np.empty((0, out.x.size), float)
                 arr         = np.append(arr, [out.x], axis=0)
                 
@@ -1524,7 +1637,6 @@ while True:
                 L        = np.asarray(arr).T
                 x        = L.tolist()
                 plotdata = [" ".join(map(str, i)) for i in x]
-                #print(plotdata)
                 f.writelines(header_file + '\n')
                 for i in plotdata:
                     f.writelines(i)
@@ -1534,12 +1646,9 @@ while True:
                 sg.popup_ok("Error : there is a file %s" % fname_plotdata)
             except Exception:
                 sg.popup_ok("Unexpected error:", sys.exc_info()[0])
+        continue
 
 window.close()         
-
-
-# %%
-
 
 
 # %%
