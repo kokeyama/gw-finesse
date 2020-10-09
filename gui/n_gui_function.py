@@ -272,56 +272,207 @@ yaxis lin abs:deg
     code = input_finesse
     print(code)
     return code
+
 # %%
-def change_nums_unit_str_to_float(str_num):
+def return_gui_selected_portlist(values, selected_interferometer):
     """
-    str_numに含まれる省略した単位を数値に変換して,str_numをfloat型の数字に変換して計算した結果を返す
+    GUIで選択したポートをリストにして返す
 
     Parameters
     ----------
-    str_num    : str
-        str型の数字
+    values            : dictionary
+        pysimpleGUIで選択した値の辞書
+    selected_interferometer      : str
+        GUIで選択されている干渉計構成の名前 MI/FPMI/PRFPMI/DRFPMI
 
     Returns
     -------
-    str_num : float
-        計算した結果のfloat型の数字
+    port_trues : list of str
+        GUI上で選択したポートの名前のリスト
+    
+    See Also
+    --------
+    all_ports        : list of str
+        GUIで用意しているすべてのportのリスト
     """
-    str_num = str_num.replace('ppm','*10**(-6)')
-    str_num = str_num.replace('p',  '*10**(-12)')
-    str_num = str_num.replace('n',  '*10**(-9)')
-    str_num = str_num.replace('k',  '*10**3')
-    str_num = str_num.replace('m',  '*10**(-3)')
-    str_num = str_num.replace('M',  '*10**6')
-    str_num = str_num.replace('G',  '*10**9')
-    if str_num=="":
-        pass
+    port_trues = []
+    for port in all_ports:
+        port_name = "%s_%s" % (selected_interferometer, port)
+        if "k"+port_name in values:# このポートがGUI上で選択できるかを調べる
+            if(values["k"+port_name]):
+                port_trues.append(port)
+    
+    return port_trues
+# %%
+
+
+# %%
+def make_dic_selected_setting_from_gui(values, selected_tab, type_of_pd_signal):
+    """
+    GUIで選択した設定とそれを加工して作った変数を辞書でまとめて返す。
+
+    Parameters
+    ----------
+    values            : dictionary
+        pysimpleGUIで選択した値の辞書
+    selected_tab      : str
+        GUIで選択されている干渉計構成の名前 MI/FPMI/PRFPMI/DRFPMI
+    type_of_pd_signal : str
+        GUIで選択されているPdの信号の検出の方法 sw_power/sw_amptd/sw_dmod1/tf_power/tf_dmod2
+
+    Returns
+    -------
+    dic_selected_setting_from_gui : dictionary
+        finesseに送ったりplotを行うために必要な変数をまとめた辞書
+    
+    See Also
+    --------
+    all_ports        : list of str
+        GUIで用意しているすべてのportのリスト
+    all_pdname_heads : list of str
+        GUIで用意しているすべてのpdの種類のリスト
+    all_demod_freqs  : list of str
+        GUIで用意しているすべての復調（変調）周波数のリスト
+    all_demod_phases : list of str
+        GUIで用意しているすべての復調位相のリスト（Iphase/Qphase）
+    """
+    
+    port_trues   = []
+    pdname_tails = []
+
+    interferometer = selected_tab
+        
+    # port_true
+    port_trues = return_gui_selected_portlist(values,interferometer)
+        
+    # selected_detector_name
+    # pdname_heads
+    if type_of_pd_signal  =="sw_power" or type_of_pd_signal=="tf_power":
+        pdname_head = "pd0"
+        #elif type_of_pd_signal=="sw_amptd" or type_of_pd_signal=="tf_amptd":
+        #    if value[""]
+    elif type_of_pd_signal=="sw_dmod1":
+        pdname_head = "pd1"
+    elif type_of_pd_signal=="tf_dmod2":
+        pdname_head = "pd2"
+    elif type_of_pd_signal=="sw_amptd" or \
+         type_of_pd_signal=="tf_amptd":
+        pdname_head = "ad"
+    # pdname_tails
+    for freq in all_demod_freqs:
+        for phase in all_demod_phases:
+            tail = "%s_%s"%(phase, freq)
+            key  = "k%s_%s_%s"%(interferometer, pdname_head, tail)
+            if key in values:
+                if values[key]:
+                    pdname_tails.append(tail)
+    # demod_freq
+    tmp_head = ""
+    if type_of_pd_signal=="sw_dmod1":
+        tmp_head = "pd1"
+    elif type_of_pd_signal=="tf_dmod2":
+        tmp_head = "pd2"
+    if ('k%s_%s_arbitraryfreq001'%(interferometer, tmp_head) in values) or ('k%s_%s_arbitraryfreq002'%(interferometer, tmp_head) in values):
+        arbitraryfreq001       = str(change_nums_unit_str_to_float(values['k%s_%s_arbitraryfreq001'%(interferometer, tmp_head)]))
+        arbitraryfreq002       = str(change_nums_unit_str_to_float(values['k%s_%s_arbitraryfreq002'%(interferometer, tmp_head)]))
+        arbitraryfreq001_name  = values['k%s_%s_arbitraryfreq001_name'%(interferometer, tmp_head)]
+        arbitraryfreq002_name  = values['k%s_%s_arbitraryfreq002_name'%(interferometer, tmp_head)]
     else:
-        str_num = eval(str_num)
-    return str_num
-# %%
-def date_to_num(dt_now):
-    """
-    dt_nowに含まれる" ", ":", ".", "-"を取り除いて数字のみのstrにする
+        arbitraryfreq001       = "0"
+        arbitraryfreq002       = "0"
+        arbitraryfreq001_name  = "arbitraryfreq001_name"
+        arbitraryfreq002_name  = "arbitraryfreq002_name"
 
-    Parameters
-    ----------
-    dt_now    : str
-        str型の日付
+    # demod_phase
+    demod_phase = values["k%s_pd1_demod_phase"%interferometer]
+    if(type_of_pd_signal=="tf_dmod2"):
+        demod_phase  = values["k%s_pd2_demod_phase"%interferometer]
+    # plotscale
+    if(values['k_inf_c_xaxis_log'] == True):
+        x_plotscale = 'log'
+    else:
+        x_plotscale = 'linear'
+    if(values['k_inf_c_yaxis_log'] == True):
+        y_plotscale = 'log'
+    else:
+        y_plotscale = 'linear'
 
-    Returns
-    -------
-    dt_now : str
-        引数から記号を取り除いたもの
-    """
-    dt_now = dt_now.replace(' ','')
-    dt_now = dt_now.replace('-','')
-    dt_now = dt_now.replace(':','')
-    dt_now = dt_now.replace(',','')
-    dt_now = dt_now.replace('.','')
-    dt_now = str(dt_now)
-    return dt_now
-
+    dic_selected_setting_from_gui = {
+            ### DoF
+            'dof'                       : values['k%s_dof'%interferometer],#str
+            'type_of_pd_signal'         : type_of_pd_signal,#str sw_power/sw_dmod1/tf_power/tf_dmod2
+            ### advanced setting
+            # IFO_param
+            'laser_power'               : values['k_inf_c_laser_power'],#str
+            #       BS
+            'mibs_mirror_transmittance' : values['k_inf_c_mibs_mirror_transmittance'],#str
+            'mibs_mirror_loss'          : values['k_inf_c_mibs_mirror_loss'],#str
+            #       PRM
+            'prm_mirror_transmittance'  : values['k_inf_c_prm_mirror_transmittance'],#str
+            'prm_mirror_loss'           : values['k_inf_c_prm_mirror_loss'],#str
+            #       PRC
+            'pr2_mirror_transmittance'  : values['k_inf_c_pr2_mirror_transmittance'],#str
+            'pr2_mirror_loss'           : values['k_inf_c_pr2_mirror_loss'],#str
+            'pr3_mirror_transmittance'  : values['k_inf_c_pr3_mirror_transmittance'],#str
+            'pr3_mirror_loss'           : values['k_inf_c_pr3_mirror_loss'],#str
+            #       SRM
+            'srm_mirror_transmittance'  : values['k_inf_c_srm_mirror_transmittance'],#str
+            'srm_mirror_loss'           : values['k_inf_c_srm_mirror_loss'],#str
+            #       SRC
+            'sr2_mirror_transmittance'  : values['k_inf_c_sr2_mirror_transmittance'],#str
+            'sr2_mirror_loss'           : values['k_inf_c_sr2_mirror_loss'],#str
+            'sr3_mirror_transmittance'  : values['k_inf_c_sr3_mirror_transmittance'],#str
+            'sr3_mirror_loss'           : values['k_inf_c_sr3_mirror_loss'],#str
+            #       ITM
+            'itmx_mirror_transmittance' : values['k_inf_c_itmx_mirror_transmittance'],#str
+            'itmx_mirror_loss'          : values['k_inf_c_itmx_mirror_loss'],#str
+            'itmy_mirror_transmittance' : values['k_inf_c_itmy_mirror_transmittance'],#str
+            'itmy_mirror_loss'          : values['k_inf_c_itmy_mirror_loss'],#str
+            #       ETM
+            'etmx_mirror_transmittance' : values['k_inf_c_etmx_mirror_transmittance'],#str
+            'etmx_mirror_loss'          : values['k_inf_c_etmx_mirror_loss'],#str
+            'etmy_mirror_transmittance' : values['k_inf_c_etmy_mirror_transmittance'],#str
+            'etmy_mirror_loss'          : values['k_inf_c_etmy_mirror_loss'],#str
+            #       modulation
+            'f1_mod_frequency'          : values['k_inf_c_f1_mod_frequency'],#str
+            'f1_mod_index'              : values['k_inf_c_f1_mod_index'],#str
+            'f2_mod_frequency'          : values['k_inf_c_f2_mod_frequency'],#str
+            'f2_mod_index'              : values['k_inf_c_f2_mod_index'],#str
+            'num_of_sidebands'          : values['k_inf_c_num_of_sidebands'],#str
+            #       plot
+            'x_plotscale'               : x_plotscale,#str log/linear
+            'y_plotscale'               : y_plotscale,#str log/linear
+            'samplingnum'               : values['k_inf_c_samplingnum'],#str
+            # general
+            'xaxis_range_beg'           : values['k_inf_c_xaxis_range_beg'],#str #x軸の最小値
+            'xaxis_range_end'           : values['k_inf_c_xaxis_range_end'],#str #x軸の最大値
+            # dmod1 and dmod2
+            #       demodulation
+            'arbitraryfreq001'          : arbitraryfreq001,#str
+            'arbitraryfreq002'          : arbitraryfreq002,#str
+            'arbitraryfreq001_name'     : arbitraryfreq001_name,#str
+            'arbitraryfreq002_name'     : arbitraryfreq002_name,#str
+            #       other
+            'demod_phase'               : demod_phase,#str
+            'put_car_sw_amptd_flag'     : values['k%s_put_car_sw_amptd_flag'%interferometer],#str
+            'put_f1u_sw_amptd_flag'     : values['k%s_put_f1u_sw_amptd_flag'%interferometer],#str
+            'put_f1l_sw_amptd_flag'     : values['k%s_put_f1l_sw_amptd_flag'%interferometer],#str
+            'put_f2u_sw_amptd_flag'     : values['k%s_put_f2u_sw_amptd_flag'%interferometer],#str
+            'put_f2l_sw_amptd_flag'     : values['k%s_put_f2l_sw_amptd_flag'%interferometer],#str
+            #'put_car_tf_amptd_flag'     : values['k%s_put_car_tf_amptd_flag'%interferometer],
+            #'put_f1u_tf_amptd_flag'     : values['k%s_put_f1u_tf_amptd_flag'%interferometer],
+            #'put_f1l_tf_amptd_flag'     : values['k%s_put_f1l_tf_amptd_flag'%interferometer],
+            #'put_f2u_tf_amptd_flag'     : values['k%s_put_f2u_tf_amptd_flag'%interferometer],
+            #'put_f2l_tf_amptd_flag'     : values['k%s_put_f2l_tf_amptd_flag'%interferometer],
+            #       other
+            'interferometer'            : interferometer,
+            'port_trues'                : port_trues,
+            'pdname_head'               : pdname_head,
+            'pdname_tails'              : pdname_tails,
+            }
+    
+    return dic_selected_setting_from_gui
+    
 # %%
 def create_input_finesse(dic_selected_setting_from_gui, selected_interferometer):# make_interferometer_sentence_for_finesse
     """
@@ -340,41 +491,41 @@ def create_input_finesse(dic_selected_setting_from_gui, selected_interferometer)
         finesseに送ったりplotを行うために必要な変数をまとめた辞書
     """
 
-    laser_power               = dic_selected_setting_from_gui["laser_power"]
-    mibs_mirror_transmittance = dic_selected_setting_from_gui['mibs_mirror_transmittance']
-    mibs_mirror_loss          = dic_selected_setting_from_gui['mibs_mirror_loss']
+    laser_power               = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui["laser_power"]))
+    mibs_mirror_transmittance = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui['mibs_mirror_transmittance']))
+    mibs_mirror_loss          = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui['mibs_mirror_loss']))
 
-    prm_mirror_transmittance  = dic_selected_setting_from_gui['prm_mirror_transmittance']
-    prm_mirror_loss           = dic_selected_setting_from_gui["prm_mirror_loss"]
-    pr2_mirror_transmittance  = dic_selected_setting_from_gui["pr2_mirror_transmittance"]
-    pr2_mirror_loss           = dic_selected_setting_from_gui["pr2_mirror_loss"]
-    pr3_mirror_transmittance  = dic_selected_setting_from_gui["pr3_mirror_transmittance"]
-    pr3_mirror_loss           = dic_selected_setting_from_gui["pr3_mirror_loss"]
+    prm_mirror_transmittance  = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui['prm_mirror_transmittance']))
+    prm_mirror_loss           = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui["prm_mirror_loss"]))
+    pr2_mirror_transmittance  = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui["pr2_mirror_transmittance"]))
+    pr2_mirror_loss           = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui["pr2_mirror_loss"]))
+    pr3_mirror_transmittance  = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui["pr3_mirror_transmittance"]))
+    pr3_mirror_loss           = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui["pr3_mirror_loss"]))
 
-    srm_mirror_transmittance  = dic_selected_setting_from_gui['srm_mirror_transmittance']
-    srm_mirror_loss           = dic_selected_setting_from_gui["srm_mirror_loss"]
-    sr2_mirror_transmittance  = dic_selected_setting_from_gui["sr2_mirror_transmittance"]
-    sr2_mirror_loss           = dic_selected_setting_from_gui["sr2_mirror_loss"]
-    sr3_mirror_transmittance  = dic_selected_setting_from_gui["sr3_mirror_transmittance"]
-    sr3_mirror_loss           = dic_selected_setting_from_gui["sr3_mirror_loss"]
+    srm_mirror_transmittance  = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui['srm_mirror_transmittance']))
+    srm_mirror_loss           = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui["srm_mirror_loss"]))
+    sr2_mirror_transmittance  = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui["sr2_mirror_transmittance"]))
+    sr2_mirror_loss           = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui["sr2_mirror_loss"]))
+    sr3_mirror_transmittance  = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui["sr3_mirror_transmittance"]))
+    sr3_mirror_loss           = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui["sr3_mirror_loss"]))
 
-    itmx_mirror_transmittance = dic_selected_setting_from_gui['itmx_mirror_transmittance']
-    itmx_mirror_loss          = dic_selected_setting_from_gui["itmx_mirror_loss"]
-    itmy_mirror_transmittance = dic_selected_setting_from_gui['itmy_mirror_transmittance']
-    itmy_mirror_loss          = dic_selected_setting_from_gui["itmy_mirror_loss"]
+    itmx_mirror_transmittance = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui['itmx_mirror_transmittance']))
+    itmx_mirror_loss          = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui["itmx_mirror_loss"]))
+    itmy_mirror_transmittance = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui['itmy_mirror_transmittance']))
+    itmy_mirror_loss          = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui["itmy_mirror_loss"]))
 
-    etmx_mirror_transmittance = dic_selected_setting_from_gui['etmx_mirror_transmittance']
-    etmx_mirror_loss          = dic_selected_setting_from_gui["etmx_mirror_loss"]
-    etmy_mirror_transmittance = dic_selected_setting_from_gui['etmy_mirror_transmittance']
-    etmy_mirror_loss          = dic_selected_setting_from_gui["etmy_mirror_loss"]
+    etmx_mirror_transmittance = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui['etmx_mirror_transmittance']))
+    etmx_mirror_loss          = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui["etmx_mirror_loss"]))
+    etmy_mirror_transmittance = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui['etmy_mirror_transmittance']))
+    etmy_mirror_loss          = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui["etmy_mirror_loss"]))
 
-    f1_mod_frequency          = dic_selected_setting_from_gui['f1_mod_frequency']
-    f1_mod_index              = dic_selected_setting_from_gui['f1_mod_index']
-    f2_mod_frequency          = dic_selected_setting_from_gui['f2_mod_frequency']
-    f2_mod_index              = dic_selected_setting_from_gui['f2_mod_index']
-    arbitraryfreq001          = dic_selected_setting_from_gui['arbitraryfreq001']
-    arbitraryfreq002          = dic_selected_setting_from_gui['arbitraryfreq002']
-    num_of_sidebands          = dic_selected_setting_from_gui['num_of_sidebands']
+    f1_mod_frequency          = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui['f1_mod_frequency']))
+    f1_mod_index              = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui['f1_mod_index']))
+    f2_mod_frequency          = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui['f2_mod_frequency']))
+    f2_mod_index              = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui['f2_mod_index']))
+    arbitraryfreq001          = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui['arbitraryfreq001']))
+    arbitraryfreq002          = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui['arbitraryfreq002']))
+    num_of_sidebands          = str(change_nums_unit_str_to_float(dic_selected_setting_from_gui['num_of_sidebands']))
     
     input_finesse = (""
             + "# ======== Constants ========================\n"
@@ -525,209 +676,6 @@ def create_input_finesse(dic_selected_setting_from_gui, selected_interferometer)
         )
     
     return input_finesse
-
-# %%
-def return_gui_selected_portlist(values, selected_interferometer):
-    """
-    GUIで選択したポートをリストにして返す
-
-    Parameters
-    ----------
-    values            : dictionary
-        pysimpleGUIで選択した値の辞書
-    selected_interferometer      : str
-        GUIで選択されている干渉計構成の名前 MI/FPMI/PRFPMI/DRFPMI
-
-    Returns
-    -------
-    port_trues : list of str
-        GUI上で選択したポートの名前のリスト
-    
-    See Also
-    --------
-    all_ports        : list of str
-        GUIで用意しているすべてのportのリスト
-    """
-    port_trues = []
-    for port in all_ports:
-        port_name = "%s_%s" % (selected_interferometer, port)
-        if "k"+port_name in values:# このポートがGUI上で選択できるかを調べる
-            if(values["k"+port_name]):
-                port_trues.append(port)
-    
-    return port_trues
-# %%
-
-
-# %%
-def make_dic_selected_setting_from_gui(values, selected_tab, type_of_pd_signal):
-    """
-    GUIで選択した設定とそれを加工して作った変数を辞書でまとめて返す。
-
-    Parameters
-    ----------
-    values            : dictionary
-        pysimpleGUIで選択した値の辞書
-    selected_tab      : str
-        GUIで選択されている干渉計構成の名前 MI/FPMI/PRFPMI/DRFPMI
-    type_of_pd_signal : str
-        GUIで選択されているPdの信号の検出の方法 sw_power/sw_amptd/sw_dmod1/tf_power/tf_dmod2
-
-    Returns
-    -------
-    dic_selected_setting_from_gui : dictionary
-        finesseに送ったりplotを行うために必要な変数をまとめた辞書
-    
-    See Also
-    --------
-    all_ports        : list of str
-        GUIで用意しているすべてのportのリスト
-    all_pdname_heads : list of str
-        GUIで用意しているすべてのpdの種類のリスト
-    all_demod_freqs  : list of str
-        GUIで用意しているすべての復調（変調）周波数のリスト
-    all_demod_phases : list of str
-        GUIで用意しているすべての復調位相のリスト（Iphase/Qphase）
-    """
-    
-    port_trues   = []
-    pdname_tails = []
-
-    interferometer = selected_tab
-        
-    # port_true
-    port_trues = return_gui_selected_portlist(values,interferometer)
-        
-    # selected_detector_name
-    # pdname_heads
-    if type_of_pd_signal  =="sw_power" or type_of_pd_signal=="tf_power":
-        pdname_head = "pd0"
-        #elif type_of_pd_signal=="sw_amptd" or type_of_pd_signal=="tf_amptd":
-        #    if value[""]
-    elif type_of_pd_signal=="sw_dmod1":
-        pdname_head = "pd1"
-    elif type_of_pd_signal=="tf_dmod2":
-        pdname_head = "pd2"
-    elif type_of_pd_signal=="sw_amptd" or \
-         type_of_pd_signal=="tf_amptd":
-        pdname_head = "ad"
-    # pdname_tails
-    for freq in all_demod_freqs:
-        for phase in all_demod_phases:
-            tail = "%s_%s"%(phase, freq)
-            key  = "k%s_%s_%s"%(interferometer, pdname_head, tail)
-            if key in values:
-                if values[key]:
-                    pdname_tails.append(tail)
-    # demod_freq
-    tmp_head = ""
-    if type_of_pd_signal=="sw_dmod1":
-        tmp_head = "pd1"
-    elif type_of_pd_signal=="tf_dmod2":
-        tmp_head = "pd2"
-    if ('k%s_%s_arbitraryfreq001'%(interferometer, tmp_head) in values) or ('k%s_%s_arbitraryfreq002'%(interferometer, tmp_head) in values):
-        arbitraryfreq001       = str(change_nums_unit_str_to_float(values['k%s_%s_arbitraryfreq001'%(interferometer, tmp_head)]))
-        arbitraryfreq002       = str(change_nums_unit_str_to_float(values['k%s_%s_arbitraryfreq002'%(interferometer, tmp_head)]))
-        arbitraryfreq001_name  = values['k%s_%s_arbitraryfreq001_name'%(interferometer, tmp_head)]
-        arbitraryfreq002_name  = values['k%s_%s_arbitraryfreq002_name'%(interferometer, tmp_head)]
-    else:
-        arbitraryfreq001       = "0"
-        arbitraryfreq002       = "0"
-        arbitraryfreq001_name  = "arbitraryfreq001_name"
-        arbitraryfreq002_name  = "arbitraryfreq002_name"
-
-    # demod_phase
-    demod_phase = values["k%s_pd1_demod_phase"%interferometer]
-    if(type_of_pd_signal=="tf_dmod2"):
-        demod_phase  = values["k%s_pd2_demod_phase"%interferometer]
-    # plotscale
-    if(values['k_inf_c_xaxis_log'] == True):
-        x_plotscale = 'log'
-    else:
-        x_plotscale = 'linear'
-    if(values['k_inf_c_yaxis_log'] == True):
-        y_plotscale = 'log'
-    else:
-        y_plotscale = 'linear'
-
-    dic_selected_setting_from_gui = {
-            ### DoF
-            'dof'                       : values['k%s_dof'%interferometer],#str
-            'type_of_pd_signal'         : type_of_pd_signal,#str sw_power/sw_dmod1/tf_power/tf_dmod2
-            ### advanced setting
-            # IFO_param
-            'laser_power'               : str(change_nums_unit_str_to_float(values['k_inf_c_laser_power'])),#str
-            #       BS
-            'mibs_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_mibs_mirror_transmittance'])),#str
-            'mibs_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_mibs_mirror_loss'])),#str
-            #       PRM
-            'prm_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_prm_mirror_transmittance'])),#str
-            'prm_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_prm_mirror_loss'])),#str
-            #       PRC
-            'pr2_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_pr2_mirror_transmittance'])),#str
-            'pr2_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_pr2_mirror_loss'])),#str
-            'pr3_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_pr3_mirror_transmittance'])),#str
-            'pr3_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_pr3_mirror_loss'])),#str
-            #       SRM
-            'srm_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_srm_mirror_transmittance'])),#str
-            'srm_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_srm_mirror_loss'])),#str
-            #       SRC
-            'sr2_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_sr2_mirror_transmittance'])),#str
-            'sr2_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_sr2_mirror_loss'])),#str
-            'sr3_mirror_transmittance'  : str(change_nums_unit_str_to_float(values['k_inf_c_sr3_mirror_transmittance'])),#str
-            'sr3_mirror_loss'           : str(change_nums_unit_str_to_float(values['k_inf_c_sr3_mirror_loss'])),#str
-            #       ITM
-            'itmx_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_itmx_mirror_transmittance'])),#str
-            'itmx_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_itmx_mirror_loss'])),#str
-            'itmy_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_itmy_mirror_transmittance'])),#str
-            'itmy_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_itmy_mirror_loss'])),#str
-            #       ETM
-            'etmx_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_etmx_mirror_transmittance'])),#str
-            'etmx_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_etmx_mirror_loss'])),#str
-            'etmy_mirror_transmittance' : str(change_nums_unit_str_to_float(values['k_inf_c_etmy_mirror_transmittance'])),#str
-            'etmy_mirror_loss'          : str(change_nums_unit_str_to_float(values['k_inf_c_etmy_mirror_loss'])),#str
-            #       modulation
-            'f1_mod_frequency'          : (change_nums_unit_str_to_float(values['k_inf_c_f1_mod_frequency'])),#str
-            'f1_mod_index'              : values['k_inf_c_f1_mod_index'],#str
-            'f2_mod_frequency'          : (change_nums_unit_str_to_float(values['k_inf_c_f2_mod_frequency'])),#str
-            'f2_mod_index'              : values['k_inf_c_f2_mod_index'],#str
-            'num_of_sidebands'          : values['k_inf_c_num_of_sidebands'],#str
-            #       plot
-            'x_plotscale'               : x_plotscale,#str log/linear
-            'y_plotscale'               : y_plotscale,#str log/linear
-            'samplingnum'               : values['k_inf_c_samplingnum'],#str
-            # general
-            'xaxis_range_beg'           : values['k_inf_c_xaxis_range_beg'],#str #x軸の最小値
-            'xaxis_range_end'           : values['k_inf_c_xaxis_range_end'],#str #x軸の最大値
-            # dmod1 and dmod2
-            #       demodulation
-            'arbitraryfreq001'          : arbitraryfreq001,#str
-            'arbitraryfreq002'          : arbitraryfreq002,#str
-            'arbitraryfreq001_name'     : arbitraryfreq001_name,#str
-            'arbitraryfreq002_name'     : arbitraryfreq002_name,#str
-            #       other
-            'demod_phase'               : demod_phase,#str
-            'put_car_sw_amptd_flag'     : values['k%s_put_car_sw_amptd_flag'%interferometer],#str
-            'put_f1u_sw_amptd_flag'     : values['k%s_put_f1u_sw_amptd_flag'%interferometer],#str
-            'put_f1l_sw_amptd_flag'     : values['k%s_put_f1l_sw_amptd_flag'%interferometer],#str
-            'put_f2u_sw_amptd_flag'     : values['k%s_put_f2u_sw_amptd_flag'%interferometer],#str
-            'put_f2l_sw_amptd_flag'     : values['k%s_put_f2l_sw_amptd_flag'%interferometer],#str
-            #'put_car_tf_amptd_flag'     : values['k%s_put_car_tf_amptd_flag'%interferometer],
-            #'put_f1u_tf_amptd_flag'     : values['k%s_put_f1u_tf_amptd_flag'%interferometer],
-            #'put_f1l_tf_amptd_flag'     : values['k%s_put_f1l_tf_amptd_flag'%interferometer],
-            #'put_f2u_tf_amptd_flag'     : values['k%s_put_f2u_tf_amptd_flag'%interferometer],
-            #'put_f2l_tf_amptd_flag'     : values['k%s_put_f2l_tf_amptd_flag'%interferometer],
-            #       other
-            'interferometer'            : interferometer,
-            'port_trues'                : port_trues,
-            'pdname_head'               : pdname_head,
-            'pdname_tails'              : pdname_tails,
-            }
-    
-    return dic_selected_setting_from_gui
-# %%
-#def make_pdname():
-
 
 # %%
 def make_pd_kat_for_finesse(dic_selected_setting_from_gui):# make_pd_sentence_for _finesse
@@ -1015,3 +963,66 @@ def verify_mirror_tl_sum(transmittance, loss):
         return True
     else:
         return False
+# %%
+def date_to_num(dt_now):
+    """
+    dt_nowに含まれる" ", ":", ".", "-"を取り除いて数字のみのstrにする
+
+    Parameters
+    ----------
+    dt_now    : str
+        str型の日付
+
+    Returns
+    -------
+    dt_now : str
+        引数から記号を取り除いたもの
+    """
+    dt_now = dt_now.replace(' ','')
+    dt_now = dt_now.replace('-','')
+    dt_now = dt_now.replace(':','')
+    dt_now = dt_now.replace(',','')
+    dt_now = dt_now.replace('.','')
+    dt_now = str(dt_now)
+    return dt_now
+# %%
+def change_nums_unit_str_to_float(str_num):
+    """
+    str_numに含まれる省略した単位を数値に変換して,str_numをfloat型の数字に変換して計算した結果を返す
+
+    Parameters
+    ----------
+    str_num    : str
+        str型の数字
+
+    Returns
+    -------
+    str_num : float
+        計算した結果のfloat型の数字
+    """
+    str_num = str_num.replace('ppm','*10**(-6)')#pより先に置かないとpが置き換わってしまう
+    str_num = str_num.replace('p',  '*10**(-12)')
+    str_num = str_num.replace('n',  '*10**(-9)')
+    str_num = str_num.replace('k',  '*10**3')
+    str_num = str_num.replace('m',  '*10**(-3)')
+    str_num = str_num.replace('M',  '*10**6')
+    str_num = str_num.replace('G',  '*10**9')
+    if str_num=="":
+        pass
+    else:
+        str_num = eval(str_num)
+    return str_num
+# %%
+def verify_input_chr_foramt_is_correct(input_str):
+    """
+    input_strに値が入っているか、入っている値はchange_nums_unit_str_to_floatで計算できるのかを調べる
+    GUIのinputboxで入力した値をkatファイルのパラメータに代入できるかを調べるために作った
+    """
+    if input_str=="":
+        return False
+    else:
+        try:
+            change_nums_unit_str_to_float(input_str)
+            return True
+        except:
+            return False

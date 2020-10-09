@@ -1215,58 +1215,76 @@ while True:
         # 全部をoverplotするかどうか判定するための変数
         is_overplot_all_pds = values["k_inf_c_is_overplot_all_pds"]
         
-        kat = finesse.kat()
-        
-        dic_selected_setting_from_gui = mifsim.make_dic_selected_setting_from_gui(values, selected_tab, type_of_pd_signal)
-        
-        # 置いたpdの名前 = pdname_head + pdname_tail + port
-        port_trues        = dic_selected_setting_from_gui["port_trues"]
-        pdname_head       = dic_selected_setting_from_gui["pdname_head"]
-        pdname_tails      = dic_selected_setting_from_gui["pdname_tails"]
-        
         #
         # finesseを実行する前にGUIで必要な設定がすべてできているかチェックする
         #
         # IFO_paramの項目に何もいれていない時にエラーを返す
-        # ここを通っていればIFO_paramのタブに未入力の箇所はないということ
-        no_value_in_ifo_param_values = False
+        # ここを通っていればIFO_paramのタブに限っては未入力の箇所はないということ
+        wrong_value_in_ifo_param_values = False
         for key in mifsim.all_ifo_param_key:
-            if dic_selected_setting_from_gui[key] == "":
-                sg.popup_ok('Error : Please input any values in the inputbox in IFO_param tab.')
-                no_value_in_ifo_param_values = True
+            key = "k_inf_c_%s"%key
+            if mifsim.verify_input_chr_foramt_is_correct(values[key]):
+                pass
+            else:
+                sg.popup_ok('Error : Please input any values in the %s inputbox in IFO_param tab.'%key)
+                wrong_value_in_ifo_param_values = True
                 break
-        if no_value_in_ifo_param_values:
+        if wrong_value_in_ifo_param_values:
             continue
-        else:
-            pass
+        # dmod1 と dmod2 の入力ボックスのエラー
+        wrong_value_in_ifo_param_values = False
         if type_of_pd_signal=="sw_dmod1" or type_of_pd_signal=="tf_dmod2":
-            # arbitraryfreqが未入力のエラー
-            if dic_selected_setting_from_gui["arbitraryfreq001"]=="" or dic_selected_setting_from_gui["arbitraryfreq002"]==""\
-                or dic_selected_setting_from_gui["arbitraryfreq001_name"]=="" or dic_selected_setting_from_gui["arbitraryfreq002_name"]=="":
-                sg.popup_ok('Error : Please set any values in frequency input field.')
-                continue
-
+            tmp_checklist = ["arbitraryfreq001", "arbitraryfreq002"]
+            tmp_checklist2 = ["arbitraryfreq001_name", "arbitraryfreq002_name"]
+            # arbitraryfreqが未入力か変な値かなどエラーをチェック
+            tmp_head = ""
+            if type_of_pd_signal=="sw_dmod1":
+                tmp_head = "pd1"
+            elif type_of_pd_signal=="tf_dmod2":
+                tmp_head = "pd2"
+            for key in tmp_checklist:
+                if mifsim.verify_input_chr_foramt_is_correct(values["k%s_%s_%s"%(selected_tab, tmp_head, key)]):
+                    pass
+                else:
+                    sg.popup_ok('Error : Please set correct values in frequency input field.')
+                    wrong_value_in_ifo_param_values = True
+                    break
+            # arbitraryfreq_nameが未入力のエラー
+            for key in tmp_checklist2:
+                if values["k%s_%s_%s"%(selected_tab, tmp_head, key)]=="":
+                    sg.popup_ok('Error : Please set correct values in frequency_name input field.')
+                    wrong_value_in_ifo_param_values = True
+                    break
+                else:
+                    pass
             # demod phaseが未入力のエラー
-            if dic_selected_setting_from_gui["demod_phase"]=="":
+            if mifsim.verify_input_chr_foramt_is_correct(values["k%s_%s_demod_phase"%(selected_tab, tmp_head)]):
+                pass
+            else:
                 sg.popup_ok('Error : Please set the demodulation phase value.')
                 continue
-        # xaxis に　180 -180 とか入力してしまった時に、エラーを返す
-        if dic_selected_setting_from_gui["xaxis_range_beg"] == '':# できれば未入力の箇所は一括してチェックしたいが、よくわかりません
-            sg.popup_ok('Error : Please set the xaxis_beg value or xaxis_end value.')
+        if wrong_value_in_ifo_param_values:
             continue
-        else:
-            tmp_beg = eval(dic_selected_setting_from_gui["xaxis_range_beg"])
-            tmp_end = eval(dic_selected_setting_from_gui["xaxis_range_end"])
+        # xaxis の入力ボックスのエラー
+        if mifsim.verify_input_chr_foramt_is_correct(values["k_inf_c_xaxis_range_beg"]) and \
+           mifsim.verify_input_chr_foramt_is_correct(values["k_inf_c_xaxis_range_end"]):
+            # xaxis に　180 -180 とか入力してしまった時に、エラーを返す
+            tmp_beg = eval(values["k_inf_c_xaxis_range_beg"])
+            tmp_end = eval(values["k_inf_c_xaxis_range_end"])
             if tmp_beg<tmp_end:
                 pass
             else:
                 sg.popup_ok('Error : Please Set the xaxis_beg value higher than the value of xaxis_end.')
                 continue
+            pass
+        else:
+            sg.popup_ok('Error : Please set the xaxis_beg value and xaxis_end value.')
+            continue
         # 反射率と透過率とロスの合計が1以下になっているかどうかを調べる関数を用意する
         mirror_tl_sum_within_1 = True
         for mirror in mifsim.all_mirrors:
-            tmp_t = eval(dic_selected_setting_from_gui["%s_mirror_transmittance"%mirror])# transmittance と loss はIFO_paramのタブで設定するので、ここに来ているなら未入力にはなりません
-            tmp_l = eval(dic_selected_setting_from_gui["%s_mirror_loss"%mirror])
+            tmp_t = eval(values["k_inf_c_%s_mirror_transmittance"%mirror])# transmittance と loss はIFO_paramのタブで設定するので、ここに来ているなら未入力にはなりません
+            tmp_l = eval(values["k_inf_c_%s_mirror_loss"%mirror])
             if mifsim.verify_mirror_tl_sum(tmp_t, tmp_l):
                 pass
             else:
@@ -1282,11 +1300,25 @@ while True:
         # KAGRAの設定（デフォルト）に戻すボタンを作る
 
         # DARMにDARMaとかタイプしてしまった時にエラーを返す設定を作る
-        if dic_selected_setting_from_gui["dof"] in mifsim.all_dofs:
+        if values["k%s_dof"%selected_tab] in mifsim.all_dofs:
             pass
         else:
             sg.popup_ok('Error : Please select a DoF from the list.')#何も入力していない場合もエラーメッセージを表示できる
             continue
+
+        kat = finesse.kat()
+        
+        dic_selected_setting_from_gui = mifsim.make_dic_selected_setting_from_gui(values, selected_tab, type_of_pd_signal)
+        
+        # 置いたpdの名前 = pdname_head + pdname_tail + port
+        port_trues        = dic_selected_setting_from_gui["port_trues"]
+        pdname_head       = dic_selected_setting_from_gui["pdname_head"]
+        pdname_tails      = dic_selected_setting_from_gui["pdname_tails"]
+        
+
+        pds_for_kat = mifsim.make_pd_kat_for_finesse(dic_selected_setting_from_gui)
+        code = mifsim.generate_kat(pds_for_kat, dic_selected_setting_from_gui, selected_tab)
+        
         # ラジオボックスをちゃんと選んでいない時エラーになる
         if is_selected_type_of_pd_signal == False:
             sg.popup_ok('Error : Please follow the instructions on the screen to set up your pd.')
@@ -1299,13 +1331,13 @@ while True:
             if len(port_trues)==0:
                 sg.popup_ok('Error : Please check at least one pd port.')
                 continue
-            if dic_selected_setting_from_gui['put_car_sw_amptd_flag']==False and\
-               dic_selected_setting_from_gui['put_f1u_sw_amptd_flag']==False and dic_selected_setting_from_gui['put_f1l_sw_amptd_flag']==False and \
-               dic_selected_setting_from_gui['put_f2u_sw_amptd_flag']==False and dic_selected_setting_from_gui['put_f2l_sw_amptd_flag']==False:
+            if values['k%s_put_car_sw_amptd_flag'%selected_tab]==False and\
+               values['k%s_put_f1u_sw_amptd_flag'%selected_tab]==False and values['k%s_put_f1l_sw_amptd_flag'%selected_tab]==False and \
+               values['k%s_put_f2u_sw_amptd_flag'%selected_tab]==False and values['k%s_put_f2l_sw_amptd_flag'%selected_tab]==False:
                 """
-                dic_selected_setting_from_gui['put_car_tf_amptd_flag']==False and\
-                dic_selected_setting_from_gui['put_f1u_tf_amptd_flag']==False and dic_selected_setting_from_gui['put_f1l_tf_amptd_flag']==False and\
-                dic_selected_setting_from_gui['put_f2u_tf_amptd_flag']==False and dic_selected_setting_from_gui['put_f2l_tf_amptd_flag']==False:
+                values['k%s_put_car_tf_amptd_flag']==False and\
+                values['k%s_put_f1u_tf_amptd_flag']==False and values['k%s_put_f1l_tf_amptd_flag']==False and\
+                values['k%s_put_f2u_tf_amptd_flag']==False and values['k%s_put_f2l_tf_amptd_flag']==False:
                 """
                 sg.popup_ok('Error : Please check at least one freq.')
                 continue
@@ -1313,10 +1345,7 @@ while True:
             if len(port_trues)==0 or len(pdname_tails)==0:
                 sg.popup_ok('Error : Please check at least one pd port or one demodulation phase.')
                 continue
-
-        pds_for_kat = mifsim.make_pd_kat_for_finesse(dic_selected_setting_from_gui)
-        code = mifsim.generate_kat(pds_for_kat, dic_selected_setting_from_gui, selected_tab)
-        
+            
         kat.parse(code)
         out = kat.run()
         # katファイルや結果をoutputする用のlist
