@@ -234,13 +234,14 @@ yaxis lin abs:deg
             input_finesse += """
             
 ### BS ###
-fsig sig1 ETMX 10 0
-fsig sig1 ITMX 10 0
-fsig sig1 ETMY 10 180
-fsig sig1 ITMY 10 180
+fsig sig1 bs1 10 0
 xaxis sig1 f %s %s %s %s
 yaxis lin abs:deg
             """ % (x_plotscale, xaxis_range_beg, xaxis_range_end, samplingnum)
+#fsig sig1 ETMX 10 0
+#fsig sig1 ITMX 10 0
+#fsig sig1 ETMY 10 180
+#fsig sig1 ITMY 10 180
         elif(dof=="BS"and selected_interferometer=="MI"):
             input_finesse += """
 
@@ -667,7 +668,7 @@ def create_input_finesse(dic_selected_setting_from_gui, selected_interferometer)
             + "m1 ETMY %s %s 90 ny3 nTMSY\n"%(etmy_mirror_transmittance, etmy_mirror_loss)
             + "\n"
             + "# ========= SRC each mirror loss $src_loss =======\n"
-            + "s sLsr3 15.7396 n4 nsr5\n"
+            + "s sLsr3 15.7386 n4 nsr5\n"
             + "bs1 SR3 %s %s 0 $a nsr5 nsr4 dump dump\n"%(sr3_mirror_transmittance, sr3_mirror_loss)
             + "s sLsr2 11.1115 nsr4 nsr3\n"
             + "bs1 SR2 %s %s 0 $a nsr2 nsr3 POS dump\n"%(sr2_mirror_transmittance, sr2_mirror_loss)

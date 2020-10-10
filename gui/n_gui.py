@@ -762,7 +762,7 @@ extra_ifo_param_tab =  [
                 [sg.Text('ETMX mirror power transmittance'), sg.Input(key='k_inf_c_etmx_mirror_transmittance', default_text='5e-06'   , enable_events=True)],
                 [sg.Text('ETMY mirror power transmittance'), sg.Input(key='k_inf_c_etmy_mirror_transmittance', default_text='5e-06'   , enable_events=True)],
                 [sg.Text('PRM  mirror power transmittance'), sg.Input(key='k_inf_c_prm_mirror_transmittance' , default_text='0.1'     , enable_events=True)],
-                [sg.Text('SRM  mirror power transmittance'), sg.Input(key='k_inf_c_srm_mirror_transmittance' , default_text='0.1536'  , enable_events=True)],
+                [sg.Text('SRM  mirror power transmittance'), sg.Input(key='k_inf_c_srm_mirror_transmittance' , default_text='0.3'  , enable_events=True)],
                 #       PRC SRC
                 [sg.Text('PR2  mirror power transmittance'), sg.Input(key='k_inf_c_pr2_mirror_transmittance' , default_text='500e-6'  , enable_events=True)],
                 [sg.Text('PR3  mirror power transmittance'), sg.Input(key='k_inf_c_pr3_mirror_transmittance' , default_text='50e-6'   , enable_events=True)],
@@ -848,8 +848,8 @@ window['layoutkey'].expand(expand_x=True)# 枠で囲ったGUIのサイズに応�
 while True:
     # GUIを立ち上げた時に一度だけ実行する
     if(initialization==False):
-        mifsim.set_gui_window_visible(mifsim.all_gui_section_keys, False, window)#pdの設定をするためのsectionをすべて閉じる
-        mifsim.set_gui_window_bool(mifsim.all_radiobox_keys, False, window)#pdの設定をするためのRADIOBOXの値を全部Falseにする
+        mifsim.set_gui_window_visible(all_gui_section_keys, False, window)#pdの設定をするためのsectionをすべて閉じる
+        mifsim.set_gui_window_bool(all_radiobox_keys, False, window)#pdの設定をするためのRADIOBOXの値を全部Falseにする
         mifsim.set_drawing_size_enlarge(selected_tab, False, window)# #GUIを立ち上げた時には通常サイズと大きいサイズの図が両方表示されるから普通のサイズの図だけ表示されるようにする。
         initialization = True
     event, values = window.read()
@@ -866,11 +866,11 @@ while True:
             continue
         else:
             ####### initializeと共通なのでなんとかする
-            #mifsim.set_gui_window_visible(mifsim.all_gui_section_keys, False, window)#pdの設定をするためのsectionをすべて閉じる
-            #mifsim.set_gui_window_bool(mifsim.all_radiobox_keys, False, window)#pdの設定をするためのRADIOBOXの値を全部Falseにする
+            #mifsim.set_gui_window_visible(all_gui_section_keys, False, window)#pdの設定をするためのsectionをすべて閉じる
+            #mifsim.set_gui_window_bool(all_radiobox_keys, False, window)#pdの設定をするためのRADIOBOXの値を全部Falseにする
             mifsim.set_drawing_size_enlarge(selected_tab, False, window)#GUIを立ち上げた時には通常サイズと大きいサイズの図が両方表示されるから普通のサイズの図だけ表示されるようにする。
             #type_of_pd_signal = 'sw_power'
-            is_selected_type_of_pd_signal = False
+            #is_selected_type_of_pd_signal = False
 
     # drawing normal/large size button
     if event == 'k%s_normalize_drawing_size'%selected_tab:
@@ -1027,16 +1027,16 @@ while True:
     ### port select button
     if event == "k%s_set_all_important_port_bool"%selected_tab:
         if should_check_all_important_port:
-            mifsim.set_gui_port_bool(values, selected_tab, mifsim.all_important_ports, False, window)
+            mifsim.set_gui_port_bool(values, selected_tab, all_important_ports, False, window)
             should_check_all_important_port = False
         else:
-            mifsim.set_gui_port_bool(values, selected_tab, mifsim.all_important_ports, True, window)
+            mifsim.set_gui_port_bool(values, selected_tab, all_important_ports, True, window)
             should_check_all_important_port = True
     if event == "k%s_check_all_port"%selected_tab:
-        mifsim.set_gui_port_bool(values, selected_tab, mifsim.all_ports, True, window)
+        mifsim.set_gui_port_bool(values, selected_tab, all_ports, True, window)
         should_check_all_important_port = True
     if event == "k%s_uncheck_all_port"%selected_tab:
-        mifsim.set_gui_port_bool(values, selected_tab, mifsim.all_ports, False, window)
+        mifsim.set_gui_port_bool(values, selected_tab, all_ports, False, window)
         should_check_all_important_port = False
                 
     ### visible/invisible advanced setting
@@ -1054,8 +1054,8 @@ while True:
         windowkeys  = ["k%s_sec_sw_setting"%selected_tab]
         # sectionkeysに含まれるオブジェクトの真偽値を変更する
         sectionkeys = ["k%s_issw"          %selected_tab]
-        mifsim.set_gui_window_visible(mifsim.all_gui_section_keys, False, window)
-        mifsim.set_gui_window_bool(mifsim.all_radiobox_keys, False, window)
+        mifsim.set_gui_window_visible(all_gui_section_keys, False, window)
+        mifsim.set_gui_window_bool(all_radiobox_keys, False, window)
         mifsim.set_gui_window_visible(windowkeys, True, window)
         mifsim.set_gui_window_bool(sectionkeys, True, window)
         # default xaxis range
@@ -1073,8 +1073,8 @@ while True:
                        "k%s_sec_sw_power_setting"%selected_tab]
         sectionkeys = ["k%s_issw"      %selected_tab,
                        "k%s_issw_power"%selected_tab]
-        mifsim.set_gui_window_visible(mifsim.all_gui_section_keys, False, window)
-        mifsim.set_gui_window_bool(mifsim.all_radiobox_keys, False, window)
+        mifsim.set_gui_window_visible(all_gui_section_keys, False, window)
+        mifsim.set_gui_window_bool(all_radiobox_keys, False, window)
         mifsim.set_gui_window_visible(windowkeys, True, window)
         mifsim.set_gui_window_bool(sectionkeys, True, window)
 
@@ -1087,8 +1087,8 @@ while True:
                        "k%s_sec_sw_amptd_setting"%selected_tab]
         sectionkeys = ["k%s_issw"      %selected_tab,
                        "k%s_issw_amptd"%selected_tab]
-        mifsim.set_gui_window_visible(mifsim.all_gui_section_keys, False, window)
-        mifsim.set_gui_window_bool(mifsim.all_radiobox_keys, False, window)
+        mifsim.set_gui_window_visible(all_gui_section_keys, False, window)
+        mifsim.set_gui_window_bool(all_radiobox_keys, False, window)
         mifsim.set_gui_window_visible(windowkeys, True, window)
         mifsim.set_gui_window_bool(sectionkeys, True, window)
 
@@ -1158,8 +1158,8 @@ while True:
                        "k%s_sec_tf_amptd_setting"%selected_tab]
         sectionkeys = ["k%s_istf"      %selected_tab,
                        "k%s_istf_amptd"%selected_tab]
-        mifsim.set_gui_window_visible(mifsim.all_gui_section_keys, False, window)
-        mifsim.set_gui_window_bool(mifsim.all_radiobox_keys, False, window)
+        mifsim.set_gui_window_visible(all_gui_section_keys, False, window)
+        mifsim.set_gui_window_bool(all_radiobox_keys, False, window)
         mifsim.set_gui_window_visible(windowkeys, True, window)
         mifsim.set_gui_window_bool(sectionkeys, True, window)
 
@@ -1345,7 +1345,7 @@ while True:
             if len(port_trues)==0 or len(pdname_tails)==0:
                 sg.popup_ok('Error : Please check at least one pd port or one demodulation phase.')
                 continue
-            
+
         kat.parse(code)
         out = kat.run()
         # katファイルや結果をoutputする用のlist
@@ -1797,7 +1797,7 @@ while True:
                 sg.popup_ok("Unexpected error:", sys.exc_info()[0])
         continue
 
-window.close()         
+window.close()
 
 
 # %%
