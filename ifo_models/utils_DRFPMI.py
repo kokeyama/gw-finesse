@@ -29,6 +29,7 @@ def model_DRFPMI():
 
     ## ======= PRC each mirror loss 45ppm =======
     # PRC
+
     m1 PRM 0.1 45e-6 0 nREFL npr1
     s sLpr1 14.7615 npr1 npr2
     bs1 PR2 500e-6 45e-6 0 $a npr3 npr2 nPOP nPOP2
@@ -73,17 +74,29 @@ def model_DRFPMI():
     ad SB2p_POP $f2 nPOP
     ad SB2m_POP $mf2 nPOP
 
-    ad CR_TMSX 0_TMSX nTMSX
+    ad CR_TMSX 0 nTMSX
     ad SB1p_TMSX $f1 nTMSX
     ad SB1m_TMSX $mf1 nTMSX
     ad SB2p_TMSX $f2 nTMSX
     ad SB2m_TMSX $mf2 nTMSX
+
+    ad CR_TMSY   0 nTMSY
+    ad SB1p_TMSY $f1 nTMSY
+    ad SB1m_TMSY $mf1 nTMSY
+    ad SB2p_TMSY $f2 nTMSY
+    ad SB2m_TMSY $mf2 nTMSY
     
     ad CR_POS 0 nPOS
     ad SB1p_POS $f1 nPOS
     ad SB1m_POS $mf1 nPOS
     ad SB2p_POS $f2 nPOS
     ad SB2m_POS $mf2 nPOS
+
+    ad CR_AS 0 nAS
+    ad SB1p_AS $f1 nAS
+    ad SB1m_AS $mf1 nAS
+    ad SB2p_AS $f2 nAS
+    ad SB2m_AS $mf2 nAS
     
     """)
     return base
@@ -192,17 +205,30 @@ def model_HOM_DRFPMI():
     ad SB2p_POP $f2 nPOP
     ad SB2m_POP $mf2 nPOP
 
-    ad CR_TMSX 0_TMSX nTMSX
+    ad CR_TMSX   0 nTMSX
     ad SB1p_TMSX $f1 nTMSX
     ad SB1m_TMSX $mf1 nTMSX
     ad SB2p_TMSX $f2 nTMSX
     ad SB2m_TMSX $mf2 nTMSX
+
+    ad CR_TMSY   0 nTMSY
+    ad SB1p_TMSY $f1 nTMSY
+    ad SB1m_TMSY $mf1 nTMSY
+    ad SB2p_TMSY $f2 nTMSY
+    ad SB2m_TMSY $mf2 nTMSY
     
     ad CR_POS 0 nPOS
     ad SB1p_POS $f1 nPOS
     ad SB1m_POS $mf1 nPOS
     ad SB2p_POS $f2 nPOS
     ad SB2m_POS $mf2 nPOS
+
+    ad CR_AS 0 nAS
+    ad SB1p_AS $f1 nAS
+    ad SB1m_AS $mf1 nAS
+    ad SB2p_AS $f2 nAS
+    ad SB2m_AS $mf2 nAS
+    
     
     """)
     return base
@@ -257,21 +283,24 @@ def run_sweep(DoF, base):
         model.parse("""
         var tuning 0
         xaxis tuning phi lin -90 90 5000
-        put bs1 phi $x1
+        put* ITMX phi $x1
+        put* ETMX phi $x1
+        put* ITMY phi $mx1
+        put* ETMY phi $mx1
         yaxis lin abs
         """)
     elif DoF == "PRCL":
         model.parse("""
         var tuning 0
-        xaxis tuning phi lin -90 90 5000
-        put PRM phi $x1
+        xaxis* tuning phi lin -90 90 5000
+        put* PRM phi $x1
         yaxis lin abs
         """)
     elif DoF == "SRCL":
         model.parse("""
         var tuning 0
-        xaxis tuning phi lin -90 90 5000
-        put SRM phi $x1
+        xaxis* tuning phi lin -90 90 5000
+        put* SRM phi $x1
         yaxis lin abs
         """)
         
