@@ -234,14 +234,15 @@ yaxis lin abs:deg
             input_finesse += """
             
 ### BS ###
-fsig sig1 bs1 10 0
+fsig sig1 ETMX 10 0
+fsig sig1 ITMX 10 0
+fsig sig1 ETMY 10 180
+fsig sig1 ITMY 10 180
 xaxis sig1 f %s %s %s %s
 yaxis lin abs:deg
             """ % (x_plotscale, xaxis_range_beg, xaxis_range_end, samplingnum)
-#fsig sig1 ETMX 10 0
-#fsig sig1 ITMX 10 0
-#fsig sig1 ETMY 10 180
-#fsig sig1 ITMY 10 180
+#fsig sig1 bs1 10 0
+
         elif(dof=="BS"and selected_interferometer=="MI"):
             input_finesse += """
 
