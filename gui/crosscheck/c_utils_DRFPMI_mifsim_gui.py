@@ -324,42 +324,65 @@ def run_fsig(DoF, base):
     const arbitraryfreq001 0
     const arbitraryfreq002 0
     const a 0.686
+    
+    
+    pd2 pd2_Iphase_fsb1_REFL $fsb1 0.0 10 REFL
+    put pd2_Iphase_fsb1_REFL f2 $x1
+    pd2 pd2_Qphase_fsb1_REFL $fsb1 90.0 10 REFL
+    put pd2_Qphase_fsb1_REFL f2 $x1
+    pd2 pd2_Qphase_fsb2_REFL $fsb2 90.0 10 REFL
+    put pd2_Qphase_fsb2_REFL f2 $x1
+    pd2 pd2_Iphase_fsb2_REFL $fsb2 0.0 10 REFL
+    put pd2_Iphase_fsb2_REFL f2 $x1
 
-    pd2 ASI1 $fsb1 0 10 nAS
-    pd2 ASQ1 $fsb1 90 10 nAS
-    pd2 REFLI1 $fsb1 0 10 nREFL
-    pd2 REFLQ1 $fsb1 90 10 nREFL
-    pd2 POPI1 $fsb1 0 10 nPOP
-    pd2 POPQ1 $fsb1 90 10 nPOP
-    pd2 POSI1 $fsb1 0 10 nPOS
-    pd2 POSQ1 $fsb1 90 10 nPOS
+    pd2 pd2_Iphase_fsb2_POP $fsb2 0.0 10 POP
+    put pd2_Iphase_fsb2_POP f2 $x1
+    pd2 pd2_Iphase_fsb1_POP $fsb1 0.0 10 POP
+    put pd2_Iphase_fsb1_POP f2 $x1
+    pd2 pd2_Qphase_fsb1_POP $fsb1 90.0 10 POP
+    put pd2_Qphase_fsb1_POP f2 $x1
+    pd2 pd2_Qphase_fsb2_POP $fsb2 90.0 10 POP
+    put pd2_Qphase_fsb2_POP f2 $x1
 
-    pd2 ASI2 $fsb2 0 10 nAS
-    pd2 ASQ2 $fsb2 90 10 nAS
-    pd2 REFLI2 $fsb2 0 10 nREFL
-    pd2 REFLQ2 $fsb2 90 10 nREFL
-    pd2 POPI2 $fsb2 0 10 nPOP
-    pd2 POPQ2 $fsb2 90 10 nPOP
-    pd2 POSI2 $fsb2 0 10 nPOS
-    pd2 POSQ2 $fsb2 90 10 nPOS
+    pd2 pd2_Iphase_fsb1_POS $fsb1 0.0 10 POS
+    put pd2_Iphase_fsb1_POS f2 $x1
+    pd2 pd2_Qphase_fsb2_POS $fsb2 90.0 10 POS
+    put pd2_Qphase_fsb2_POS f2 $x1
+    pd2 pd2_Iphase_fsb2_POS $fsb2 0.0 10 POS
+    put pd2_Iphase_fsb2_POS f2 $x1
+    pd2 pd2_Qphase_fsb1_POS $fsb1 90.0 10 POS
+    put pd2_Qphase_fsb1_POS f2 $x1
 
-    put ASI1 f2 $x1
-    put ASQ1 f2 $x1
-    put REFLI1 f2 $x1
-    put REFLQ1 f2 $x1
-    put POPI1 f2 $x1
-    put POPQ1 f2 $x1
-    put POSI1 f2 $x1
-    put POSQ1 f2 $x1
+    
+    pd2 pd2_Iphase_fsb1_AS $fsb1 0.0 10 AS
+    put pd2_Iphase_fsb1_AS f2 $x1
+   pd2 pd2_Qphase_fsb2_AS $fsb2 90.0 10 AS
+    put pd2_Qphase_fsb2_AS f2 $x1
+    pd2 pd2_Qphase_fsb1_AS $fsb1 90.0 10 AS
+    put pd2_Qphase_fsb1_AS f2 $x1
+    pd2 pd2_Iphase_fsb2_AS $fsb2 0.0 10 AS
+    put pd2_Iphase_fsb2_AS f2 $x1
 
-    put ASI2 f2 $x1
-    put ASQ2 f2 $x1
-    put REFLI2 f2 $x1
-    put REFLQ2 f2 $x1
-    put POPI2 f2 $x1
-    put POPQ2 f2 $x1
-    put POSI2 f2 $x1
-    put POSQ2 f2 $x1
+    pd2 pd2_Iphase_fsb1_nTMSX $fsb1 0.0 10 nTMSX
+    put pd2_Iphase_fsb1_nTMSX f2 $x1
+    pd2 pd2_Qphase_fsb2_nTMSX $fsb2 90.0 10 nTMSX
+    put pd2_Qphase_fsb2_nTMSX f2 $x1
+    pd2 pd2_Qphase_fsb1_nTMSX $fsb1 90.0 10 nTMSX
+    put pd2_Qphase_fsb1_nTMSX f2 $x1
+    pd2 pd2_Iphase_fsb2_nTMSX $fsb2 0.0 10 nTMSX
+    put pd2_Iphase_fsb2_nTMSX f2 $x1
+
+    
+    pd2 pd2_Qphase_fsb2_nTMSY $fsb2 90.0 10 nTMSY
+    put pd2_Qphase_fsb2_nTMSY f2 $x1
+    pd2 pd2_Qphase_fsb1_nTMSY $fsb1 90.0 10 nTMSY
+    put pd2_Qphase_fsb1_nTMSY f2 $x1
+    pd2 pd2_Iphase_fsb2_nTMSY $fsb2 0.0 10 nTMSY
+    put pd2_Iphase_fsb2_nTMSY f2 $x1
+    pd2 pd2_Iphase_fsb1_nTMSY $fsb1 0.0 10 nTMSY
+    put pd2_Iphase_fsb1_nTMSY f2 $x1
+
+
 
     yaxis log abs:deg
     """)
@@ -376,31 +399,42 @@ def run_fsig(DoF, base):
         """)
     elif DoF == "DARM":
         model.parse("""
+        /*
         const fstart 0.0005
         const fend 500
         fsig sig1 ETMX 10 0
         fsig sig1 ETMY 10 180
         xaxis sig1 f log $fstart $fend 1000
+        */
+        const fstart 0.0005
+        const fend 500
+        fsig sig1 ETMX 10 0
+        fsig sig1 ETMY 10 180
+        xaxis sig1 f log $fstart $fend 1000
+        #yaxis log abs:deg
         """)
     elif DoF == "MICH":
         model.parse("""
         const fstart 0.0005
         const fend 500
-        fsig sig1 bs1 10 0
+        fsig sig1 ETMX 10 0
+        fsig sig1 ITMX 10 0
+        fsig sig1 ETMY 10 180
+        fsig sig1 ITMY 10 180
         xaxis sig1 f log $fstart $fend 1000
         """)
     elif DoF == "PRCL":
         model.parse("""
         const fstart 0.0005
         const fend 500
-        fsig sig1 PRM 10 0
+        fsig sig1 PRM 1 0
         xaxis sig1 f log $fstart $fend 1000
         """)    
     elif DoF == "SRCL":
         model.parse("""
         const fstart 0.0005
         const fend 500
-        fsig sig1 SRM 10 0
+        fsig sig1 SRM 1 0
         xaxis sig1 f log $fstart $fend 1000
         """)    
     else:
@@ -436,3 +470,5 @@ def demod_phase(out, port, SB, N):
 
 
 
+
+# %%
