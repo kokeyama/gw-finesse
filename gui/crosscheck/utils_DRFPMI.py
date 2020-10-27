@@ -74,17 +74,17 @@ def model_DRFPMI():
     ad SB2p_POP $f2 nPOP
     ad SB2m_POP $mf2 nPOP
 
-    ad CR_TMSX 0 nTMSX
-    ad SB1p_TMSX $f1 nTMSX
-    ad SB1m_TMSX $mf1 nTMSX
-    ad SB2p_TMSX $f2 nTMSX
-    ad SB2m_TMSX $mf2 nTMSX
+    ad CR_nTMSX 0 nTMSX
+    ad SB1p_nTMSX $f1 nTMSX
+    ad SB1m_nTMSX $mf1 nTMSX
+    ad SB2p_nTMSX $f2 nTMSX
+    ad SB2m_nTMSX $mf2 nTMSX
 
-    ad CR_TMSY   0 nTMSY
-    ad SB1p_TMSY $f1 nTMSY
-    ad SB1m_TMSY $mf1 nTMSY
-    ad SB2p_TMSY $f2 nTMSY
-    ad SB2m_TMSY $mf2 nTMSY
+    ad CR_nTMSY   0 nTMSY
+    ad SB1p_nTMSY $f1 nTMSY
+    ad SB1m_nTMSY $mf1 nTMSY
+    ad SB2p_nTMSY $f2 nTMSY
+    ad SB2m_nTMSY $mf2 nTMSY
     
     ad CR_POS 0 nPOS
     ad SB1p_POS $f1 nPOS
@@ -245,8 +245,8 @@ def run_sweep(DoF, base):
     #
     model = base.deepcopy()
     model.parse("""
-    #const f1 16.881M
-    #const fsb2 45.0159M
+    const f1 16.881M
+    const f2 45.0159M
 
     pd1 ASI1 $f1 0 nAS
     pd1 ASQ1 $f1 90 nAS
