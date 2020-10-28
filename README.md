@@ -9,6 +9,6 @@ This is a test repository. We might move to LIGO git in the near future.
    * DRFPMI with HOM but without Maps
  * OMC_model: KAGRA OMC model
  * birefringence: simulations with birefringence mirrors
- * gui: Finesse graphical interface
+ * gui: Finesse graphical interface for KAGRA model
 
 
