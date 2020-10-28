@@ -333,6 +333,14 @@ def run_fsig(DoF, base):
     pd2 POPQ2 $fsb2 90 10 nPOP
     pd2 POSI2 $fsb2 0 10 nPOS
     pd2 POSQ2 $fsb2 90 10 nPOS
+    pd2 TMSXI1 $fsb1 0 10 nTMSX
+    pd2 TMSXQ1 $fsb1 90 10 nTMSX
+    pd2 TMSYI1 $fsb1 0 10 nTMSY
+    pd2 TMSYQ1 $fsb1 90 10 nTMSY
+    pd2 TMSXI2 $fsb2 0 10 nTMSX
+    pd2 TMSXQ2 $fsb2 90 10 nTMSX
+    pd2 TMSYI2 $fsb2 0 10 nTMSY
+    pd2 TMSYQ2 $fsb2 90 10 nTMSY
 
     put ASI1 f2 $x1
     put ASQ1 f2 $x1
@@ -351,6 +359,14 @@ def run_fsig(DoF, base):
     put POPQ2 f2 $x1
     put POSI2 f2 $x1
     put POSQ2 f2 $x1
+    put TMSXQ1 f2 $x1
+    put TMSXI1 f2 $x1
+    put TMSYQ1 f2 $x1
+    put TMSYI1 f2 $x1
+    put TMSXQ2 f2 $x1
+    put TMSXI2 f2 $x1
+    put TMSYQ2 f2 $x1
+    put TMSYI2 f2 $x1
 
     yaxis log abs:deg
     """)
