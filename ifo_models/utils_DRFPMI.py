@@ -2,6 +2,7 @@ import pykat
 from pykat import finesse
 import numpy as np
 
+
 def model_DRFPMI():
     #
     # usage: base = utils_DRFPMI.model_DRFPMI()
@@ -376,7 +377,10 @@ def run_fsig(DoF, base):
         model.parse("""
         const fstart 0.0005
         const fend 500
-        fsig sig1 bs1 10 0
+        fsig sig1 ETMX 10 0
+        fsig sig1 ITMX 10 0
+        fsig sig1 ETMY 10 180
+        fsig sig1 ITMY 10 180
         xaxis sig1 f log $fstart $fend 1000
         """)
     elif DoF == "PRCL":
