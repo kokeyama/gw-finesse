@@ -1,8 +1,3 @@
-# KAGRA DRFPMI model under development
-#
-# Keiko Kokeyama, 12th Aug, 2020
-# 
-
 # ======== Constants ========================
 const f1 16.881M
 const f2 45.0159M
@@ -21,7 +16,7 @@ s s_eo2 0 n_eo4 nREFL
 
 ## ======= PRC each mirror loss 45ppm =======
 # PRC
-#m1 PRM 1 0e-6 0 nREFL npr1
+
 m1 PRM 0.1 45e-6 0 nREFL npr1
 s sLpr1 14.7615 npr1 npr2
 bs1 PR2 500e-6 45e-6 0 $a npr3 npr2 nPOP nPOP2
@@ -46,36 +41,52 @@ m ETMY 0.999995 5e-06 90 ny3 nTMSY
 
 
 # ========= SRC each mirror loss 45ppm =======
-s sLsr3 15.7396 n4 nsr5
+s sLsr3 15.7386 n4 nsr5
 bs1 SR3 50e-6 45e-6 0 $a nsr5 nsr4 dump dump
 s sLsr2 11.1115 nsr4 nsr3
 bs1 SR2 500e-6 45e-6 0 $a nsr2 nsr3 nPOS dump
 s sLsr1 14.7412 nsr2 nsr1
-m1 SRM 0.3 45e-6 0 nsr1 nAS
+m1 SRM 0.3 0e-6 0 nsr1 nAS
 
-
-
-
-#### ===== amplitude detectors =====
+## ===== amplitude detectors =====
 /*
+ad CR_REFL 0 nREFL
+ad SB1p_REFL $f1 nREFL
+ad SB1m_REFL $mf1 nREFL
+ad SB2p_REFL $f2 nREFL
+ad SB2m_REFL $mf2 nREFL
+
 ad CR_POP 0 nPOP
 ad SB1p_POP $f1 nPOP
 ad SB1m_POP $mf1 nPOP
 ad SB2p_POP $f2 nPOP
 ad SB2m_POP $mf2 nPOP
 
-ad CR_TMSX 0_TMSX nTMSX
+ad CR_TMSX 0 nTMSX
 ad SB1p_TMSX $f1 nTMSX
 ad SB1m_TMSX $mf1 nTMSX
 ad SB2p_TMSX $f2 nTMSX
 ad SB2m_TMSX $mf2 nTMSX
+
+ad CR_TMSY   0 nTMSY
+ad SB1p_TMSY $f1 nTMSY
+ad SB1m_TMSY $mf1 nTMSY
+ad SB2p_TMSY $f2 nTMSY
+ad SB2m_TMSY $mf2 nTMSY
 
 ad CR_POS 0 nPOS
 ad SB1p_POS $f1 nPOS
 ad SB1m_POS $mf1 nPOS
 ad SB2p_POS $f2 nPOS
 ad SB2m_POS $mf2 nPOS
+
+ad CR_AS 0 nAS
+ad SB1p_AS $f1 nAS
+ad SB1m_AS $mf1 nAS
+ad SB2p_AS $f2 nAS
+ad SB2m_AS $mf2 nAS
 */
+
 
 # =======  Example Commands ================
 
@@ -83,39 +94,39 @@ ad SB2m_POS $mf2 nPOS
 
 ## DARM scan ##
 /*
-xaxis ETMX phi lin -0.01 0.01 500
-put* ETMY phi $ITMX
+xaxis ETMX phi lin -1 1 500
+put* ETMY phi $mx1
 yaxis abs
 */
 
 ## BS scan ##
 /*
-xaxis* ITMX phi lin -0.1 0.1 1000
-put* ITMY phi $ITMX
+xaxis* ITMX phi lin -90 90 500
+put* ITMY phi $mx1
 put* ETMX phi $x1
-put* ETMY phi $ITMX
+put* ETMY phi $mx1
 yaxis abs
 */
 
 ## CARM scan ##
 /*
-xaxis* ETMX phi lin -0.001 0.001 500
+xaxis* ETMX phi lin -90 90 500
 put* ETMY phi $x1
 yaxis lin abs
 */
 
 ## PRM scan ##
 /*
-xaxis PRM phi lin -0.1 0.1 300
-#diff PRM phi
+xaxis PRM phi lin -90 90 500
 yaxis lin abs
 */
 
 ## SRM scan ##
 /*
-xaxis SRM phi lin -8.59 -8.5 300
+xaxis SRM phi lin -90 90 500
 yaxis lin abs
 */
+
 
 # ====================================
 ### Transfer Functions using fsig
@@ -157,15 +168,6 @@ yaxis lin abs
 ## PRCL ##
 /*
 fsig sig1 PRM 1 0
-pd2 inphase $f1 max 10 nREFL
-xaxis sig1 f log .01 100 500
-put inphase f2 $x1
-yaxis lin abs:deg
-*/
-
-## SRCL ##
-/*
-fsig sig1 SRM 1 0
 pd2 inphase $f1 max 10 nREFL
 xaxis sig1 f log .01 100 500
 put inphase f2 $x1
