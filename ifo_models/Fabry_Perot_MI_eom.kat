@@ -1,5 +1,7 @@
 const f1 16.881M
 const f2 45.0159M
+const mf1 -16.881M
+const mf2 -45.0159M
 
 # Input optics
 l i1 1 0 n0
@@ -7,111 +9,39 @@ s s_eo0 0 n0 n_eo1
 mod eom1 16.881M 0.3 1 pm n_eo1 n_eo2
 s s_eo1 0 n_eo2 n_eo3
 mod eom2 45.0159M 0.3 1 pm n_eo3 n_eo4
-s s_eo2 0 n_eo4 n1
+s s_eo2 0 n_eo4 nREFL
 
 
 # Michelson
-bs bs1 0.5 0.5 0 45 n1 n2 n3 n4
+bs bs1 0.5 0.5 0 45 nREFL n2 n3 n4
 s lx 26.6649 n3 nx1
 s ly 23.3351 n2 ny1
 
 
 # X arm
-m mx1 0.996 0.004 0 nx1 nx2
+m ITMX 0.996 0.004 0 nx1 nx2
 s sx1 3000 nx2 nx3
-m mx2 0.99995 5e-06 0 nx3 nxTRANS
+m ETMX 0.99995 5e-06 0 nx3 nTMSX
 
 # Y arm
-m my1 0.996 0.004 90 ny1 ny2
+m ITMY 0.996 0.004 90 ny1 ny2
 s sy1 3000 ny2 ny3
-m my2 0.99995 5e-06 90 ny3 nyTRANS
-
-
-# photodetector n4
-#pd0 photodetector n1
-
-#### PDs ####
-## REFL
-/*
-pd1 I1 $f1 0 n1
-pd1 Q1 $f1 90 n1
-pd1 I2 $f2 0 n1
-pd1 Q2 $f2 90 n1
-*/
-/*
-## AS
-pd1 I1 $f1 0 n4
-pd1 Q1 $f1 90 n4
-pd1 I2 $f2 0 n4
-pd1 Q2 $f2 90 n4
-*/
-
-## REFL amplitude
-#ad CR0 0 n2*
-#ad SB1 16.881M n2*
-#ad SB2 45.0159M n2*
-
-## AS amplitude
-#ad CR0 0 n4
-#ad SB1 16.881M n4
-#ad SB2 45.0159M n4
-
-### Scan
-
-# DC PDs
-#pd0 AS n4
-#pd0 REFL n1
-
-# Amplitude detectors
-#ad CR0 0 n4
-#ad SB1 16.881M n4
-#ad SB2 45.0159M n4
-
-# Heterodyne signals
-#pd1 I2 $f2 0 n1
-pd1 Q2 $f2 90 n4
-
-# BS scan
-/*
-xaxis* mx1 phi lin -1 1 500
-put* my1 phi $mx1
-put* mx2 phi $x1
-put* my2 phi $mx1
-diff mx1 phi
-yaxis abs
-*/
-
-# CARM scan
-/*
-xaxis* mx2 phi lin -.01 .01 500
-put* my2 phi $x1
-diff mx2 phi
-yaxis abs
-*/
-
-
-# DARM scan
-
-xaxis mx2 phi lin -.001 0.001 500
-put* my2 phi $mx1
-diff mx2 phi
-yaxis abs
-
-
-
-### PDH signal
-#pd1 REFL_I 40k 0 n_in
-#pd1 REFL_Q 40k 90 n_in
-#xaxis m1 phi lin -1 1 500
-#yaxis lin abs
-
-
+m ETMY 0.99995 5e-06 90 ny3 nTMSY
 
 /*
-### Transfer function
-pd2 inphase 40k 0 10 n_in
-xaxis sig1 f log .01 100 400
-put inphase f2 $x1
-fsig sig1 m1 10 0
-yaxis lin db:deg
+## ===== amplitude detectors =====
+ad CR_REFL 0 nREFL
+ad SB1p_REFL $f1 nREFL
+ad SB1m_REFL $mf1 nREFL
+ad SB2p_REFL $f2 nREFL
+ad SB2m_REFL $mf2 nREFL
+    
+
+ad CR_TMSX 0 nTMSX
+ad SB1p_TMSX $f1 nTMSX
+ad SB1m_TMSX $mf1 nTMSX
+ad SB2p_TMSX $f2 nTMSX
+ad SB2m_TMSX $mf2 nTMSX
+    
 */
+
