@@ -52,7 +52,7 @@ s sLsr2 11.1115 nsr4 nsr3
 bs1 SR2 500e-6 45e-6 0 $a nsr2 nsr3 nPOS dump
 s sLsr1 14.7412 nsr2 nsr1
 m1 SRM 0.3 45e-6 0 nsr1 nAS
-#m1 SRM 1 0e-6 0 nsr1 nAS
+
 
 
 
@@ -94,7 +94,6 @@ xaxis* ITMX phi lin -0.1 0.1 1000
 put* ITMY phi $ITMX
 put* ETMX phi $x1
 put* ETMY phi $ITMX
-#diff ITMX phi
 yaxis abs
 */
 
@@ -102,7 +101,6 @@ yaxis abs
 /*
 xaxis* ETMX phi lin -0.001 0.001 500
 put* ETMY phi $x1
-#diff ETMX phi
 yaxis lin abs
 */
 
