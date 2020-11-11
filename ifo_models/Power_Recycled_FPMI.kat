@@ -45,20 +45,36 @@ s sy1 3000 ny2 ny3
 m ETMY 0.999995 5e-06 90 ny3 nTMSY
 
 #### ===== amplitude detectors =====
-/*
+
+ad CR_REFL 0 nREFL
+ad SB1p_REFL $f1 nREFL
+ad SB1m_REFL $mf1 nREFL
+ad SB2p_REFL $f2 nREFL
+ad SB2m_REFL $mf2 nREFL
+
+ad CR_AS 0 nAS
+ad SB1p_AS $f1 nAS
+ad SB1m_AS $mf1 nAS
+ad SB2p_AS $f2 nAS
+ad SB2m_AS $mf2 nAS
+
 ad CR_POP 0 nPOP
 ad SB1p_POP $f1 nPOP
 ad SB1m_POP $mf1 nPOP
 ad SB2p_POP $f2 nPOP
 ad SB2m_POP $mf2 nPOP
 
-ad CR_TMSX 0_TMSX nTMSX
+ad CR_TMSX 0 nTMSX
 ad SB1p_TMSX $f1 nTMSX
 ad SB1m_TMSX $mf1 nTMSX
 ad SB2p_TMSX $f2 nTMSX
 ad SB2m_TMSX $mf2 nTMSX
 
-*/
+ad CR_POS 0 nPOS
+ad SB1p_POS $f1 nPOS
+ad SB1m_POS $mf1 nPOS
+ad SB2p_POS $f2 nPOS
+ad SB2m_POS $mf2 nPOS
 
 # =======  Example Commands ================
 
