@@ -5,22 +5,26 @@ const d2 0.359284M
 const aoiomc 3.0
 #========= source ===============
 
-maxtem 1
+
 
 l i1 1 0 nsr
 
 
 
-s srmmt1 5.630 nsr nom1
-
 # Laser mode
+maxtem 3
 
-tem i1 0 0 1.0 0.0
-tem i1 0 1 1.0 0.0
-tem i1 1 0 1.0 90.0
+tem i1 1 1 1 0
+
+#====== mode Tester ==================
+#bs modedetec 0.5 0.5 0 0 mod1 mod2 mod1t mod2t 
+#beam b1 mod1t
+#s msrmmt 1 mod1t nom1
+#====== mode Tester ==================
+
 
 # SRM->OMMT1
-
+s srmmt1 5.630 nsr nom1
 bs mmt1 0.99997 0.00003 0 3.07 nom1 nom2 nom1t nom2t
 
 # OMMT1->OMMT2
@@ -74,18 +78,19 @@ attr omc2 Rc 0
 #cavity
 cav OMC_ring omc1 n2 omc1 n9
 
-
-# amp detector
-#ad OMC_TR 0 npd
-#xaxis omc1 phi lin -0.0025 0.0025 2400
-#yaxis abs
 trace 2
 
+#============amp detector=======
+ad OMC_TR 0 npd
+xaxis omc1 phi lin -360 360 2400
+yaxis abs
 
-beam b1 npd
+#================================
 
 
-xaxis  b1 x lin -3 3 80
-x2axis b1 y lin -3 3 80
+#=========== beam profile============
 
-
+#beam b1 npd
+#xaxis  b1 x lin -3 3 80
+#x2axis b1 y lin -3 3 80
+#=====================================
