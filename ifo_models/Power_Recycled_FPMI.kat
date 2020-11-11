@@ -1,4 +1,4 @@
-# KAGRA PRFPMI
+ # KAGRA PRFPMI
 #
 # Keiko Kokeyama, 2nd Aug, 2020
 # 
@@ -66,38 +66,33 @@ ad SB2m_TMSX $mf2 nTMSX
 
 ## DARM scan ##
 /*
-xaxis ETMX phi lin -0.01 0.01 500
-put* ETMY phi $ITMX
+xaxis ETMX phi lin -90 90 500
+put* ETMY phi $mx1
 yaxis abs
 */
 
 ## BS scan ##
 /*
-xaxis* ITMX phi lin -0.1 0.1 1000
-put* ITMY phi $ITMX
+xaxis* ITMX phi lin -90 90 500
+put* ITMY phi $mx1
 put* ETMX phi $x1
-put* ETMY phi $ITMX
+put* ETMY phi $mx1
 yaxis abs
 */
 
 ## CARM scan ##
 /*
-xaxis* ETMX phi lin -0.001 0.001 500
+xaxis* ETMX phi lin -90 90 500
 put* ETMY phi $x1
 yaxis lin abs
 */
 
 ## PRM scan ##
 /*
-xaxis PRM phi lin -0.1 0.1 300
+xaxis PRM phi lin -90 90 500
 yaxis lin abs
 */
 
-## SRM scan ##
-/*
-xaxis SRM phi lin -8.59 -8.5 300
-yaxis lin abs
-*/
 
 # ====================================
 ### Transfer Functions using fsig
@@ -145,14 +140,6 @@ put inphase f2 $x1
 yaxis lin abs:deg
 */
 
-## SRCL ##
-/*
-fsig sig1 SRM 1 0
-pd2 inphase $f1 max 10 nREFL
-xaxis sig1 f log .01 100 500
-put inphase f2 $x1
-yaxis lin abs:deg
-*/
 
 
 
