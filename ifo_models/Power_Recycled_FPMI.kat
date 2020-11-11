@@ -70,11 +70,6 @@ ad SB1m_TMSX $mf1 nTMSX
 ad SB2p_TMSX $f2 nTMSX
 ad SB2m_TMSX $mf2 nTMSX
 
-ad CR_POS 0 nPOS
-ad SB1p_POS $f1 nPOS
-ad SB1m_POS $mf1 nPOS
-ad SB2p_POS $f2 nPOS
-ad SB2m_POS $mf2 nPOS
 
 # =======  Example Commands ================
 
