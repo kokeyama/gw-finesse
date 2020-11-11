@@ -174,7 +174,14 @@ put inphase f2 $x1
 yaxis lin abs:deg
 */
 
-
+## SRCL ##
+/*
+fsig sig1 SRM 1 0
+pd2 inphase $f1 max 10 nREFL
+xaxis sig1 f log .01 100 500
+put inphase f2 $x1
+yaxis lin abs:deg
+*/
 
 
 
