@@ -1,8 +1,7 @@
-# KAGRA PRFPMI model under development
+# KAGRA PRFPMI
 #
 # Keiko Kokeyama, 2nd Aug, 2020
 # 
-
 
 
 
@@ -45,87 +44,85 @@ m ITMY 0.996 0.004 90 ny1 ny2
 s sy1 3000 ny2 ny3
 m ETMY 0.999995 5e-06 90 ny3 nTMSY
 
-###############
-
-
-# Amplitude detectors ================
+#### ===== amplitude detectors =====
 /*
-ad CR 0 nTMSX
-ad SB1p $f1 nTMSX
-ad SB1m $mf1 nTMSX
-ad SB2p $f2 nTMSX
-ad SB2m $mf2 nTMSX
+ad CR_POP 0 nPOP
+ad SB1p_POP $f1 nPOP
+ad SB1m_POP $mf1 nPOP
+ad SB2p_POP $f2 nPOP
+ad SB2m_POP $mf2 nPOP
+
+ad CR_TMSX 0_TMSX nTMSX
+ad SB1p_TMSX $f1 nTMSX
+ad SB1m_TMSX $mf1 nTMSX
+ad SB2p_TMSX $f2 nTMSX
+ad SB2m_TMSX $mf2 nTMSX
+
 */
 
-#pd1 REFLI1 $f1 0 nREFL
-#pd1 REFLQ1 $f1 90 nREFL
+# =======  Example Commands ================
 
-#pd1 REFLI2 $f2 0 nREFL
-#pd1 REFLQ2 $f2 90 nREFL
+### DoF Sweeps
 
-#pd1 POPI1 $f1 119 nPOP
-#pd1 POPQ1 $f1 209 nPOP
-
-#pd1 POPI2 $f2 74 nPOP
-#pd1 POPQ2 $f2 164 nPOP
-
-#pd1 ASQ2 $f2 178 nAS
-
-
-# ====================================
-
-# DARM scan
+## DARM scan ##
 /*
 xaxis ETMX phi lin -0.01 0.01 500
 put* ETMY phi $ITMX
-diff ETMX phi
 yaxis abs
 */
 
-
-# BS scan
+## BS scan ##
 /*
 xaxis* ITMX phi lin -0.1 0.1 1000
 put* ITMY phi $ITMX
 put* ETMX phi $x1
 put* ETMY phi $ITMX
-#diff ITMX phi
 yaxis abs
 */
 
-
-
-# CARM scan
+## CARM scan ##
 /*
 xaxis* ETMX phi lin -0.001 0.001 500
 put* ETMY phi $x1
-#diff ETMX phi
 yaxis lin abs
 */
 
-# PRM scan
+## PRM scan ##
 /*
 xaxis PRM phi lin -0.1 0.1 300
-#diff PRM phi
 yaxis lin abs
 */
 
+## SRM scan ##
+/*
+xaxis SRM phi lin -8.59 -8.5 300
+yaxis lin abs
+*/
 
 # ====================================
-### Sensmat using fsig
+### Transfer Functions using fsig
 
-## DARM ###
+## DARM ##
 /*
 fsig sig1 ETMX 10 0
-fsig sig2 ETMY 10 180
+fsig sig1 ETMY 10 180
 pd2 inphase $f1 max 10 nREFL
 xaxis sig1 f log .01 100 500
 put inphase f2 $x1
 yaxis lin abs:deg
 */
 
+## CARM ##
+/*
+fsig sig1 ETMX 10 0
+fsig sig2 ETMY 10 0
+pd2 inphase $f1 max 10 nREFL
+xaxis sig1 f log .01 100 500
+put inphase f2 $x1
+yaxis lin abs:deg
+*/
 
-## MICH ###
+## MICH ##
 /*
 fsig sig1 ETMX 10 0
 fsig sig2 ITMX 10 0
@@ -139,27 +136,23 @@ put REFLQ1 f2 $x1
 yaxis lin abs
 */
 
-
-
 ## PRCL ##
-
-fsig sig1 PRM 1 0
-pd2 inphase $f1 0 10 nREFL
-xaxis sig1 f log .01 100 500
-put inphase f2 $x1
-yaxis lin abs:deg
-
-
-## CARM ###
 /*
-fsig sig1 ETMX 10 0
-fsig sig2 ETMY 10 0
+fsig sig1 PRM 1 0
 pd2 inphase $f1 max 10 nREFL
 xaxis sig1 f log .01 100 500
 put inphase f2 $x1
 yaxis lin abs:deg
 */
 
+## SRCL ##
+/*
+fsig sig1 SRM 1 0
+pd2 inphase $f1 max 10 nREFL
+xaxis sig1 f log .01 100 500
+put inphase f2 $x1
+yaxis lin abs:deg
+*/
 
 
 
