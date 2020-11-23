@@ -439,3 +439,41 @@ def demod_phase(out, port, SB, N):
     mag = np.sqrt(I**2 + Q**2)
     
     return mag, demod
+
+def run_sensitivity(base, mode):
+# mode is a string, either:
+# 'RF' Shot noise sensitivity for RF demod signal at AS port
+# 'DC' DC readout signal with DARM offset of xxx
+# 'QN' Quantum (radiation pressure and shot) noise limited sensitivity (???)
+# 'HM' Quantum (radiation pressure and shot) noise limited sensitivity with Homodlyne detection
+# 'SQ' Quantum (radiation pressure and shot) noise limited sensitivity with squeezed injection
+#
+#
+# only RF signal is available for now
+#
+#
+    model = base.deepcopy()
+    if mode == 'RF':
+        model.parse("""
+        const f1 16.881M
+        # Differentially modulate the arm lengths
+        fsig darm sx1 1 0
+        fsig darm sy1 1 180
+        xaxis darm f log 5 5k 1000
+        yaxis log abs
+    
+        # Output the shot noise limited sensitivity
+        qnoisedS RF_AS_f1 2 $f1 max $fs nAS
+        """)
+    else:
+        print('Sorry, ther options are not available yet')
+    
+    d = model.run()
+    f = d.x
+    sens = d["RF_AS_f1"]
+
+    return out, model
+        
+    
+
+
