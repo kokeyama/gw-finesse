@@ -304,6 +304,7 @@ def verify_input_chr_foramt_is_correct(input_str):
     else:
         try:
             a = change_nums_unit_str_to_float(input_str)
+            a = a
             return True
         except:
             return False
@@ -687,21 +688,6 @@ def replace_chr(tmp, values):
         tmp = tmp.replace(list1[i], list2[i])
     return tmp
 
-def parse_sw_amptd_kat(model, values, port):
-    # default value
-    model.parse("ad car_ad_REFL 0 REFL")
-    if values["kifo_put_car_sw_amptd_flag"]:# or kifo_put_car_tf_amptd_flag:
-        model.parse("ad car_ad_%s 0 %s" % (port, port))
-    if values["kifo_put_f1u_sw_amptd_flag"]:# or kifo_put_f1u_tf_amptd_flag:
-        model.parse("ad fsb1_upper_ad_%s %s %s" % (port, fsb1, port))
-    if values["kifo_put_f1l_sw_amptd_flag"]:# or kifo_put_f1l_tf_amptd_flag:
-        model.parse("ad fsb1_lower_ad_%s %s %s" % (port, mfsb1, port))
-    if values["kifo_put_f2u_sw_amptd_flag"]:# or kifo_put_f2u_tf_amptd_flag:
-        model.parse("ad fsb2_upper_ad_%s %s %s" % (port, fsb2, port))
-    if values["kifo_put_f2l_sw_amptd_flag"]:# or kifo_put_f2l_tf_amptd_flag:
-        model.parse("ad fsb2_lower_ad_%s %s %s" % (port, mfsb2, port))
-    return model
-
 def parse_sw_dmod1_kat(values, model, port, freq, phase):
     if freq=="DC":            
         model.parse("pd0 pd0_DC_%s %s" % (port, port))
@@ -756,6 +742,7 @@ def parse_sw_dmod2_kat_not_optimal(values, model, port, freq, phase):
     return model
 
 def parse_sw_dmod2_kat_optimal(values, model, port, freq, phase):
+    # calculate dmod1 optimal
     tmp_model = model.deepcopy()
     tmp1         = "pd1 pd1_insert_freqs_later_0_%s %s 0 %s" % (port, freq, port)
     tmp1         = replace_chr(tmp1, values)
@@ -772,20 +759,60 @@ def parse_sw_dmod2_kat_optimal(values, model, port, freq, phase):
     print("now calculating optimalphase")
     print(tmp_model)
     out = tmp_model.run()
-    optimal_phase = get_optimal_demod_phase(out, I_pdname, Q_pdname, 0)[1]
-    print("optimal phase = ")
-    print(optimal_phase)
-    #
-    tmp3 = "pd2 pd2_insert_freqs_later_optimal%s_%s %s %s 10 %s"%(optimal_phase, port, freq, optimal_phase, port)
-    tmp3 = replace_chr(tmp3, values)
-    #tmp4 = "put pd2_insert_freqs_later_optimal%s_%s f2 $x1"%(optimal_phase, port)
-    tmp3 = tmp3.replace('insert_freqs_later', freq)
-    tmp3 = tmp3.replace('Iphase', '0' )
-    tmp3 = tmp3.replace('Qphase', '90')
-    model.parse(tmp3)
+    optimal_phase1 = get_optimal_demod_phase(out, I_pdname, Q_pdname, 0)[0]
+    print("optimal phase1 = ")
+    print(optimal_phase1)
+
+    # calculate dmod2 optimal
+    tmp_model = model.deepcopy()
+    tmp3         = "pd2 pd2_insert_freqs_later_0_%s %s %s 10 0 %s"%(port, freq, optimal_phase1, port)
+    tmp3         = replace_chr(tmp3, values)
+    tmp4         = "pd2 pd2_insert_freqs_later_90_%s %s %s 10 90 %s"%(port, freq, optimal_phase1, port)
+    tmp4         = replace_chr(tmp4, values)
+    I_pdname     = "pd2_insert_freqs_later_0_%s"%(port)
+    I_pdname     = replace_chr(I_pdname, values)
+    Q_pdname     = "pd2_insert_freqs_later_90_%s"%(port)
+    Q_pdname     = replace_chr(Q_pdname, values)
+    tmp_model.parse(tmp3)
+    tmp_model.parse(tmp4)
+    tmp_model.xaxis.remove()
+    tmp_model = add_dofcommand_to_model(tmp_model, values, "tf_dmod2")# sw_dmod1の項目だけど、ここで渡すのは"tf_dmod2"で合ってる
+    print("now calculating optimalphase")
+    print(tmp_model)
+    out = tmp_model.run()
+    optimal_phase2 = get_optimal_demod_phase(out, I_pdname, Q_pdname, 0)[0]
+    print("optimal phase2 = ")
+    print(optimal_phase2)
+
+    # put PD
+    tmp5 = "pd2 pd2_insert_freqs_later_optimal%s_%s_%s %s %s 10 %s %s"%(optimal_phase1, optimal_phase2, port, freq, optimal_phase1, optimal_phase2, port)
+    tmp5 = replace_chr(tmp5, values)
+    tmp5 = tmp5.replace('insert_freqs_later', freq)
+    tmp5 = tmp5.replace('Iphase', '0' )
+    tmp5 = tmp5.replace('Qphase', '90')
+    model.parse(tmp5)
     #model.parse(tmp4)
     print("now added optimal pd2")
     print(model)
+    return model
+
+def parse_sw_amptd_kat(model, values, port):
+    # default value
+    fsb1 = values["k_inf_c_f1_mod_frequency"]
+    mfsb1 = "-"+values["k_inf_c_f1_mod_frequency"]
+    fsb2 = values["k_inf_c_f2_mod_frequency"]
+    mfsb2 = "-"+values["k_inf_c_f2_mod_frequency"]
+    #model.parse("ad car_ad_REFL 0 REFL")
+    if values["kifo_put_car_sw_amptd_flag"]:# or kifo_put_car_tf_amptd_flag:
+        model.parse("ad car_ad_%s 0 %s" % (port, port))
+    if values["kifo_put_f1u_sw_amptd_flag"]:# or kifo_put_f1u_tf_amptd_flag:
+        model.parse("ad fsb1_upper_ad_%s %s %s" % (port, fsb1, port))
+    if values["kifo_put_f1l_sw_amptd_flag"]:# or kifo_put_f1l_tf_amptd_flag:
+        model.parse("ad fsb1_lower_ad_%s %s %s" % (port, mfsb1, port))
+    if values["kifo_put_f2u_sw_amptd_flag"]:# or kifo_put_f2u_tf_amptd_flag:
+        model.parse("ad fsb2_upper_ad_%s %s %s" % (port, fsb2, port))
+    if values["kifo_put_f2l_sw_amptd_flag"]:# or kifo_put_f2l_tf_amptd_flag:
+        model.parse("ad fsb2_lower_ad_%s %s %s" % (port, mfsb2, port))
     return model
 
 def add_pds_to_model(base, values, type_of_pd_signal, add_dofcommand_to_model):
