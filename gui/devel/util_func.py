@@ -63,11 +63,10 @@ def get_optimal_demod_phase(out, I_pdname, Q_pdname, N):
     #jupyter notebook script
     
     tot = out[I_pdname] + 1j*out[Q_pdname]
-    print(type(out[I_pdname]))
-    print(type(out[Q_pdname]))
+    #print(type(out[I_pdname]))
+    #print(type(out[Q_pdname]))
     #mag=1
     phase = np.angle(tot)*180/np.pi
-    
     # kokeyamasan script
     #I = np.sign(np.sin(np.angle(out[I_pdname][N])))* np.abs(out[I_pdname][N])
     #print("out_I = ")
@@ -146,6 +145,8 @@ def get_model(values, inteferometer_config_list):
     # base
     drfpmi_model = finesse.kat()
     drfpmi_model.parse(input_finesse)
+    print("drfpmi = \n")
+    print(drfpmi_model)
     # model
     model = create_base_by_setting_param(values, drfpmi_model, interferometer)
         # use HOM
@@ -158,10 +159,20 @@ def get_model(values, inteferometer_config_list):
     return model
 
 def disable_FP_param(window, values):
-    window["k_inf_c_etmx_mirror_transmittance"].update(value="0")
-    window["k_inf_c_etmx_mirror_loss"].update(value="1")
-    window["k_inf_c_etmy_mirror_transmittance"].update(value="0")
-    window["k_inf_c_etmy_mirror_loss"].update(value="1")
+    """
+
+    """
+    window["k_inf_c_itmx_mirror_transmittance"].update(value="1")
+    window["k_inf_c_itmx_mirror_loss"].update(value="0")
+    window["k_inf_c_itmy_mirror_transmittance"].update(value="1")
+    window["k_inf_c_itmy_mirror_loss"].update(value="0")
+    window["k_inf_c_length_itmx_etmx"].update(value="0")
+    window["k_inf_c_length_itmy_etmy"].update(value="0")
+    
+    #window["k_inf_c_etmx_mirror_transmittance"].update(value="1")
+    #window["k_inf_c_etmx_mirror_loss"].update(value="0")
+    #window["k_inf_c_etmy_mirror_transmittance"].update(value="1")
+    #window["k_inf_c_etmy_mirror_loss"].update(value="0")
 
 def disable_PRC_param(window, values):
     window["k_inf_c_prm_mirror_transmittance"].update(value="1")
@@ -201,7 +212,7 @@ def change_interferometer(window, values, interferometer):
     if interferometer=="MI":
         disable_SRC_param(window, values)
         disable_PRC_param(window, values)
-        disable_FP_param(window, values)
+        disable_FP_param(window,  values)
     elif interferometer=="FPMI":
         disable_SRC_param(window, values)
         disable_PRC_param(window, values)
@@ -391,6 +402,7 @@ def hom_extention(values, base):
     model.nodes.replaceNode(model.ETMY, "TMSY", "nety1")
 
     hom_code = """
+
     # ======== Thick ITMs ======================
     m IXAR 0     1     0 nitx1 nitx2
     s thick_IX 0.15 1.754 nitx2 nx1
@@ -524,8 +536,12 @@ def gui_param_to_model_param(values, model):
     model.eom2.order = values["k_inf_c_num_of_sidebands"]
     
 def disable_FP_by_param(model):
-    model.ETMX.setRTL(0,0,1)
-    model.ETMY.setRTL(0,0,1)
+    model.ITMX.setRTL(0,1,0)
+    model.ITMY.setRTL(0,1,0)
+    model.sx1.L   = 0
+    model.sy1.L   = 0
+    #model.ETMX.setRTL(0,0,1)
+    #model.ETMY.setRTL(0,0,1)
     return model
 
 def disable_PRC_by_param(model):
@@ -683,7 +699,7 @@ def replace_chr(tmp, values):
     f2_2  = change_nums_unit_str_to_float("2*%s"%values["k_inf_c_f2_mod_frequency"])
     f2_3  = change_nums_unit_str_to_float("3*%s"%values["k_inf_c_f2_mod_frequency"])
     list2 = [str(f1_2), str(f2_2), str(f1_3), str(f2_3), values["k_inf_c_f1_mod_frequency"], values["k_inf_c_f2_mod_frequency"]]
-    print(list2)
+    #print(list2)
     for i in range(len(list1)):
         tmp = tmp.replace(list1[i], list2[i])
     return tmp
@@ -694,55 +710,29 @@ def parse_sw_dmod1_kat(values, model, port, freq, phase):
         return model
     else:
         if phase=="optimal":
-            tmp_model = model.deepcopy()
-            tmp1         = "pd1 pd1_insert_freqs_later_0_%s %s 0 %s" % (port, freq, port)
-            tmp1         = replace_chr(tmp1, values)
-            tmp2         = "pd1 pd1_insert_freqs_later_90_%s %s 90 %s" % (port, freq, port)
-            tmp2         = replace_chr(tmp2, values)
-            I_pdname     = "pd1_insert_freqs_later_0_%s"%(port)
-            I_pdname     = replace_chr(I_pdname, values)
-            Q_pdname     = "pd1_insert_freqs_later_90_%s"%(port)
-            Q_pdname     = replace_chr(Q_pdname, values)
-            tmp_model.parse(tmp1)
-            tmp_model.parse(tmp2)
-            #tmp_model.xaxis.remove()
-            tmp_model = add_dofcommand_to_model(tmp_model, values, "tf_dmod2")# sw_dmod1の項目だけど、ここで渡すのは"tf_dmod2"で合ってる
-            tmp_model.xaxis.scale = "log"
-            tmp_model.xaxis.limits = (1e-30, 1000)
-            print("now calculating optimalphase")
-            print(tmp_model)
-            out = tmp_model.run()
-            optimal_phase = get_optimal_demod_phase(out, I_pdname, Q_pdname, 0)[0]
-            #
+            optimal_phase = get_first_mixer_optimal_phase(model, values, port, freq)
+            phase = optimal_phase
             tmp = "pd1 pd1_insert_freqs_later_optimal%s_%s %s %s %s" % (optimal_phase, port, freq, optimal_phase, port)
+            """
             tmp = replace_chr(tmp, values)
             tmp = tmp.replace('insert_freqs_later', freq)
             tmp = tmp.replace('Iphase', '0' )
             tmp = tmp.replace('Qphase', '90')
             model.parse(tmp)
+            """
         else:
             tmp = "pd1 pd1_insert_freqs_later_%s_%s %s %s %s" % (phase, port, freq, phase, port)
             print(tmp)
-            tmp = replace_chr(tmp, values)
-            tmp = tmp.replace('insert_freqs_later', freq)
-            tmp = tmp.replace('Iphase', '0' )
-            tmp = tmp.replace('Qphase', '90')
-            model.parse(tmp)
+        tmp = replace_chr(tmp, values)
+        tmp = tmp.replace('insert_freqs_later', freq)
+        tmp = tmp.replace('Iphase', '0' )
+        tmp = tmp.replace('Qphase', '90')
+        model.parse(tmp)
         return model
         ## def end
 
-def parse_sw_dmod2_kat_not_optimal(values, model, port, freq, phase):
-    tmp = "pd2 pd2_insert_freqs_later_%s_%s %s %s 10 %s"%(phase, port, freq, phase, port)
-    tmp = tmp.replace('fsb1',values["k_inf_c_f1_mod_frequency"])
-    tmp = tmp.replace('fsb2',values["k_inf_c_f2_mod_frequency"])
-    tmp = tmp.replace('insert_freqs_later', freq)
-    tmp = tmp.replace('Iphase', '0' )
-    tmp = tmp.replace('Qphase', '90')
-    model.parse(tmp)
-    return model
-
-def parse_sw_dmod2_kat_optimal(values, model, port, freq, phase):
-    # calculate dmod1 optimal
+def get_first_mixer_optimal_phase(model, values, port, freq):
+    # calculate first mixer optimal phase
     tmp_model = model.deepcopy()
     tmp1         = "pd1 pd1_insert_freqs_later_0_%s %s 0 %s" % (port, freq, port)
     tmp1         = replace_chr(tmp1, values)
@@ -756,12 +746,49 @@ def parse_sw_dmod2_kat_optimal(values, model, port, freq, phase):
     tmp_model.parse(tmp2)
     tmp_model.xaxis.remove()
     tmp_model = add_dofcommand_to_model(tmp_model, values, "tf_dmod2")# sw_dmod1の項目だけど、ここで渡すのは"tf_dmod2"で合ってる
+    tmp_model.xaxis.scale = "log"
+    tmp_model.xaxis.limits = (1e-30, 1000)
+    #print("now calculating optimalphase")
+    #print(tmp_model)
+    out = tmp_model.run()
+    optimal_phase = get_optimal_demod_phase(out, I_pdname, Q_pdname, 0)[0]
+    print("calculated optimal phase = %s"%optimal_phase)
+    return optimal_phase
+
+def parse_sw_dmod2_kat_not_optimal(values, model, port, freq, phase):
+    tmp = "pd2 pd2_insert_freqs_later_%s_%s %s %s 10 %s"%(phase, port, freq, phase, port)
+    tmp = tmp.replace('fsb1',values["k_inf_c_f1_mod_frequency"])
+    tmp = tmp.replace('fsb2',values["k_inf_c_f2_mod_frequency"])
+    tmp = tmp.replace('insert_freqs_later', freq)
+    tmp = tmp.replace('Iphase', '0' )
+    tmp = tmp.replace('Qphase', '90')
+    model.parse(tmp)
+    return model
+
+def parse_sw_dmod2_kat_optimal(values, model, port, freq, phase):
+    # calculate dmod1 optimal
+    optimal_phase1 = get_first_mixer_optimal_phase(model, values, port, freq)
+    """
+    tmp_model = model.deepcopy()
+    tmp1         = "pd1 pd1_insert_freqs_later_0_%s %s 0 %s" % (port, freq, port)
+    tmp1         = replace_chr(tmp1, values)
+    tmp2         = "pd1 pd1_insert_freqs_later_90_%s %s 90 %s" % (port, freq, port)
+    tmp2         = replace_chr(tmp2, values)
+    I_pdname     = "pd1_insert_freqs_later_0_%s"%(port)
+    I_pdname     = replace_chr(I_pdname, values)
+    Q_pdname     = "pd1_insert_freqs_later_90_%s"%(port)
+    Q_pdname     = replace_chr(Q_pdname, values)
+    tmp_model.parse(tmp1)
+    tmp_model.parse(tmp2)
+    tmp_model.xaxis.remove()
+    tmp_model = add_dofcommand_to_model(tmp_model, values, "tf_dmod2")
     print("now calculating optimalphase")
     print(tmp_model)
     out = tmp_model.run()
     optimal_phase1 = get_optimal_demod_phase(out, I_pdname, Q_pdname, 0)[0]
     print("optimal phase1 = ")
     print(optimal_phase1)
+    """
 
     # calculate dmod2 optimal
     tmp_model = model.deepcopy()
@@ -870,3 +897,6 @@ def add_pds_to_model(base, values, type_of_pd_signal, add_dofcommand_to_model):
     print("now added PDs")
     return model
     
+def make_plot_f_title(base_name, interferometer, dof, type_of_pd_signal):
+    plot_title = base_name+"_"+interferometer+"_"+dof+"_"+type_of_pd_signal
+    return plot_title
