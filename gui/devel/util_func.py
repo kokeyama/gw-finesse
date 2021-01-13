@@ -705,7 +705,7 @@ def replace_chr(tmp, values):
     return tmp
 
 def parse_sw_dmod1_kat(values, model, port, freq, phase):
-    if freq=="DC":            
+    if freq=="DC":
         model.parse("pd0 pd0_DC_%s %s" % (port, port))
         return model
     else:
@@ -885,6 +885,7 @@ def add_pds_to_model(base, values, type_of_pd_signal, add_dofcommand_to_model):
         for pdname in model.detectors.keys():
             model.parse("put %s f2 $x1"%pdname)
     elif type_of_pd_signal=="st_type1":
+        #freq = "0"
         freq = values["k_inf_c_f1_mod_frequency"]
         for port in get_all_port_list():
             if values["kifo_st_type1_%s"%port]:
@@ -897,6 +898,11 @@ def add_pds_to_model(base, values, type_of_pd_signal, add_dofcommand_to_model):
     print("now added PDs")
     return model
     
-def make_plot_f_title(base_name, interferometer, dof, type_of_pd_signal):
+    #make_plot_figure_title(base_name, values["kifo_dof"], "Power")
+def make_plot_figure_title(base_name, dof, type_of_pd_signal):
+    plot_title = base_name+" "+dof+" "+type_of_pd_signal
+    return plot_title
+
+def make_plot_axes_title(base_name, interferometer, dof, type_of_pd_signal):
     plot_title = base_name+"_"+interferometer+"_"+dof+"_"+type_of_pd_signal
     return plot_title
